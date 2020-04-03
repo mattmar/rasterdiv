@@ -1,0 +1,15 @@
+Package: rasterdiv
+Version: 0.1-0
+Date: 2020-03-20
+Title: Diversity Indices for Numerical Matrices
+Author: Matteo Marcantonio <marcantoniomatteo@gmail.com>, Martina Iannacito <martina.iannacito@inria.fr>, Elisa Thouverai <elisa.th95@gmail.com>, Daniele Da Re <daniele.dare@uclouvain.be>, Clara Tattoni <clara.tattoni@gmail.com>, Giovanni Bacaro <gbacaro@units.it>, Saverio Vicario <averio.vicario@cnr.it>, Duccio Rocchini <duccio.rocchini@unibo.it>
+Maintainer: Matteo Marcantonio <marcantoniomatteo@gmail.com>
+Depends: R (>= 3.6.0)
+Imports: raster, parallel, doParallel, methods, foreach, proxy,
+		 svMisc
+Suggests: knitr, rmarkdown, RColorBrewer, rasterVis
+LazyData: TRUE
+Description: Providing functions to calculate indices of diversity on numerical matrices based on Information Theory. The rationale behind the package is described in Rocchini, Marcantonio and Ricotta (2017) <doi:10.1016/j.ecolind.2016.07.039>.
+License: GPL(>=2)
+VignetteBuilder: knitr
+Encoding: UTF-8

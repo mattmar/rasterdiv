@@ -1,5 +1,24 @@
-Rasterdiv basics. Derive indices of diversity from NDVI.
-author: "Matteo Marcantonio, Duccio Rocchini"
+---
+title: "Rasterdiv basics. Derive indices of diversity from NDVI."
+author: "Matteo Marcantonio"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Rasterdiv basics. Derive spatial indices of diversity from NDVI.}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center") 
+knitr::opts_chunk$set(dev = 'pdf')
+```
+
+```{r results='hide', message=FALSE, warning=FALSE}
+#Required packages
+library(rasterdiv)
+library(rasterVis)
+library(RColorBrewer)
+```
 
 This vignette uses **rasterdiv** to build global series of indices of diversity based on Information Theory. The input dataset is the Copernicus Long-term (1999-2017) average Normalise Difference Vegetation Index for the 21st of June (copNDVI).
 

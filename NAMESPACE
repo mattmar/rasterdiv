@@ -1,0 +1,26 @@
+
+#####################################
+##               Import            ##
+#####################################
+import(doParallel)
+importFrom("methods", "is")
+importFrom("parallel", "makeCluster")
+importFrom("parallel", "stopCluster")
+importFrom("raster", "raster", "getValues")
+importFrom("stats", "cov", "median", "window", "xtabs")
+importFrom("utils", "combn", "setTxtProgressBar", "txtProgressBar","globalVariables")
+importFrom("foreach", "%dopar%")
+importFrom("foreach", "foreach")
+importFrom("proxy", "dist")
+importFrom("svMisc", "progress")
+
+#####################################
+##               Export            ##
+#####################################
+export(Hill, HillS, HillP)
+export(Rao)
+export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
+export(Renyi, RenyiS, RenyiP)
+export(Shannon, ShannonS, ShannonP)
+export(Pielou, PielouS, PielouP)
+export(BergerParker, BergerParkerS, BergerParkerP)

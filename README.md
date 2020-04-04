@@ -1,10 +1,13 @@
-Rasterdiv basics. Derive indices of diversity from NDVI.
-author: "Matteo Marcantonio, Duccio Rocchini"
+# What is rasterdiv?
 
-This vignette uses **rasterdiv** to build global series of indices of diversity based on Information Theory. The input dataset is the Copernicus Long-term (1999-2017) average Normalise Difference Vegetation Index for the 21st of June (copNDVI).
+*rasterdiv* is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indeces on RasterLayer or numerical matrices, such as Shannon's entropy or Cumulative Residual Entropy (CRE).
+
+## Rasterdiv basics. Derive indices of diversity from NDVI.
+
+Here, we show hot to use **rasterdiv** to derive global series of indices of diversity based on Information Theory. The input dataset is the Copernicus Long-term (1999-2017) average Normalise Difference Vegetation Index for the 21st of June (copNDVI).
 
 ## Overview
-A RasterLayer called copNDVI is loaded together with package **rasterdiv**. *copNDVI* is at 8-bit meaning that pixel values range from 0 to 255 (you could *stretch* it to a more familiar (-1,1) range using `raster::stretch(copNDVI,minv=-1,maxv=1)`). 
+A RasterLayer called copNDVI is loaded together with package **rasterdiv**. *copNDVI* is at 8-bit meaning that pixel values range from 0 to 255. You could *stretch* it to a more familiar (-1,1) range using `raster::stretch(copNDVI,minv=-1,maxv=1)` .  
 
 ## Reclassify NDVI 
 Pixels with values 253, 254 and 255 (water) will be set as NA's.
@@ -14,22 +17,20 @@ copNDVI <- reclassify(copNDVI, cbind(253, 255, NA), right=TRUE)
 ```
 
 ## Resample NDVI to coarser resolution 
-To speed up the calculation, the RasterLayer will be "resampled" at a resolution 20 times coarser than original.
+To speed up the calculation, the RasterLayer will be "resampled" at a resolution 10 times coarser than original.
 
 ```{r}
-#Make a raster with target resolution
-rtar <- raster(nrow=3920/40,ncol=10080/40,ext=extent(copNDVI))
-#Resample using bilinear sampling
-copNDVIlr <- resample(copNDVI, rtar, method = "bilinear")
-#Set float numbers as integers
+#Resample using raster::aggregate and a linear factor of 10
+copNDVIlr <- raster::aggregate(copNDVI, fact=20)
+#Set float numbers as integers to further speed up the calculation
 storage.mode(copNDVIlr[]) = "integer"
 ```
 
 ## Compare NDVI low and high resolution
 
 ```{r fig01}
-levelplot(copNDVI,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~5km pixel resolution")
-levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~100km pixel resolution")
+levelplot(copNDVI,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~8km pixel resolution")
+levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~150km pixel resolution")`
 ```
 
 ## Derive Hill's and Renyi's indices 

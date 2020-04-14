@@ -1,4 +1,4 @@
-Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shannon=FALSE, rescale=FALSE, na.tolerance=0.0, simplify=3, np=1, cluster.type="SOCK", debugging=FALSE)
+paRao <- function(x, dist_m="euclidean", window=9, mode="classic", alpha=1, lambda=0, rescale=FALSE, na.tolerance=0.0, simplify=3, np=1, cluster.type="SOCK", debugging=FALSE)
 {
 #
 ## Define function to check if a number is an integer
@@ -7,6 +7,10 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
 #
 ## Initial checks
 #
+    if(!dist_m=="euclidean")
+    {
+        stop("\nParametric Rao temporarily defined only in Euclidean space. Exiting...")
+    }
     if( !(is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list")) ) {
         stop("\nNot a valid x object.")
     }
@@ -45,14 +49,10 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
             }
         }
         #Print user messages
-        if( mode=="classic" & shannon ){
-            message("Matrix check OK: \nRao and Shannon output matrices will be returned")
-        }else if( mode=="classic" & !shannon ){
-            message("Matrix check OK: \nRao output matrix will be returned")
-        }else if( mode=="multidimension" & !shannon ){
-            message(("Matrix check OK: \nA matrix with multimension RaoQ will be returned"))
-        }else if( mode=="multidimension" & shannon ){
-            stop("Matrix check failed: \nMultidimension and Shannon not compatible, set shannon=FALSE")
+        if( mode=="classic" ){
+            message("Matrix check OK: \nParametric Rao output matrix will be returned")
+        }else if( mode=="multidimension" ){
+            message(("Matrix check OK: \nA matrix with multimension Parametric Rao will be returned"))
         }else{
             stop("Matrix check failed: \nNot a valid x | method | distance, please check all these options...")
         }
@@ -71,14 +71,10 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                 rasterm<-as.matrix(rasterm)
             }
         }
-        if( mode=="classic" & shannon ){
-            message("Matrix check OK: \nRao and Shannon output matrices will be returned")
-        }else if( mode=="classic" & !shannon ){
-            message("Matrix check OK: \nRao output matrix will be returned")
-        }else if( mode=="multidimension" & shannon ){
-            stop("Matrix check failed: \nMultidimension and Shannon not compatible, set shannon=FALSE")
-        }else if( mode=="multidimension" & !shannon ){
-            message(("Matrix check OK: \nA matrix with multimension RaoQ will be returned"))
+        if( mode=="classic" ){
+            message("Matrix check OK: \nParametric Rao output matrix will be returned")
+        }else if( mode=="multidimension" ){
+            message(("Matrix check OK: \nA matrix with multimension Parametric Rao will be returned"))
         }else{
             stop("Matrix check failed: \nNot a valid x | method | distance, please check all these options")
         }
@@ -87,7 +83,7 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
     if(np>1) {
         if(mode=="multidimension"){
             message(
-                "Multi-core is not supported for multidimensional Rao, proceeding with 1 core...")
+                "Multi-core is not supported for multidimensional Parametric Rao, proceeding with 1 core...")
             np=1
         }else{
             message("
@@ -108,15 +104,12 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
     if(np==1) {
         raoqe<-matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
     }
-    if(shannon){
-        shannond<-matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-    }
 #
 ## If mode is classic Rao
 #
     if(mode=="classic") {
 #
-# If classic RaoQ is parallelized
+# If classic Rao is parallelized
 #
         if(np>1) {
 #
@@ -131,14 +124,14 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
             ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
             trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
             rm(hor,ver,rasterm_1,values); gc()
-            if(debugging){cat("#check: RaoQ parallel function.")}
+            if(debugging){cat("#check: Parametric Rao parallel function.")}
 #       
 ## Derive distance matrix
 #
             if( is.character( dist_m) | is.function(dist_m) ) {
-                d1 <- proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m,upper=TRUE)
+                d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
             } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
-                d1 <- stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
+                d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
             }
 #       
 ## Create cluster object with given number of slaves
@@ -169,7 +162,7 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                     else {
                         tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
                         if( "NA's"%in%names(tw) ) {
-                            tw <- tw[-length(tw)]
+                            tw<-tw[-length(tw)]
                         }
                         if( debugging ) {
                             message("Working on coords ",rw,",",cl,". classes length: ",length(tw),". window size=",window)
@@ -187,16 +180,16 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                             p1[upper.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
-                            vv <- sum(p1*d2)
+                            vv <- sum(p1*(d2^alpha))^(1/alpha)
                             return(vv)
                         }
                     }
                 })
                 return(raout)
-            } # End classic RaoQ - parallelized
-            message(("\n\nCalculation of Rao's index complete.\n"))
+            } # End classic Parametric Rao - parallelized
+            message(("\n\nCalculation of Parametric Rao's index complete.\n"))
 #
-## If classic RaoQ is sequential
+## If classic Parametric Rao is sequential
 #
         } else if(np==1) {
 # Reshape values
@@ -238,25 +231,25 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                             p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
                             if(isfloat) {
-                                raoqe[rw-w,cl-w]<-sum(p1*d2)/mfactor
+                                raoqe[rw-w,cl-w] <- ((sum((p1)*(d2^alpha)))^(1/alpha))/mfactor
                             } else {
-                                raoqe[rw-w,cl-w]<-sum(p1*d2)
+                                raoqe[rw-w,cl-w] <- (sum(p1*(d2^alpha)))^(1/alpha)
                             }
                         }
                     } 
                     svMisc::progress(value=cl/(ncol(trasterm)-1)*100, max.value=100, progress.bar = F,init=T)
                 } 
             } # End of for loop 
-            message(("\nCalculation of Rao's index complete.\n"))
+            message(("\nCalculation of sequntial Parametric Rao's index complete.\n"))
         }
-    }  # End classic RaoQ - sequential
+    }  # End classic Parametric Rao - sequential
     else if( mode=="multidimension" ){
         if(debugging) {
             message("#check: Into multidimensional clause.")
         }
 #----------------------------------------------------#
 #
-## If multimensional RaoQ
+## If multimensional Parametric Rao
 #
 # Check if there are NAs in the matrices
         if ( is(rasterm,"RasterLayer") ){
@@ -341,7 +334,7 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                 warning("Multimahalanobis distance is not fully supported...")
             }
         } else {
-            stop("Distance function not defined for multidimensional Rao's Q; please choose among euclidean, manhattan, canberra, minkowski, mahalanobis!")
+            stop("Distance function not defined for multidimensional Parametric Rao's Q; please choose among euclidean, manhattan, canberra, minkowski, mahalanobis!")
         }
         if(debugging) {
             message("#check: After distance calculation in multimenional clause.")
@@ -402,51 +395,12 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
             progress(value=cl, max.value=dim(rasterm)[2]+w, progress.bar = FALSE)
         }
         if(exists("pb")) {
-         close(pb) 
-         message("\nCalculation of Multidimensional Rao's index complete.\n")
-     }
- } else{
-    message("Something went wrong when trying to calculate Rao's indiex.")
-}  # end of multimensional RaoQ
-
-#----------------------------------------------------#
-
-#
-## Shannon
-#
-if( shannon ) {
-    message("\nStarting Shannon-Wiener index calculation:\n")
-    # Reshape values
-    values<-as.numeric(as.factor(rasterm))
-    rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-#
-## Add "fake" columns and rows for moving window
-#
-    hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
-    ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-    trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
-#
-## Loop over all the pixels
-#
-    for (cl in (1+w):(dim(rasterm)[2]+w)) {
-        for(rw in (1+w):(dim(rasterm)[1]+w)) {
-            if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-                shannond[rw-w,cl-w]<-NA
-            } else {
-                tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]))
-                if( "NA's"%in%names(tw) ) {
-                    tw<-tw[-length(tw)]
-                }
-                tw_values<-as.vector(tw)
-                p<-tw_values/sum(tw_values)
-                p_log<-log(p)
-                shannond[rw-w,cl-w]<-(-(sum(p*p_log)))
-            }
-        }   
-        svMisc::progress(value=cl, max.value=(c((dim(rasterm)[2]+w)+(dim(rasterm)[1]+w))/2), progress.bar = FALSE)
-    } 
-    message(("\nCalculation of Shannon's index is also complete!\n"))
-} # End ShannonD
+           close(pb) 
+           message("\nCalculation of Multidimensional Parametric Rao's index complete.\n")
+       }
+   } else{
+    message("Something went wrong when trying to calculate Parametric Rao's indiex.")
+}  # end of multimensional Parametric Rao
 
 #----------------------------------------------------#
 
@@ -457,28 +411,19 @@ if(debugging){
     message( "#check: return function." )
 }
 
-if( shannon ) {
-    if( np>1 ) {
-        outl<-list(do.call(cbind,raop),shannond)
-        names(outl)<-c("Rao","Shannon")
-        return(outl)
-    } else if( np==1 ){ 
-        outl<-list(raoqe,shannond)
-        names(outl)<-c("Rao","Shannon")
-        return(outl)
-    }
-} else if( !shannon & mode=="classic" ) {
+if( mode=="classic" ) {
     if( isfloat & np>1 ) {
         return(do.call(cbind,raop)/mfactor)
         if(debugging){
             message("#check: return function - classic.")
-        }
+        } 
     } else if( !isfloat & np>1 ) {
         return(do.call(cbind,raop))
     } else { return(raoqe) }
-} else if( !shannon & mode=="multidimension" ) {
+} else if( mode=="multidimension" ) {
     outl<-list(raoqe)
     names(outl)<-c("Multidimension_Rao")
     return(outl)
 }
 }
+

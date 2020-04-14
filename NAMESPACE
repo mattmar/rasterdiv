@@ -19,6 +19,7 @@ importFrom("svMisc", "progress")
 #####################################
 export(Hill, HillS, HillP)
 export(Rao)
+export(paRao)
 export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
 export(Renyi, RenyiS, RenyiP)
 export(Shannon, ShannonS, ShannonP)

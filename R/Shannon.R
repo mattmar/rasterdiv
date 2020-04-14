@@ -46,7 +46,7 @@ Shannon <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK", debu
       cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
     } 
     else if( cluster.type=="MPI" ) {
-      cls <- makeMPIcluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
+      cls <- makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
     } 
     else {
       message("Wrong definition for cluster.type. Exiting...")

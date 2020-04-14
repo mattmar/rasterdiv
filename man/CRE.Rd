@@ -41,7 +41,7 @@ out <- CRE(x=a,window=3,na.tolerance=0,mode="classic")
 
 #Minimum example; compute CRE in paralllel
 a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
-out <- CRE(x=a,window=3,na.tolerance=0,mode="classic",np=2)
+out <- CRE(x=a,window=3,na.tolerance=0,mode="classic",np=1)
 
 #Compute multidimension Rao's index rescaling the input matrices
 a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)

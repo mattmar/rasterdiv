@@ -1,1 +1,13 @@
-Readme.md
+^Readme.md$
+^.git$
+^README.Rmd
+^.gitignore$
+^.*\.Rproj$
+^\.Rproj\.user$
+^CONDUCT\.md$
+^\.travis\.yml$
+^README-.*\.png$
+^cran-comments\.md$
+^doc\.tex$
+^doc\.html$
+^doc$

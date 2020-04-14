@@ -50,22 +50,5 @@ https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-ma
 #Minimal example; compute Hill's index with alpha 1:5 
 a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
 hill <- Hill(x=a,window=3,alpha=1:5)
-\donttest{
-#Compute Hill's index with alpha values 0,0.5,1,1.5,2 on Copernicus global NDVI 
-#on a 9 px-side moving window and using parallel computing.
-	require("proxy")
-	require("raster")
-	require("svMisc")
-
-	ndvi17_r <- reclassify(copNDVI, cbind(253, 255, NA), right=TRUE)
-	hill <- Hill(x=ndvi17_r,window=9,np=4,cluster.type="SOCK",alpha=seq(0,2,0.5))
-	hillra <- lapply(hill, function(x) raster(x,template=ndvi17))
-	cols <- colorRampPalette(brewer.pal(9,"RdBu"))
-
-#Plot results using lattice
-	levelplot(hillra,main="Hill's numbers (9px moving window) - Copernicus NDVI 5km",
-		col.regions = cols,as.table = T,layout = c(0,5,1),
-		names.attr = paste("alpha",seq(0,2,0.5),sep=" "))
-}
 }
 \keyword{methods}

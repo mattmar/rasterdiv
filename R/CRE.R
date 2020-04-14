@@ -127,9 +127,9 @@ CRE <- function(x, window=9, mode="classic", rescale=FALSE, na.tolerance=0.0, si
             if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
                 cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
             } else if( cluster.type=="MPI" ) {
-                cls <- makeMPIcluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
+                cls <- makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
             }
-            registerDoParallel(cls)
+            doParallel::registerDoParallel(cls)
             on.exit(stopCluster(cls)) # Close the clusters on exit
             gc()
 #
@@ -138,7 +138,7 @@ CRE <- function(x, window=9, mode="classic", rescale=FALSE, na.tolerance=0.0, si
             pb <- txtProgressBar(min = (1+w), max = dim(rasterm)[2], style = 3)
             progress <- function(n) setTxtProgressBar(pb, n)
             opts <- list(progress = progress)
-            raoqe <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.options.snow = opts,.verbose = F) %dopar% {
+            raoqe <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.options.parallel = opts,.verbose = F) %dopar% {
                 if(debugging) {
                     cat(paste(cl))
                 }

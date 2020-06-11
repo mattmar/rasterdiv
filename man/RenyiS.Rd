@@ -1,10 +1,10 @@
 \name{RenyiS}
 \alias{RenyiS}
 \title{
-Renyi's diversity index.
+Sequential Renyi's diversity index
 }
 \description{
-Renyi's diversity index.
+Sequential Renyi's diversity index.
 }
 \usage{
 RenyiS(rasterm, w, alpha, base, na.tolerance, debugging)

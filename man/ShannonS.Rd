@@ -1,10 +1,10 @@
 \name{ShannonS}
 \alias{ShannonS}
 \title{
-Shannon's diversity index.
+Sequential Shannon's diversity index
 }
 \description{
-Shannon's diversity index.
+Sequential Shannon's diversity index.
 }
 \usage{
 ShannonS(rasterm, w, na.tolerance, debugging)

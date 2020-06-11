@@ -1,4 +1,4 @@
-Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shannon=FALSE, rescale=FALSE, na.tolerance=0.0, simplify=3, np=1, cluster.type="SOCK", debugging=FALSE)
+Rao <- function(x, dist_m="euclidean", window=9, rasterOut=TRUE, mode="classic", lambda=0, shannon=FALSE, rescale=FALSE, na.tolerance=1.0, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
 {
 #
 ## Define function to check if a number is an integer
@@ -135,7 +135,7 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
 #       
 ## Derive distance matrix
 #
-            if( is.character( dist_m) | is.function(dist_m) ) {
+            if( is.character(dist_m) | is.function(dist_m) ) {
                 d1 <- proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m,upper=TRUE)
             } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
                 d1 <- stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
@@ -184,10 +184,9 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                         else {
                             p <- tw_values/sum(tw_values)
                             p1 <- diag(0,length(tw_values))
-                            p1[upper.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
-                            vv <- sum(p1*d2)
+                            vv <- sum(p1*d2*2)
                             return(vv)
                         }
                     }
@@ -229,18 +228,17 @@ Rao <- function(x, dist_m="euclidean", window=9, mode="classic", lambda=0, shann
                         tw_labels <- names(tw)
                         tw_values <- as.vector(tw)
                         #if clause to exclude windows with only 1 category
-                        if(length(tw_values) < 2) {
-                            raoqe[rw-w,cl-w]<-NA
+                        if( length(tw_values) <  2 ) {
+                            raoqe[rw-w,cl-w] <- NA
                         } else {
                             p <- tw_values/sum(tw_values)
                             p1 <- diag(0,length(tw_values))
-                            p1[upper.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod))
                             d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
                             if(isfloat) {
-                                raoqe[rw-w,cl-w]<-sum(p1*d2)/mfactor
+                                raoqe[rw-w,cl-w] <- sum(p1*d2*2)/mfactor
                             } else {
-                                raoqe[rw-w,cl-w]<-sum(p1*d2)
+                                raoqe[rw-w,cl-w]<-sum(p1*d2*2)
                             }
                         }
                     } 
@@ -461,24 +459,46 @@ if( shannon ) {
     if( np>1 ) {
         outl<-list(do.call(cbind,raop),shannond)
         names(outl)<-c("Rao","Shannon")
-        return(outl)
+        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+            return(raster(outl),template=x)
+        }else{
+            return(outl)
+        }
     } else if( np==1 ){ 
         outl<-list(raoqe,shannond)
         names(outl)<-c("Rao","Shannon")
-        return(outl)
+        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+            return(raster(outl),template=x)
+        }else{
+            return(outl)
+        }
     }
 } else if( !shannon & mode=="classic" ) {
     if( isfloat & np>1 ) {
-        return(do.call(cbind,raop)/mfactor)
         if(debugging){
             message("#check: return function - classic.")
         }
+        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+            return(raster(do.call(cbind,raop)/mfactor,template=x))
+        }else{
+            return(do.call(cbind,raop)/mfactor)
+        }
     } else if( !isfloat & np>1 ) {
-        return(do.call(cbind,raop))
-    } else { return(raoqe) }
+        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+            return(raster(do.call(cbind,raop),template=x))
+        }else{
+            return(do.call(cbind,raop))
+        }
+    } else { 
+        return(raster(raoqe,template=x)) 
+    }
 } else if( !shannon & mode=="multidimension" ) {
-    outl<-list(raoqe)
+    outl <- list(raoqe)
     names(outl)<-c("Multidimension_Rao")
-    return(outl)
-}
+    if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+        return(raster(outl,template=x))
+    }else{
+        return(outl)
+    }
+} else("Something went wrong, exiting...")
 }

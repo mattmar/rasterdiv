@@ -1,7 +1,7 @@
 \name{RenyiP}
 \alias{RenyiP}
 \title{
-Parallelised Renyi's diversity index.
+Parallelised Renyi's diversity index
 }
 \description{
 Parallelised Renyi's diversity index.

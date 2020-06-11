@@ -1,7 +1,7 @@
 \name{PielouP}
 \alias{PielouP}
 \title{
-Parallelised Pielou's diversity index.
+Parallelised Pielou's diversity index
 }
 \description{
 Parallelised Pielou's diversity index.

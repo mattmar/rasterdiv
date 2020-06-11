@@ -5,16 +5,17 @@
 Computes Cumulative Residual Entropy (CRE) on different classes of numeric matrices using a moving window algorithm.
 }
 \usage{
-CRE(x, window=9, mode="classic", rescale=FALSE, 
-  na.tolerance=0.0, simplify=3, np=1, 
+CRE(x, window=3, mode="classic", rasterOut=TRUE,
+  rescale=FALSE, na.tolerance=1.0, simplify=2, np=1, 
   cluster.type="SOCK", debugging=FALSE)
 }
 \arguments{
   \item{x}{input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, if \emph{mode="classic"} only the first element of the list will be considered.}
   \item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the center of the moving window. Default value is 3.}
   \item{mode}{currently, there are two modes to calculate Cumulative Residual Entropy (CRE). If mode is "classic", then the monodimension CRE will be calculated on one single matrix. If mode is "multidimension" (experimental!) a list of matrices must be provided as input. In this latter case, the multidimensional cumulative residual probability will be calculated. Default value is "classic".}
+  \item{rasterOut}{Boolean, if TRUE output will be in RasterLayer format with \emph{x} as template.}
   \item{rescale}{a boolean variable set to FALSE by default. If TRUE, \emph{x} will be scaled and centered to standardise different matrices if mode is "multidimension". Default value is FALSE.}
-  \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate CRE in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise CRE will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).}
+  \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate CRE in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise CRE will be calculated considering the non-NA values. Default values is 1.0 (i.e., full tolerance for NA's).}
   \item{simplify}{Number of decimal places to be retained to calculate CRE. Only if \emph{x} is floats.}
   \item{np}{the number of processes (cores) which will be spawned. Default value is 1.}
   \item{cluster.type}{the type of cluster which will be created. The options are \emph{"MPI"} (which calls "makeMPIcluster"), \emph{"FORK"} and \emph{"SOCK"} (which call "makeCluster"). Default type is \emph{"SOCK"}.}

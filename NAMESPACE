@@ -13,13 +13,15 @@ importFrom("foreach", "%dopar%")
 importFrom("foreach", "foreach")
 importFrom("proxy", "dist")
 importFrom("svMisc", "progress")
+importFrom("pbapply", "pblapply")
+importFrom("pbmcapply", "pbmclapply")
 
 #####################################
 ##               Export            ##
 #####################################
 export(Hill, HillS, HillP)
 export(Rao)
-export(paRao)
+export(paRao, paRaoS, paRaoP, mpaRaoS)
 export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
 export(Renyi, RenyiS, RenyiP)
 export(Shannon, ShannonS, ShannonP)

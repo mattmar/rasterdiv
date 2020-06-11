@@ -31,9 +31,9 @@ HillP<-function(rasterm, w, alpha, na.tolerance,debugging){
         return(vv)
       } 
       else {
-        tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
+        tw <- summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
         if( "NA's"%in%names(tw) ) {
-          tw<-tw[-length(tw)]
+          tw <- tw[-length(tw)]
         }
         if( debugging ) {
           message("Hill - parallelized\nWorking on coords ",rw,",",cl,". classes length: ",length(tw),". window size=", window)

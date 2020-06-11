@@ -1,4 +1,4 @@
-Renyi <- function(x, window=3, alpha=1, base=exp(1), np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE){
+Renyi <- function(x, window=3, alpha=1, base=exp(1), rasterOut=TRUE, np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE){
 
   # Initial checks
   if( !((is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list"))) ) {
@@ -69,27 +69,37 @@ Renyi <- function(x, window=3, alpha=1, base=exp(1), np=1, na.tolerance=1, clust
         outS <- RenyiS(rasterm, w, alpha, base, na.tolerance, debugging)
       }
       message(("\nCalculation complete.\n"))
-      return(outS)
+      if(rasterOut==T & class(x)[1]=="RasterLayer") {
+        outR <- lapply(list(outS),raster, template=x)
+        return(outR)
+      }else{
+        return(outS)
+      }
     }
     else if(mode == "iterative"){
-      out <- list()
+      outS <- list()
       for (ALPHA in alpha){
         message("\nProcessing alpha ",ALPHA,"\n")
         if((abs(ALPHA-1)<.Machine$double.eps)) {
           s <- "Shannon_Renyi_alpha_1"
-          out[[s]] <- ShannonS(rasterm, w, na.tolerance, debugging)
+          outS[[s]] <- ShannonS(rasterm, w, na.tolerance, debugging)
         }
         else if (ALPHA >= .Machine$integer.max) {
           s <- "Berger-Parker"
-          out[[s]] <- log(1/BergerParkerS(rasterm, w, na.tolerance, debugging))
+          outS[[s]] <- log(1/BergerParkerS(rasterm, w, na.tolerance, debugging))
         }
         else{
           s <- paste("Renyi_alpha_",as.character(ALPHA),sep="")
-          out[[s]] <- RenyiS(rasterm, w, ALPHA, base, na.tolerance, debugging)
+          outS[[s]] <- RenyiS(rasterm, w, ALPHA, base, na.tolerance, debugging)
         }
       }
       message(("\nCalculation complete.\n"))
-      return(out)
+      if(rasterOut==T & class(x)[1]=="RasterLayer") {
+        outR <- lapply(outS, raster, template=x)
+        return(outR)
+      }else{
+        return(outS)
+      }
     }
   }
   else if (np>1){
@@ -122,7 +132,12 @@ Renyi <- function(x, window=3, alpha=1, base=exp(1), np=1, na.tolerance=1, clust
       else{
         outP <- RenyiP(rasterm, w, alpha, base, na.tolerance, debugging)
       }
-      return(do.call(cbind,outP))
+      if(rasterOut==T & class(x)[1]=="RasterLayer") {
+        outR <- lapply(list(do.call(cbind,outP)),raster, template=x)
+        return(outR)
+      }else{
+        return(outP)
+      }
     }
     else if(mode == "iterative"){
       outP <- list()
@@ -143,7 +158,12 @@ Renyi <- function(x, window=3, alpha=1, base=exp(1), np=1, na.tolerance=1, clust
           outP[[s]] <- do.call(cbind,out)
         }
       }
-      return(outP)
+      if(rasterOut==T & class(x)[1]=="RasterLayer") {
+        outR <- lapply(outP,raster, template=x)
+        return(outR)
+      }else{
+        return(outP)
+      }
       message("\nCalculation complete.\n")
     }
   }

@@ -1,7 +1,7 @@
 \name{HillS}
 \alias{HillS}
 \title{
-Hill's diversity index.
+Sequential Hill's diversity index
 }
 \description{
 Hill's diversity index.

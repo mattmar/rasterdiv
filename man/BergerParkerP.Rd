@@ -1,7 +1,7 @@
 \name{BergerParkerP}
 \alias{BergerParkerP}
 \title{
-Parallelised Berger-Parker's diversity index.
+Parallelised Berger-Parker's diversity index
 }
 \description{
 Parallelised Berger-Parker's diversity index.

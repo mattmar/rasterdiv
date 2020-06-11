@@ -1,7 +1,7 @@
 \name{HillP}
 \alias{HillP}
 \title{
-Parallelised Hill's diversity index.
+Parallelised Hill's diversity index
 }
 \description{
 Parallelised Hill's diversity index.

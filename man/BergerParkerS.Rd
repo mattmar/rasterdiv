@@ -1,7 +1,6 @@
 \name{BergerParkerS}
 \alias{BergerParkerS}
-\title{
-Berger-Parker's diversity index.
+\title{Sequential Berger-Parker's diversity index
 }
 \description{
 Berger-Parker's diversity index.

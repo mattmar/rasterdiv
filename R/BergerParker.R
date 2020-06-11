@@ -1,4 +1,4 @@
-BergerParker <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE){
+BergerParker <- function(x, window=3, rasterOut=TRUE, np=1, na.tolerance=1.0, cluster.type="SOCK", debugging=FALSE){
 
 # Initial checks
   if( !((is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list"))) ) {
@@ -18,7 +18,7 @@ BergerParker <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK",
     if( !((is(x[[1]],"matrix") | is(x[[1]],"SpatialGridDataFrame") | is(x[[1]],"RasterLayer"))) ) {
       stop("The first element of list x is not a valid object. Exiting...")
     }
-    rasterm<-x[[1]]
+    rasterm <- x[[1]]
     if( is(rasterm,"RasterLayer") ) {
       rasterm <- matrix(getValues(rasterm), ncol = ncol(rasterm), nrow = nrow(rasterm), byrow=TRUE)
     }
@@ -35,12 +35,17 @@ BergerParker <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK",
   if (np == 1){
     outS <- BergerParkerS(rasterm, w, na.tolerance, debugging)
     message(("\nCalculation complete.\n"))
-    return (outS)
+    if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+      outR <- raster(outS,template=x)
+      return(outR)
+    }else{
+      return(outS)
+    }
   }
   else if (np>1){
   # If more than 1 process
     message("\n##################### Starting parallel calculation #######################")
-    if(debugging){cat("#check: Shannon parallel function.")}
+    if(debugging){cat("#check: Berger-Parker parallel function.")}
     if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
       cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
     } 
@@ -56,7 +61,12 @@ BergerParker <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK",
     # Garbage collection
     gc()
     outP <- do.call(cbind,BergerParkerP(rasterm, w, na.tolerance, debugging))
-    message(("\nCalculation complete.\n"))
-    return(outP)
+    message("\nCalculation complete.\n")
+    if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+      outR <- raster(outP,template=x)
+      return(outR)
+    }else{
+      return(outP)
+    }
   }
 }

@@ -1,4 +1,4 @@
-CRE <- function(x, window=9, mode="classic", rescale=FALSE, na.tolerance=0.0, simplify=3, np=1, cluster.type="SOCK", debugging=FALSE)
+CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.tolerance=1.0, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
 {
 #
 ## Define function to check if a number is an integer
@@ -31,7 +31,7 @@ CRE <- function(x, window=9, mode="classic", rescale=FALSE, na.tolerance=0.0, si
 # If data are raster layers
     if( is(x[[1]],"RasterLayer") ) {
         if( mode=="classic" ){
-            isfloat<-FALSE # If data are float numbers, transform them in integer, this may allow for a shorter computation time on big datasets.
+            isfloat <- FALSE # If data are float numbers, transform them in integer, this may allow for a shorter computation time on big datasets.
             if( !is.wholenumber(rasterm@data@min) | !is.wholenumber(rasterm@data@max) | is.infinite(rasterm@data@min) | !is.wholenumber(median(getValues(rasterm),na.rm=T)) ){
                 message("Converting x data in an integer matrix...")
                 isfloat<-TRUE
@@ -134,7 +134,9 @@ CRE <- function(x, window=9, mode="classic", rescale=FALSE, na.tolerance=0.0, si
             gc()
 #
 ## Start the parallelized loop over iter
-#
+#           
+            print(dim(rasterm))
+            print(w)
             pb <- txtProgressBar(min = (1+w), max = dim(rasterm)[2], style = 3)
             progress <- function(n) setTxtProgressBar(pb, n)
             opts <- list(progress = progress)
@@ -289,25 +291,43 @@ CRE <- function(x, window=9, mode="classic", rescale=FALSE, na.tolerance=0.0, si
 #----------------------------------------------------#
 
 #
-## Return multiple outputs
+## Return multiple outputs; clarity should be improved
 #
 if(debugging){
     message( "#check: return function." )
 }
 if( mode=="classic" ) {
    if( isfloat & np>1 ) {
-    return(do.call(cbind,raoqe)/mfactor)
+    if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        return(raster(do.call(cbind,raoqe)/mfactor),template=x)
+    }else{
+        return(do.call(cbind,raoqe)/mfactor)
+    }
     if(debugging){
         message("#check: return function - classic.")
     }
 } else if( !isfloat & np>1 ) {
-    return(do.call(cbind,raoqe))
-} else { return(raoqe) }
+    if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        return(raster(do.call(cbind,raoqe),template=x))
+    } else { 
+        return(do.call(cbind,raoqe))
+    }
+} else {
+    if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        return(raster(raoqe,template=x))
+    } else {
+        return(raoqe)
+    } 
+} 
 } else if( mode=="multidimension" ) {
     outl <- list(raoqe)
     names(outl) <- c("Multidimension_CRE")
-    return(outl)
-}
+    if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        return(raster(outl,template=x))}
+        else {
+            return(outl)
+        }
+    }
 }
 
 #----------------------------------------------------#

@@ -1,7 +1,7 @@
 \name{ShannonP}
 \alias{ShannonP}
 \title{
-Parallelised Shannon's diversity index.
+Parallelised Shannon's diversity index
 }
 \description{
 Parallelised Shannon's diversity index.

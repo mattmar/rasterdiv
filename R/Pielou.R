@@ -1,4 +1,4 @@
-Pielou <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE){
+Pielou <- function(x, window=3, rasterOut=TRUE, np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE){
 
 # Initial checks
   if( !((is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list"))) ) {
@@ -35,7 +35,12 @@ Pielou <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK", debug
   if (np == 1){
     outS <- PielouS(rasterm, w, na.tolerance, debugging)
     message("\nCalculation complete.\n")
-    return(outS)
+    if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+      outR <- raster(outS,template=x)
+      return(outR)
+    }else{
+      return(outS)
+    }
   }
   else if (np>1){
 
@@ -58,6 +63,11 @@ Pielou <- function(x, window=3, np=1, na.tolerance=1, cluster.type="SOCK", debug
     gc()
     outP <- do.call(cbind,PielouP(rasterm, w, na.tolerance, debugging))
     message(("\nCalculation complete.\n"))
-    return(outP)
+    if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+      outR <- raster(outP,template=x)
+      return(outR)
+    }else{
+      return(outP)
+    }
   }
 }

@@ -1,23 +1,25 @@
 \name{Rao}
 \alias{Rao}
-\title{Rao's index of quadrtic entropy (Q)}
+\title{Rao's index of quadratic entropy (Q)}
 \description{
 Computes Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
 }
 \usage{
-Rao(x, dist_m="euclidean", window=9, mode="classic", lambda=0, 
-shannon=FALSE, rescale=FALSE, na.tolerance=0.0, simplify=3, 
-np=1, cluster.type="SOCK", debugging=FALSE)
+Rao(x, dist_m="euclidean", window=9, rasterOut = TRUE,
+ mode="classic",lambda=0, shannon=FALSE, rescale=FALSE,
+ na.tolerance=1.0, simplify=2, np=1, cluster.type="SOCK", 
+ debugging=FALSE)
 }
 \arguments{
   \item{x}{input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, if \code{mode="classic"} only the first element of the list will be considered.}
   \item{dist_m}{define the type of distance to be calculated between numerical categories. \code{dist_m} can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, \code{dist_m} can be a function which calculates an user defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If \code{mode="multidimension"} then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean".}
   \item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the center of the moving window. Default value is 3. If \code{proxy::dist} is a matrix then the function will assume that this is the distance matrix, and therefore no distance will be derived.}
-  \item{mode}{currently, there are two modes to calculate Rao's index. If mode is "classic", then the classic Rao's index will be calculated on one single matrix. If mode is "multidimension" (experimental!) a list of matrices must be provided as input. In this latter case, the overall distance matrix will be calculated in a multi- or hyper-dimensional system by using the measure defined through the function argument \code{dist_m}. Each pairwise distance is then multiplied by the inverse of the squared number of pixels in the considered moving window, and the Rao's Q is finally derived by applying a summation. Default value is "classic"}
+  \item{rasterOut}{Boolean, if TRUE the output will be in RasterLayer format with \emph{x} as template.}
+  \item{mode}{currently, there are two modes to calculate Rao's index. If mode is "classic", then the classic Rao's index will be calculated on one single matrix. If mode is "multidimension" (experimental!) a list of matrices must be provided as input. In this latter case, the overall distance matrix will be calculated in a multi- or hyper-dimensional system by using the measure defined through the function argument \code{dist_m}. Each pairwise distance is then multiplied by the inverse of the squared number of pixels in the considered moving window, and the Rao's Q is finally derived by applying a summation. Default value is "classic".}
   \item{lambda}{the value of the lambda of Minkowski's distance. Considered only if \code{dist_m = "minkowski"} and \code{mode="multidimension". Default value is 0.}}
   \item{shannon}{a boolean variable set to FALSE by default. If TRUE, a matrix with Shannon index will be also calculated.  Default value is FALSE.}
   \item{rescale}{a boolean variable set to FALSE by default. If TRUE, \emph{x} will be scaled and centered to standardise different matrices if mode is "multidimension". Default value is FALSE.}
-  \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).}
+  \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 1.0 (i.e., full tolerance for NA's).}
   \item{simplify}{Number of decimal places to be retained to calculate distances in Rao's index. Only if \emph{x} is floats.}
   \item{np}{the number of processes (cores) which will be spawned. Default value is 1.}
   \item{cluster.type}{the type of cluster which will be created. The options are \code{"MPI"} (which calls "makeMPIcluster"), \code{"FORK"} and \code{"SOCK"} (which call "makeCluster"). Default type is \code{"SOCK"}.}

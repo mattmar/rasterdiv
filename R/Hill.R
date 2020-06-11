@@ -1,4 +1,4 @@
-Hill <- function(x, window=3, alpha=1, np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE) {
+Hill <- function(x, window=3, alpha=1, rasterOut=TRUE, np=1, na.tolerance=1.0, cluster.type="SOCK", debugging=FALSE) {
 
   # Initial checks
   if( !((is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list"))) ) {
@@ -10,7 +10,7 @@ Hill <- function(x, window=3, alpha=1, np=1, na.tolerance=1, cluster.type="SOCK"
   else if( is(x,"SpatialGridDataFrame") ) {
     rasterm <- raster(x)
   }
-  else if( is(x,"RasterLayer")) {
+  else if( is(x,"RasterLayer") ) {
     rasterm <- matrix(getValues(x), ncol = ncol(x), nrow = nrow(x), byrow=TRUE)
   } 
   else if( is(x,"list") ) {
@@ -67,30 +67,41 @@ Hill <- function(x, window=3, alpha=1, np=1, na.tolerance=1, cluster.type="SOCK"
         outS <- exp(ShannonS(rasterm, w, na.tolerance, debugging))
       }
       else{
-        outS<- HillS(rasterm, w, alpha, na.tolerance, debugging)
+        outS <- HillS(rasterm, w, alpha, na.tolerance, debugging)
       }
       message(("\nCalculation complete.\n"))
-      return(outS)
+      # Check if the output will be a raster
+      if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        outR <- lapply(list(outS),raster, template=x)
+        return(outR)
+      }else{
+        return(outS)
+      }
     }
-    else if(mode == "iterative"){
-      out <- list()
+    else if(mode == "iterative") {
+      outS <- list()
       for (ALPHA in alpha){
         message("\n\nProcessing alpha ",ALPHA)
         if((abs(ALPHA-1)<.Machine$double.eps)) {
           s <- "Shannon_Hill_alpha_1"
-          out[[s]] <- exp(ShannonS(rasterm, w, na.tolerance, debugging))
+          outS[[s]] <- exp(ShannonS(rasterm, w, na.tolerance, debugging))
         }
         else if (ALPHA >= .Machine$integer.max) {
           s <- "Berger-Parker"
-          out[[s]] <- 1/BergerParkerS(rasterm, w, na.tolerance, debugging)
+          outS[[s]] <- 1/BergerParkerS(rasterm, w, na.tolerance, debugging)
         }
         else{
           s<-paste("Hill_alpha_",as.character(ALPHA),sep="")
-          out[[s]] <- HillS(rasterm, w, ALPHA, na.tolerance, debugging)
+          outS[[s]] <- HillS(rasterm, w, ALPHA, na.tolerance, debugging)
         }
       }
       message(("\n\nCalculation complete.\n"))
-      return(out)
+      if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        outR <- lapply(outS,raster,template=x)
+        return(outR)
+      }else{
+        return(outS)
+      }
     }
   } 
   else if (np>1){
@@ -107,7 +118,7 @@ Hill <- function(x, window=3, alpha=1, np=1, na.tolerance=1, cluster.type="SOCK"
     else {
       message("Wrong definition for cluster.type. Exiting...")
     }
-    registerDoParallel(cls)
+    doParallel::registerDoParallel(cls)
     # Close clusters on exit
     on.exit(stopCluster(cls))
     # Garbage collection
@@ -117,12 +128,18 @@ Hill <- function(x, window=3, alpha=1, np=1, na.tolerance=1, cluster.type="SOCK"
         outP <- BergerParkerP(rasterm, w, na.tolerance, debugging)
       }
       else if( Shannon ){
-        outP <- exp(ShannonP(rasterm, w, na.tolerance, debugging))
+        outP <- lapply(ShannonP(rasterm, w, na.tolerance, debugging),exp)
       }
       else{
         outP <- HillP(rasterm, w, alpha, na.tolerance, debugging)
       }
-      return(do.call(cbind,outP))
+      message("\nCalculation complete.\n")
+      if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        outR <- lapply(list(do.call(cbind,outP)),raster,template=x)
+        return(outR)
+      }else{
+        return(outP)
+      }
     }
     else if(mode == "iterative"){
       outP <- list()
@@ -143,8 +160,13 @@ Hill <- function(x, window=3, alpha=1, np=1, na.tolerance=1, cluster.type="SOCK"
           outP[[s]] <- do.call(cbind,out)
         }
       }
-      return(outP)
       message("\nCalculation complete.\n")
+      if(rasterOut==TRUE & class(x)[1]=="RasterLayer") {
+        outR <- lapply(outP,raster,template=x)
+        return(outR)
+      }else{
+        return(outP)
+      }
     }
   }
 }

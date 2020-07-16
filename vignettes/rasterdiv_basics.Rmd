@@ -1,16 +1,17 @@
 ---
-title: "Rasterdiv basics. Derive indices of diversity from NDVI."
+title: "Rasterdiv: Derive indices of diversity from NDVI."
 author: "Matteo Marcantonio, Duccio Rocchini"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Rasterdiv basics. Derive spatial indices of diversity from NDVI.}
+  %\VignetteIndexEntry{Rasterdiv: Derive indices of diversity from NDVI.}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center") 
-knitr::opts_chunk$set(dev = 'pdf')
+#knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center") 
+knitr::opts_chunk$set(fig.dpi = 150, collapse = FALSE, comment = "#")
+#knitr::opts_chunk$set(dev = 'pdf')
 ```
 
 ```{r results='hide', message=FALSE, warning=FALSE}

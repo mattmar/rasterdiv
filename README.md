@@ -1,4 +1,25 @@
-# What is rasterdiv?
+# rasterdiv
+
+[![cran version](http://www.r-pkg.org/badges/version/rasterdiv)](https://cran.r-project.org/package=rasterdiv)
+[![downloads](http://cranlogs.r-pkg.org/badges/rasterdiv)](http://cranlogs.r-pkg.org/badges/rasterdiv)
+[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/rasterdiv)](http://cranlogs.r-pkg.org/badges/grand-total/rasterdiv)
+
+# How to install?
+
+### Stable versions can be installed from the CRAN:
+
+```{r}
+install.packages("rasterdiv")
+```
+
+### Development versions stored in the Git repository can be installed with:
+
+```{r}
+library(devtools)
+install_github("mattmar/rasterdiv")
+```
+
+## What is rasterdiv?
 
 *rasterdiv* is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indeces on RasterLayer or numerical matrices, such as Shannon's entropy or Cumulative Residual Entropy (CRE).
 

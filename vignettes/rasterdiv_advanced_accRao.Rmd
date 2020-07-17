@@ -10,17 +10,15 @@ vignette: >
 
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center") 
-knitr::opts_chunk$set(fig.dpi = 150, collapse = FALSE, comment = "#")
+knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center", fig.dpi = 150, collapse = FALSE, comment = "#") 
 #knitr::opts_chunk$set(dev = 'pdf')
 ```
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 #Required packages
-library(rasterdiv)
-library(rasterVis)
-library(gridExtra)
-library(ggplot2)
+require(rasterdiv)
+require(rasterVis)
+require(gridExtra)
 ```
 
 This vignette uses **rasterdiv** to calculate the accumulation function (integral) of Rao values calculated using a range of alphas. The rationale of using the accumulation function to report values of the parametric Rao's index it is that it may be hard to choose an single alpha level and thus integrating over a range of alphas may be more convenient.
@@ -32,7 +30,7 @@ A RasterLayer called copNDVI is loaded together with the package **rasterdiv**. 
 Pixels with values 253, 254 and 255 (water) will be set as NA's.
 
 ```{r results='hide', message=FALSE, warning=FALSE}
-copNDVI <- reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
+copNDVI <- raster::reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
 
 ```
 
@@ -115,6 +113,7 @@ print(accrao.t1)
 Now that we have the values of the two integral we visualize the differences between the two accumulation functions representing them as area under the curve.
 
 ```{r results='hide', message=FALSE, warning=FALSE, out.width = "100%", fig.asp = 0.7, fig.width = 9}
+require(ggplot2)
 accrao.df <- cbind.data.frame(alphas,rao.t0,rao.t1,alphas1=rep(0,10))
 g1 <- ggplot(accrao.df,aes(x=alphas,y=rao.t0)) + 
 ylab("AccRao's Index") +

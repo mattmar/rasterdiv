@@ -27,7 +27,7 @@ accRao(alphas=1:5, x, dist_m="euclidean", window=9,
   \item{debugging}{a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.}
   }
   \details{
-  The accumulation function for the parametric Rao's Index (\eqn{Q}) is calulcated integrating numerically over a range of alphas. *accRao* is therefore equal to \eqn{\int_{a}^{b} {1\over{N^4}}\cdot{d_{i,j}^{\alpha}}^{1\over{\alpha}} dx}. Where \emph{N} is the number of pixels  in a moving window, and \emph{alpha} is a weight assigned to distances.}
+  The accumulation function for the parametric Rao's Index (\eqn{Q}) is calulcated integrating numerically over a range of alphas. *accRao* is therefore equal to \eqn{(\int_{a}^{b} {1\over{N^4}}\cdot{d_{i,j}^{\alpha}})^{1\over{\alpha}} dx}. Where \emph{N} is the number of pixels  in a moving window, and \emph{alpha} is a weight assigned to distances.}
   \value{
   A matrix of dimension \code{dim(x)}. If \code{rasterAUC=TRUE}, then the output is a RasterLayer withe \emph{x} as template.}
   \references{

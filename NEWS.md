@@ -1,6 +1,6 @@
 # rasterdiv 0.2.1
 ## Major changes
-* A new function **accRao** to derive the accumulation funtion of parametric Rao's index over a range of alphas. A vignette (rasterdiv_advanced_accRao) to show how to apply this function was addedd to the package.
+* A new function **accRao** to derive the accumulation function of parametric Rao's index over a range of alphas. A vignette (rasterdiv_advanced_accRao) to show how to apply this function was added to the package.
 
 # rasterdiv 0.2.0
 ## Major changes

@@ -9,16 +9,15 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center") 
-knitr::opts_chunk$set(fig.dpi = 150, collapse = FALSE, comment = "#")
+knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center", fig.dpi = 150, collapse = FALSE, comment = "#") 
 #knitr::opts_chunk$set(dev = 'pdf')
 ```
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 #Required packages
-library(rasterdiv)
-library(rasterVis)
-library(RColorBrewer)
+require(rasterdiv)
+require(rasterVis)
+require(RColorBrewer)
 ```
 
 This vignette uses **rasterdiv** to build global series of indices of diversity based on Information Theory. The input dataset is the Copernicus Long-term (1999-2017) average Normalised Difference Vegetation Index for the 21st of June (copNDVI).
@@ -30,7 +29,7 @@ A RasterLayer called copNDVI is loaded together with the package **rasterdiv**. 
 Pixels with values 253, 254 and 255 (water) will be set as NA's.
 
 ```{r}
-copNDVI <- reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
+copNDVI <- raster::reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
 ```
 
 ## Resample NDVI to coarser resolution 

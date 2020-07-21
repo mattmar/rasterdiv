@@ -6,7 +6,7 @@ Authors@R: c(person("Matteo", "Marcantonio", role = c("aut", "cre"), email = "ma
 Depends: R (>= 3.6.0)
 Imports: raster, parallel, doParallel, methods, foreach, proxy,
 		 svMisc, pbapply, pbmcapply
-Suggests: knitr, rmarkdown, RColorBrewer, rasterVis, gridExtra
+Suggests: knitr, rmarkdown, RColorBrewer, rasterVis, gridExtra, ggplot2
 LazyData: TRUE
 Description: Providing functions to calculate indices of diversity on numerical matrices based on information theory. The rationale behind the package is described in Rocchini, Marcantonio and Ricotta (2017) <doi:10.1016/j.ecolind.2016.07.039>.
 VignetteBuilder: knitr

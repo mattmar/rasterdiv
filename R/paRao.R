@@ -14,13 +14,13 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 	if( is(x,"SpatialGridDataFrame") ) {
 		x <- raster(x) # Change x matrix/ces names
 	}
-	else if( is(x,"matrix") | is(x,"RasterLayer")) {
+	else if( is(x,"matrix") | is(x,"RasterLayer") ) {
 		rasterm<-x
 	} 
 	else if( is(x,"list") ) {
 		rasterm<-x[[1]]
 	}
-	if(na.tolerance>1.0 | na.tolerance<0.0){
+	if( na.tolerance>1.0 | na.tolerance<0.0 ){
 		stop("na.tolerance must be in the [0-1] interval. Exiting...")
 	}
     #Alpha's check

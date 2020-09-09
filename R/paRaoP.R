@@ -7,94 +7,94 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     diagonal <- ifelse(diag==TRUE,0,NA)
     # If alpha ~ +infinite
     if( alpha >= .Machine$integer.max ) {
-#
-##Reshape values
-#
+      #
+      ##Reshape values
+      #
       values<-as.numeric(as.factor(rasterm))
       rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-#
-##Add additional columns and rows to match moving window
-#
+      #
+      ##Add additional columns and rows to match moving window
+      #
       hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
       ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
       trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
       rm(hor,ver,rasterm_1,values); gc()
       if(debugging){cat("#check: Parametric Rao parallel function.")}
-#       
-##Derive distance matrix
-#
+      #       
+      ##Derive distance matrix
+      #
       if( is.character( dist_m) | is.function(dist_m) ) {
-       d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
-   } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
-       d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
-   }
-   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
-    if(debugging) {
-        cat(paste(cl))
-    }
-    paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
-        if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-            vv<-NA
-            return(vv)
-        } 
-        else {
-            tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
-            if( "NA's"%in%names(tw) ) {
-                tw<-tw[-length(tw)]
-            }
-            if( debugging ) {
-                message("Working on coords ",rw,",",cl,". classes length: ",length(tw),". window size=",window^2)
-            }
-            tw_labels <- names(tw)
-            tw_values <- as.vector(tw)
-                #if clause to exclude windows with only 1 category
-            if( length(tw_values) <2 ) {
+         d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
+     } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
+         d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
+     }
+     out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+        if(debugging) {
+            cat(paste(cl))
+        }
+        paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
+            if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
                 vv<-NA
                 return(vv)
-            }
+            } 
             else {
-                p <- tw_values/sum(tw_values)
-                p1 <- diag(0,length(tw_values))
-                p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod,na.rm=TRUE))
-                d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
-                vv <- max(d2*2,na.rm=TRUE) / mfactor
-                return(vv)
+                tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
+                if( "NA's"%in%names(tw) ) {
+                    tw<-tw[-length(tw)]
+                }
+                if( debugging ) {
+                    message("Working on coords ",rw,",",cl,". classes length: ",length(tw),". window size=",window^2)
+                }
+                tw_labels <- names(tw)
+                tw_values <- as.vector(tw)
+                #if clause to exclude windows with only 1 category
+                if( length(tw_values) < 2 ) {
+                    vv <- 0
+                    return(vv)
+                }
+                else {
+                    p <- tw_values/sum(tw_values)
+                    p1 <- diag(0,length(tw_values))
+                    p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod,na.rm=TRUE))
+                    d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
+                    vv <- max(d2*2,na.rm=TRUE) / mfactor
+                    return(vv)
+                }
             }
-        }
-    })
-    return(paRaoOP)
-} #End classic Parametric Rao - parallelized
-    #message(("\n\nCalculation of Parametric Rao's index complete.\n"))
-return(do.call(cbind,out))
+        })
+        return(paRaoOP)
+    } #End classic Parametric Rao - parallelized
+#message(("\n\nCalculation of Parametric Rao's index complete.\n"))
+    return(do.call(cbind,out))
 } else if( alpha>0 ) {
-#
-##Reshape values
-#
+    #
+    ##Reshape values
+    #
     values<-as.numeric(as.factor(rasterm))
     rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-#
-##Add additional columns and rows to match moving window
-#
+    #
+    ##Add additional columns and rows to match moving window
+    #
     hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
     ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
     trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
     rm(hor,ver,rasterm_1,values); gc()
     if(debugging){cat("#check: Parametric Rao parallel function.")}
-#       
-##Derive distance matrix
-#
+    #       
+    ##Derive distance matrix
+    #
     if( is.character( dist_m) | is.function(dist_m) ) {
-       d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
-   } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
-       d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
-   }
-   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+     d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
+ } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
+     d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
+ }
+ out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
     if(debugging) {
         cat(paste(cl))
     }
     paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
-        if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-            vv<-NA
+        if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
+            vv <- NA
             return(vv)
         } 
         else {
@@ -107,9 +107,9 @@ return(do.call(cbind,out))
             }
             tw_labels <- names(tw)
             tw_values <- as.vector(tw)
-                        #if clause to exclude windows with only 1 category
+            #if clause to exclude windows with only 1 category
             if( length(tw_values) < 2 ) {
-                vv<-NA
+                vv <- 0
                 return(vv)
             }
             else {
@@ -126,34 +126,34 @@ return(do.call(cbind,out))
 } #End classic Parametric Rao - parallelized
 return(do.call(cbind,out))
 } else if( alpha==0 ) {
-#
-##Reshape values
-#
+    #
+    ##Reshape values
+    #
     values<-as.numeric(as.factor(rasterm))
     rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-#
-##Add additional columns and rows to match moving window
-#
+    #
+    ##Add additional columns and rows to match moving window
+    #
     hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
     ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
     trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
     rm(hor,ver,rasterm_1,values); gc()
     if(debugging){cat("#check: Parametric Rao parallel function.")}
-#       
-##Derive distance matrix
-#
+    #       
+    ##Derive distance matrix
+    #
     if( is.character( dist_m) | is.function(dist_m) ) {
-       d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
-   } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
-       d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
-   }
-   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+     d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
+ } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
+     d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
+ }
+ out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
     if(debugging) {
         cat(paste(cl))
     }
     paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
-        if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-            vv<-NA
+        if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
+            vv <- NA
             return(vv)
         } 
         else {
@@ -167,8 +167,8 @@ return(do.call(cbind,out))
             tw_labels <- names(tw)
             tw_values <- as.vector(tw)
             #if clause to exclude windows with only 1 category
-            if( length(tw_values) <2 ) {
-                vv<-NA
+            if( length(tw_values) < 2 ) {
+                vv <- 0
                 return(vv)
             }
             else {

@@ -177,8 +177,8 @@ Rao <- function(x, dist_m="euclidean", window=9, rasterOut=TRUE, mode="classic",
                         tw_labels <- names(tw)
                         tw_values <- as.vector(tw)
                         #if clause to exclude windows with only 1 category
-                        if( length(tw_values) <2 ) {
-                            vv<-NA
+                        if( length(tw_values) ==1 ) {
+                            vv<-0
                             return(vv)
                         }
                         else {
@@ -228,8 +228,8 @@ Rao <- function(x, dist_m="euclidean", window=9, rasterOut=TRUE, mode="classic",
                         tw_labels <- names(tw)
                         tw_values <- as.vector(tw)
                         #if clause to exclude windows with only 1 category
-                        if( length(tw_values) <  2 ) {
-                            raoqe[rw-w,cl-w] <- NA
+                        if( length(tw_values) == 1 ) {
+                            raoqe[rw-w,cl-w] <- 0
                         } else {
                             p <- tw_values/sum(tw_values)
                             p1 <- diag(0,length(tw_values))
@@ -400,10 +400,10 @@ Rao <- function(x, dist_m="euclidean", window=9, rasterOut=TRUE, mode="classic",
             progress(value=cl, max.value=dim(rasterm)[2]+w, progress.bar = FALSE)
         }
         if(exists("pb")) {
-         close(pb) 
-         message("\nCalculation of Multidimensional Rao's index complete.\n")
-     }
- } else{
+           close(pb) 
+           message("\nCalculation of Multidimensional Rao's index complete.\n")
+       }
+   } else{
     message("Something went wrong when trying to calculate Rao's indiex.")
 }  # end of multimensional RaoQ
 
@@ -459,7 +459,7 @@ if( shannon ) {
     if( np>1 ) {
         outl<-list(do.call(cbind,raop),shannond)
         names(outl)<-c("Rao","Shannon")
-        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+        if(rasterOut & class(x)[[1]]=="RasterLayer") {
             return(raster(outl),template=x)
         }else{
             return(outl)
@@ -467,7 +467,7 @@ if( shannon ) {
     } else if( np==1 ){ 
         outl<-list(raoqe,shannond)
         names(outl)<-c("Rao","Shannon")
-        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+        if(rasterOut & class(x)[[1]]=="RasterLayer") {
             return(raster(outl),template=x)
         }else{
             return(outl)
@@ -478,24 +478,26 @@ if( shannon ) {
         if(debugging){
             message("#check: return function - classic.")
         }
-        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+        if(rasterOut & class(x)[[1]]=="RasterLayer") {
             return(raster(do.call(cbind,raop)/mfactor,template=x))
         }else{
             return(do.call(cbind,raop)/mfactor)
         }
     } else if( !isfloat & np>1 ) {
-        if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+        if(rasterOut & class(x)[[1]]=="RasterLayer") {
             return(raster(do.call(cbind,raop),template=x))
         }else{
             return(do.call(cbind,raop))
         }
-    } else { 
-        return(raster(raoqe,template=x)) 
+    } else {
+        if(rasterOut) {
+            return(raster(raoqe,template=x)) 
+        } else (raoqe)
     }
 } else if( !shannon & mode=="multidimension" ) {
     outl <- list(raoqe)
     names(outl)<-c("Multidimension_Rao")
-    if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
+    if(rasterOut & class(x)[[1]]=="RasterLayer") {
         return(raster(outl,template=x))
     }else{
         return(outl)

@@ -94,6 +94,7 @@ paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
 					}
 				}			} 
 			}
+			return(paRaoOS)
 			#message(("\nCalculation of sequential Parametric Rao's index complete.\n"))
 		# If alpha == 0
 		} else if( alpha==0 ){

@@ -3,6 +3,7 @@
 [![cran version](http://www.r-pkg.org/badges/version/rasterdiv)](https://cran.r-project.org/package=rasterdiv)
 [![downloads](http://cranlogs.r-pkg.org/badges/rasterdiv)](http://cranlogs.r-pkg.org/badges/rasterdiv)
 [![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/rasterdiv)](http://cranlogs.r-pkg.org/badges/grand-total/rasterdiv)
+[![Rdoc](https://www.rdocumentation.org/badges/version/rasterdiv)](https://www.rdocumentation.org/packages/rasterdiv)
 
 # How to install?
 

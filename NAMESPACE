@@ -13,7 +13,7 @@ importFrom("proxy", "dist")
 importFrom("svMisc", "progress")
 importFrom("pbapply", "pblapply")
 importFrom("pbmcapply", "pbmclapply")
-importFrom("progress", "progress_bar")
+import("progress")
 
 #####################################
 ##               Export            ##
@@ -26,3 +26,4 @@ export(Renyi, RenyiS, RenyiP)
 export(Shannon, ShannonS, ShannonP)
 export(Pielou, PielouS, PielouP)
 export(BergerParker, BergerParkerS, BergerParkerP)
+export(progress_bar)

@@ -8,7 +8,7 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     diagonal <- ifelse(diag==TRUE,0,NA)
     # Set a progress bar
     pb <- progress_bar$new(
-      format = "\n [:bar] :elapsed -- Approximate ETA: :eta \n",
+      format = "\n [:bar] :elapsed -- Approximate ETA: :eta\n",
       total = (dim(rasterm)[2]+w) / np, 
       clear = FALSE, 
       width = 80, 

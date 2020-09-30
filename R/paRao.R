@@ -30,7 +30,6 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 	if ( any(alpha<0) ){
 		stop("alphas must be only positive numbers. Exiting...")
 	}
-
 	#Deal with matrices and RasterLayer in a different way
 	#If data are raster layers
 	if( method=="classic" & is(x,"RasterLayer") ) {
@@ -76,11 +75,11 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 	#
 	if(np==1) {
 		if(method=="classic") {
-			out <- pblapply(alpha, paRaoS, rasterm=rasterm, w=w, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat,mfactor=mfactor)
+			out <- lapply(X=alpha, FUN=paRaoS, rasterm=rasterm, w=w, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat,mfactor=mfactor)
 		} else if(method=="multidimensional") {
-			out <- pblapply(alpha, mpaRaoS, x=x, rasterm=rasterm, w=w, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging)
+			out <- lapply(alpha, mpaRaoS, x=x, rasterm=rasterm, w=w, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging)
 		}
-    	# Check if the output will be a raster
+    	# Check whether the output will be a raster
 		if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
 			outR <- lapply(out,raster,template=x)
 			return(outR)
@@ -95,10 +94,10 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
     		# Opening the cluster
 			if(debugging){cat("#check: Before parallel function.")}
 			if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
-				cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
+				cls <- invisible(parallel::makeCluster(np,type=cluster.type, outfile= ' '))
 			} 
 			else if( cluster.type=="MPI" ) {
-				cls <- makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
+				cls <- invisible(makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output=""))
 			} 
 			else {
 				message("Wrong definition for 'cluster.type'. Exiting...")
@@ -108,7 +107,7 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 			on.exit(stopCluster(cls))
     		# Garbage collection
 			gc()
-			out <- pblapply(alpha, paRaoP, rasterm=rasterm, w=w, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat,mfactor=mfactor)
+			out <- lapply(alpha, paRaoP, rasterm=rasterm, w=w, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np = np)
   			# Check if the output is a raster
 			if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
 				outR <- lapply(out,raster,template=x)

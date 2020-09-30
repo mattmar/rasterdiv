@@ -36,7 +36,7 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     }else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
        d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
    }
-   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F.export="progress_bar") %dopar% {
+   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
     if(debugging) {
         cat(paste(cl))
     }

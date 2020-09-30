@@ -13,6 +13,7 @@ importFrom("proxy", "dist")
 importFrom("svMisc", "progress")
 importFrom("pbapply", "pblapply")
 importFrom("pbmcapply", "pbmclapply")
+importFrom("progress", "progress_bar")
 
 #####################################
 ##               Export            ##

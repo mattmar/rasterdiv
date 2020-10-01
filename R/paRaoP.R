@@ -1,19 +1,19 @@
 paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mfactor,np) 
 {
     # Some initial tricks
-    options( warn = FALSE )
     message("\n\nProcessing alpha ",alpha)
     mfactor <- ifelse(isfloat,mfactor,1) 
     window = 2*w+1
     diagonal <- ifelse(diag==TRUE,0,NA)
     # Set a progress bar
-    pb <- progress_bar$new(
-      format = "\n [:bar] :elapsed -- Approximate ETA: :eta\n",
-      total = (dim(rasterm)[2]+w) / np, 
-      clear = FALSE, 
-      width = 80, 
-      force = TRUE)
-    # If alpha ~ +infinite
+    pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
+    # pb <- progress_bar$new(
+    #   format = "\n [:bar] :elapsed -- Approximate ETA: :eta\n",
+    #   total = dim(rasterm)[2]+w, 
+    #   clear = FALSE, 
+    #   width = 80, 
+    #   force = FALSE)
+    # # If alpha ~ +infinite
     if( alpha >= .Machine$integer.max ) {
       #
       ##Reshape values
@@ -40,9 +40,10 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     if(debugging) {
         cat(paste(cl))
     }
-        # Update progress bar
-    pb$tick()
-        # Row loop
+    # Update progress bar
+    setTxtProgressBar(pb, cl)
+    # pb$tick()
+    # Row loop
     paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
         if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
             vv<-NA
@@ -57,7 +58,7 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
             }
             tw_labels <- names(tw)
             tw_values <- as.vector(tw)
-                #if clause to exclude windows with only 1 category
+            #if clause to exclude windows with only 1 category
             if( length(tw_values) < 2 ) {
                 vv <- 0
                 return(vv)
@@ -101,7 +102,8 @@ return(do.call(cbind,out))
         cat(paste(cl))
     }
     # Update progress bar
-    pb$tick()
+    setTxtProgressBar(pb, cl)
+    #pb$tick()
     # Row loop
     paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
         if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
@@ -132,6 +134,7 @@ return(do.call(cbind,out))
         }
     })
     return(paRaoOP)
+    Sys.sleep(5)
 } #End classic Parametric Rao - parallelized
 return(do.call(cbind,out))
 }else if( alpha==0 ) {

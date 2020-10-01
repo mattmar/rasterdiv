@@ -164,7 +164,8 @@ return(do.call(cbind,out))
             cat(paste(cl))
         }
         # Update progress bar
-        pb$tick()
+        # pb$tick()
+        setTxtProgressBar(pb, cl)
         # Row loop
         paRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
             if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {

@@ -1,5 +1,4 @@
-paRao
-function(x, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
+paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
 {
         #
         ## Define function to check if a number is an integer

@@ -1,6 +1,6 @@
 paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mfactor) 
 {
-	message("\n\nProcessing alpha ",alpha)
+	message("\n\nProcessing alpha ",alpha, " Window ", w)
 	mfactor <- ifelse(isfloat,mfactor,1) 
 	window = 2*w+1
 	diagonal <- ifelse(diag==TRUE,0,NA)

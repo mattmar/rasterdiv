@@ -1,4 +1,9 @@
-RenyiP<-function(rasterm, w, alpha, base, na.tolerance, debugging){
+RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
+  # Some initial housekeeping
+  window = 2*w+1
+  message("\n\nProcessing alpha ",alpha, " Window ", window)
+  # Set a progress bar
+  pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
   #
   ## Reshape values
   #
@@ -10,18 +15,12 @@ RenyiP<-function(rasterm, w, alpha, base, na.tolerance, debugging){
   hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
   ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
   trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
-  window = 2*w+1
   rm(hor,ver,rasterm_1,values); gc()
-  #
-  ## Progression bar
-  #
-  pb <- txtProgressBar(min = (1+w), max = dim(rasterm)[2], style = 3)
-  progress <- function(n) setTxtProgressBar(pb, n)
-  opts <- list(progress = progress)
   #
   ## Start the parallelized loop over iter
   #
-  RenyiOP <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.options.parallel = opts,.verbose = F) %dopar% {
+  RenyiOP <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+    setTxtProgressBar(pb, cl)
     if(debugging) {
       cat(paste(cl))
     }
@@ -46,7 +45,7 @@ RenyiP<-function(rasterm, w, alpha, base, na.tolerance, debugging){
       }
     })
     return(RenyiOut)
-  } # End Renyi - parallelized
+  } # End Renyi - parallelised
   message(("\n\n Parallel calculation of Renyi's index complete.\n"))
   return(RenyiOP)
 }

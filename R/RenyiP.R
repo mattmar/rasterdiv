@@ -7,14 +7,14 @@ RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
   #
   ## Reshape values
   #
-  values<-as.numeric(as.factor(rasterm))
-  rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+  values <- as.numeric(as.factor(rasterm))
+  rasterm_1 <- matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
   #
   ## Add additional columns and rows to match moving window
   #
-  hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
-  ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-  trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
+  hor <- matrix(NA,ncol=dim(rasterm)[2],nrow=w)
+  ver <- matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
+  trasterm <- cbind(ver,rbind(hor,rasterm_1,hor),ver)
   rm(hor,ver,rasterm_1,values); gc()
   #
   ## Start the parallelized loop over iter
@@ -26,11 +26,11 @@ RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
     }
     RenyiOut <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
       if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-        vv<-NA
+        vv <- NA
         return(vv)
       } 
       else {
-        tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
+        tw <- summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
         if( "NA's"%in%names(tw) ) {
           tw<-tw[-length(tw)]
         }

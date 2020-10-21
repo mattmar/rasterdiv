@@ -1,4 +1,4 @@
-mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor) {
+mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor,np) {
     # Some initial housekeeping
     message("\n\nProcessing alpha: ",alpha, " Moving Window: ", 2*w+1)
     mfactor <- ifelse(isfloat,mfactor,1) 
@@ -6,27 +6,20 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     diagonal <- ifelse(diag==TRUE,0,NA)
     rasterm <- x[[1]]
     # Set a progress bar
-    pb <- progress_bar$new(
-        format = "\n [:bar] :elapsed -- Approximate ETA: :eta \n",
-        total = (dim(rasterm)[2]+w), 
-        clear = FALSE, 
-        width = 80, 
-        force = TRUE)
-    # Define output matrix
-    raoqe <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+    pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
     # Check if there are NAs in the matrices
     if ( is(x[[1]],"RasterLayer") ){
         if(any(sapply(lapply(unlist(x),length),is.na)==TRUE))
-            message("\n Warning: One or more RasterLayers contain NAs which will be treated as 0s")
+            message("\n Warning: One or more RasterLayers contain NA's which will be treated as 0")
     } else if ( is(x[[1]],"matrix") ){
         if(any(sapply(x, is.na)==TRUE) ) {
-            message("\n Warning: One or more matrices contain NAs which will be treated as 0s")
+            message("\n Warning: One or more matrices contain NA's which will be treated as 0")
         }
     }
     # Check whether the chosen distance metric is valid or not
     if( dist_m=="euclidean" | dist_m=="manhattan" | dist_m=="canberra" | dist_m=="minkowski" | dist_m=="mahalanobis" ) {
         ## Decide what function to use
-        if( dist_m=="euclidean") {
+        if( dist_m=="euclidean" ) {
             distancef <- get("multieuclidean")
         } else if( dist_m=="manhattan" ) {
             distancef <- get("multimanhattan")
@@ -49,18 +42,17 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         message("#check: After distance calculation in multimenional clause.")
         print(distancef)
     }
-    ## Reshape values
-    ## Rescale and add additional columns and rows for moving w
-    hor <- matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
+    # Rescale and add additional columns and rows for moving w
+    hor <-matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
     ver <- matrix(NA,ncol=w,nrow=dim(x[[1]])[1]+w*2)
     if(rescale) {
-        trastersm<-lapply(x, function(x) {
+        trastersm <- lapply(x, function(x) {
             t1 <- raster::scale(raster(cbind(ver,rbind(hor,x,hor),ver)))
             t2 <- raster::as.matrix(t1)
             return(t2)
         })
     } else {
-        trastersm<-lapply(x, function(x) {
+        trastersm <- lapply(x, function(x) {
             cbind(ver,rbind(hor,x,hor),ver)
         })
     }
@@ -68,37 +60,40 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         message("#check: After rescaling in multimensional clause.")
         print(distancef)
     }
-    ## Loop over all the pixels in the matrices
+    # Loop over all the pixels in the matrices
     if( (ncol(x[[1]])*nrow(x[[1]]))>10000 ) {
         message("\n Warning: ",ncol(x[[1]])*nrow(x[[1]])*length(x), " cells to be processed, it may take some time... \n")
     }
-    for (cl in (1+w):(dim(x[[1]])[2]+w)) {
+    # Parallelised parametric multidimensional Rao
+    out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
         # Update progress bar
-        pb$tick()
-        for(rw in (1+w):(dim(x[[1]])[1]+w)) {
+        setTxtProgressBar(pb, cl)
+        # Row loop
+        mpaRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
             if( length(!which(!trastersm[[1]][c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
-                raoqe[rw-w,cl-w] <- NA
+                raoqe <- NA
+                return(raoqe)
             } else {
                 tw <- lapply(trastersm, function(x) { 
                     x[(rw-w):(rw+w),(cl-w):(cl+w)]
                 })
-                ## Vectorize the matrices in the list and calculate among matrix pairwase distances
+                # Vectorize the matrices in the list and calculate between matrices pairwase distances
                 lv <- lapply(tw, function(x) {as.vector(t(x))})
                 vcomb <- combn(length(lv[[1]]),2)
-                vout <- c()
-                for(p in 1:ncol(vcomb) ) {
+                vout <- sapply(1:ncol(vcomb), function(p) {
                     lpair <- lapply(lv, function(chi) {
                         c(chi[vcomb[1,p]],chi[vcomb[2,p]])
                     })
-                    vout[p] <- distancef(lpair)/mfactor
-                }
-                raoqe[rw-w,cl-w] <- (sum(rep(vout^alpha,2) * (1/(window)^4),na.rm=TRUE) ^ (1/alpha))
+                    return(distancef(lpair)/mfactor)
+                })
+                vv <- (sum(rep(vout^alpha,2) * (1/(window)^4),na.rm=TRUE) ^ (1/alpha)) 
+                return(vv)
             }
-        }
+        })
+        return(mpaRaoOP)
     }
-    return(raoqe)
+    return(do.call(cbind,out))
 }
-
 
 # Supporting distance function
 # euclidean

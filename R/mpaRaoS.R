@@ -57,8 +57,7 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         message("#check: After distance calculation in multimenional clause.")
         print(distancef)
     }
-    ## Reshape values
-    ## Rescale and add additional columns and rows for moving w
+    # Rescale (if set) and add additional columns and rows for moving w
     hor <- matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
     ver <- matrix(NA,ncol=w,nrow=dim(x[[1]])[1]+w*2)
     if(rescale) {
@@ -94,11 +93,16 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
                 lv <- lapply(tw, function(x) {as.vector(t(x))})
                 vcomb <- combn(length(lv[[1]]),2)
                 vout <- c()
-                for(p in 1:ncol(vcomb) ) {
-                    lpair <- lapply(lv, function(chi) {
-                        c(chi[vcomb[1,p]],chi[vcomb[2,p]])
-                    })
-                    vout[p] <- distancef(lpair)/mfactor
+                # Exclude windows with only 1 category
+                if( sum(sapply(lv, function(x) length(unique(x))))<3 ) {
+                    raoqe[rw-w,cl-w] <- 0
+                } else {
+                    for( p in 1:ncol(vcomb) ) {
+                        lpair <- lapply(lv, function(chi) {
+                            c(chi[vcomb[1,p]],chi[vcomb[2,p]])
+                        })
+                        vout[p] <- distancef(lpair)/mfactor
+                    }
                 }
                 # Evaluate the parsed alpha method
                 raoqe[rw-w,cl-w] <- eval(parse(text=alphameth))
@@ -107,7 +111,6 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     }
     return(raoqe)
 }
-
 
 # Supporting distance function
 # euclidean

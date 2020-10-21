@@ -47,7 +47,7 @@ paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
 					}
 					tw_labels <- names(tw)
 					tw_values <- as.vector(tw)
-          			# if clause to exclude windows with only 1 category
+          			# Exclude windows with only 1 category
 					if(length(tw_values) == 1) {
 						paRaoOS[rw-w,cl-w] <- 0
 					}else{

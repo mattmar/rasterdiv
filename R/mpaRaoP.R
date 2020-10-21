@@ -9,9 +9,11 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     if( alpha>=.Machine$integer.max | is.infinite(alpha) ) {
         alphameth <- "max(vout*2,na.rm=TRUE)"
     } else if( alpha>0 ) {
-        alphameth <- "sum(rep(vout^alpha,2) * (1/(window)^4),na.rm=TRUE) ^ (1/alpha)"
+        alphameth <- "sum((rep(vout^alpha,2) * (1/(window)^4)),na.rm=TRUE) ^ (1/alpha)"
     } else if( alpha==0 ) {
-        alphameth <- "prod(vout,na.rm=TRUE)^(1/(window^4))"
+        alphameth <- "prod(vout,na.rm=TRUE) ^ (1/(window^4))"
+    } else {
+        stop()
     }
     # Set a progress bar
     pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
@@ -73,29 +75,37 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         message("\n Warning: ",ncol(x[[1]])*nrow(x[[1]])*length(x), " cells to be processed, it may take some time... \n")
     }
     # Parallelised parametric multidimensional Rao
-    out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+    out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F, .export="alpha") %dopar% {
         # Update progress bar
         setTxtProgressBar(pb, cl)
         # Row loop
         mpaRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
+            if(debugging) {
+                message("#check: Inside sapply.")
+            }
             if( length(!which(!trastersm[[1]][c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
-                raoqe <- NA
-                return(raoqe)
+                vv <- NA
+                return(vv)
             } else {
                 tw <- lapply(trastersm, function(x) { 
                     x[(rw-w):(rw+w),(cl-w):(cl+w)]
                 })
-                # Vectorize the matrices in the list and calculate between matrices pairwase distances
+                # Vectorise the matrices in the list and calculate between matrices pairwase distances
                 lv <- lapply(tw, function(x) {as.vector(t(x))})
                 vcomb <- combn(length(lv[[1]]),2)
-                vout <- sapply(1:ncol(vcomb), function(p) {
-                    lpair <- lapply(lv, function(chi) {
-                        c(chi[vcomb[1,p]],chi[vcomb[2,p]])
+                # Exclude windows with only 1 category in all lists
+                if( sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1) ) {
+                    vv <- 0
+                } else {
+                    vout <- sapply(1:ncol(vcomb), function(p) {
+                        lpair <- lapply(lv, function(chi) {
+                            c(chi[vcomb[1,p]],chi[vcomb[2,p]])
+                        })
+                        return(distancef(lpair)/mfactor)
                     })
-                    return(distancef(lpair)/mfactor)
-                })
-                # Evaluate the parsed alpha method
-                vv <- eval(parse(text=alphameth))
+                    # Evaluate the parsed alpha method
+                    vv <- eval(parse(text=alphameth))
+                }
                 return(vv)
             }
         })

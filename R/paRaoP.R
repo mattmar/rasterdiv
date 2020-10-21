@@ -12,9 +12,9 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
       values <- as.numeric(as.factor(rasterm))
       rasterm_1 <- matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
       # Add additional columns and rows to match moving window
-      hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
-      ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-      trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
+      hor <- matrix(NA,ncol=dim(rasterm)[2],nrow=w)
+      ver <- matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
+      trasterm <- cbind(ver,rbind(hor,rasterm_1,hor),ver)
       rm(hor,ver,rasterm_1,values)
       gc()
       if( debugging ) {
@@ -154,7 +154,7 @@ return(do.call(cbind,out))
                 vv <- NA
                 return(vv)
             }else{
-                tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
+                tw <- summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
                 if( "NA's"%in%names(tw) ) {
                     tw<-tw[-length(tw)]
                 }

@@ -5,6 +5,14 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     window = 2*w+1
     diagonal <- ifelse(diag==TRUE,0,NA)
     rasterm <- x[[1]]
+    # Evaluate Rao's method given alpha
+    if( alpha>=.Machine$integer.max | is.infinite(alpha) ) {
+        alphameth <- "max(vout*2,na.rm=TRUE)"
+    } else if( alpha>0 ) {
+        alphameth <- "sum(rep(vout^alpha,2) * (1/(window)^4),na.rm=TRUE) ^ (1/alpha)"
+    } else if( alpha==0 ) {
+        alphameth <- "prod(vout,na.rm=TRUE)^(1/(window^4))"
+    }
     # Set a progress bar
     pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
     # Check if there are NAs in the matrices
@@ -86,7 +94,8 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
                     })
                     return(distancef(lpair)/mfactor)
                 })
-                vv <- (sum(rep(vout^alpha,2) * (1/(window)^4),na.rm=TRUE) ^ (1/alpha)) 
+                # Evaluate the parsed alpha method
+                vv <- eval(parse(text=alphameth))
                 return(vv)
             }
         })

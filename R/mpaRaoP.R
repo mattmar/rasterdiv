@@ -52,20 +52,12 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         message("#check: After distance calculation in multimenional clause.")
         print(distancef)
     }
-    # Rescale and add additional columns and rows for moving w
+    # Add additional columns and rows to account for moving window size
     hor <-matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
     ver <- matrix(NA,ncol=w,nrow=dim(x[[1]])[1]+w*2)
-    if(rescale) {
-        trastersm <- lapply(x, function(x) {
-            t1 <- raster::scale(raster(cbind(ver,rbind(hor,x,hor),ver)))
-            t2 <- raster::as.matrix(t1)
-            return(t2)
-        })
-    } else {
-        trastersm <- lapply(x, function(x) {
-            cbind(ver,rbind(hor,x,hor),ver)
-        })
-    }
+    trastersm <- lapply(x, function(x) {
+        cbind(ver,rbind(hor,x,hor),ver)
+    })
     if(debugging) {
         message("#check: After rescaling in multimensional clause.")
         print(distancef)

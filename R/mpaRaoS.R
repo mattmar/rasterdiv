@@ -54,25 +54,16 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         stop("Distance function not defined for multidimensional Rao's Q; please choose among euclidean, manhattan, canberra, minkowski, mahalanobis...")
     }
     if(debugging) {
-        message("#check: After distance calculation in multimenional clause.")
-        print(distancef)
+        message("#check: After distance calculation in multidimensional function.")
     }
-    # Rescale (if set) and add additional columns and rows for moving w
+    # Add additional columns and rows to account for moving window size
     hor <- matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
     ver <- matrix(NA,ncol=w,nrow=dim(x[[1]])[1]+w*2)
-    if(rescale) {
-        trastersm<-lapply(x, function(x) {
-            t1 <- raster::scale(raster(cbind(ver,rbind(hor,x,hor),ver)))
-            t2 <- raster::as.matrix(t1)
-            return(t2)
-        })
-    } else {
-        trastersm <- lapply(x, function(x) {
-            cbind(ver,rbind(hor,x,hor),ver)
-        })
-    }
+    trastersm <- lapply(x, function(x) {
+        cbind(ver,rbind(hor,x,hor),ver)
+    })
     if(debugging) {
-        message("#check: After rescaling in multimensional clause.")
+        message("#check: After adding columns in multimensional function.")
         print(distancef)
     }
     ## Loop over all the pixels in the matrices
@@ -150,8 +141,8 @@ multimahalanobis <- function(x){
     } else if(rcond(cov(tmp)) <= 0.001) {
         return(NA)
     } else {
-                # return the inverse of the covariance matrix of tmp; aka the precision matrix
-        inverse<-solve(cov(tmp)) 
+        # return the inverse of the covariance matrix of tmp; aka the precision matrix
+        inverse <- solve(cov(tmp)) 
         if(debugging){
             print(inverse)
         }

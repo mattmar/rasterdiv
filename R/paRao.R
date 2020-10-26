@@ -34,35 +34,68 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 		isfloat <- FALSE
 		israst <- TRUE
 		# If data are float numbers, transform them to integers. This allows for a shorter computation time on big datasets.
-		if( any(sapply(rasterm,function(x) grepl("FLT", dataType(x)))) ){
+		if( any(sapply(rasterm,function(x) !all(as.matrix(x)==as.integer(as.matrix(x)),na.rm=TRUE))) ){
 			message("Input data are float numbers. Converting data to integer matrices...")
 			isfloat <- TRUE
-			nr <- sapply(rasterm,nrow); nc <- sapply(rasterm,ncol)
 			mfactor <- 100^simplify
-			rasterm <- lapply(rasterm, function(x) {
-				y <- type.convert(raster::as.matrix((x * mfactor)))
+			rasterm <- lapply(rasterm, function(z) {
+				if(rescale) {
+					message("Centering and scaling data...")
+					z <- as.matrix(raster::scale(z,center=TRUE,scale=TRUE))
+				}
+				y <- as.matrix(z) * mfactor
+				storage.mode(y) <- "integer"
 				return(y)
 			})
-			gc()
+		# If data are integers, just be sure that the storage mode is integer
 		}else{
 			nr <- sapply(x,nrow); nc <- sapply(x,ncol)
-			rasterm <- lapply(rasterm, function(x) type.convert(matrix(getValues(x),ncol=nr,nrow=nc,byrow=TRUE)))
+			rasterm <- lapply(rasterm, function(z) 
+			{
+				if(rescale) {
+					message("Centering and scaling data...")
+					z <- as.matrix(raster::scale(z,center=TRUE,scale=TRUE))
+					mfactor <- 100^simplify
+					y <- z * mfactor
+					storage.mode(y) <- "integer"
+				} else{
+					y <- type.convert(matrix(getValues(z),ncol=nc,nrow=nr,byrow=TRUE))
+				}
+				return(y)
+			})
 		}
 		message("Numerical matrix ready: \nParametric Rao output will be returned")
-    # If data are a matrix or a list
+    # If data are a in a matrix or a list
 	}else if( any(sapply(rasterm, is,"matrix")) ) {
-		isfloat <- FALSE # If data are float numbers, transform them in integer
+		isfloat <- FALSE
 		israst <- FALSE
-		if( any(sapply(rasterm, function(x) !is.integer(x))) ){
+		# If data are float numbers, transform them in integer
+		if( any(sapply(rasterm, function(x) !all(x1 == as.integer(x1)))) ){
 			message("Input data are float numbers. Converting data to integer matrices...")
 			isfloat <- TRUE
 			mfactor <- 100^simplify
 			nr <- sapply(rasterm,nrow); nc <- sapply(rasterm,ncol)
-			rasterm <- lapply(rasterm, function(x) {
-				y <- type.convert(x * mfactor)
+			rasterm <- lapply(rasterm, function(z) {
+				if(rescale) {
+					message("Centering and scaling data...")
+					z <- (z-mean(z))/sd(z)
+				}
+				y <- z * mfactor
+				storage.mode(y) <- "integer"
+				return(y)
 			})
+		# If data are integers, just be sure that the storage mode is integer
 		}else{
-			rasterm <- lapply(rasterm, function(x) type.convert(as.matrix(x)))
+			rasterm <- lapply(rasterm, function(z) {
+				if(rescale) {
+					message("Centering and scaling data...")
+					z <- (z-mean(z))/sd(z)
+					mfactor <- 100^simplify
+					y <- z * mfactor
+					storage.mode(y) <- "integer"
+				}
+				type.convert(as.matrix(z))
+			})
 		}
 		message("Numerical matrix ready: \nParametric Rao output will be returned")
 	}else ("The class of x is not recognized. Exiting...") 

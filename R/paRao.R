@@ -8,14 +8,11 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 	}
 	if( is(x,"SpatialGridDataFrame") ) {
 		rasterm <- list(raster(x))
-	}
-	else if( is(x,"matrix") | is(x,"RasterLayer") ) {
+	} else if( is(x,"matrix") | is(x,"RasterLayer") ) {
 		rasterm <- list(x)
-	} 
-	else if( is(x,"list") & method=="multidimension" ) {
+	} else if( is(x,"list") & method=="multidimension" ) {
 		rasterm <- x
-	}
-	else if( is(x,"list") & method=="classic" ) {
+	} else if( is(x,"list") & method=="classic" ) {
 		stop("If x is a list then method must be *multidimensional*")
 	}
 	if( na.tolerance>1.0 | na.tolerance<0.0 ){
@@ -49,7 +46,7 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 			})
 		# If data are integers, just be sure that the storage mode is integer
 		}else{
-			nr <- sapply(x,nrow); nc <- sapply(x,ncol)
+			nr <- sapply(rasterm,nrow); nc <- sapply(rasterm,ncol)
 			rasterm <- lapply(rasterm, function(z) 
 			{
 				if(rescale) {
@@ -70,7 +67,7 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 		isfloat <- FALSE
 		israst <- FALSE
 		# If data are float numbers, transform them in integer
-		if( any(sapply(rasterm, function(x) !all(x1 == as.integer(x1)))) ){
+		if( any(sapply(rasterm, function(x) !all(x == as.integer(x)))) ){
 			message("Input data are float numbers. Converting data to integer matrices...")
 			isfloat <- TRUE
 			mfactor <- 100^simplify
@@ -98,7 +95,7 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 			})
 		}
 		message("Numerical matrix ready: \nParametric Rao output will be returned")
-	}else ("The class of x is not recognized. Exiting...") 
+	} else ("The class of x is not recognized. Exiting...") 
 	# Derive operational moving window
 	if( all(window%%2==1) ){
 		w <- (window-1)/2
@@ -109,7 +106,7 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 	if( np==1 ) {
 		if(method=="classic") {
 			out <- lapply(X=w, function(win){
-				lapply(X=alpha, FUN=paRaoS, rasterm=rasterm[[1]], w=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat,mfactor=mfactor)
+				lapply(X=alpha, FUN=paRaoS, rasterm=rasterm[[1]], w=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
 			})
 		} else if(method=="multidimension") {
 			out <- lapply(X=w, function(win){

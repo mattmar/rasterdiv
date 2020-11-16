@@ -4,13 +4,32 @@ accRao <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic"
 
 	message("\nIntegrating numerically Rao values over alphas...\n")
 
-	outafx <- apply( sapply(out, function(x) {sapply(1:length(x), function(y) x[y])}),1, function(i) {
-		if( all(is.na(i)) ) {return(NA)} else(integrate( approxfun(y=i,x=alphas,na.rm=TRUE), lower=alphas[1], upper=alphas[max(alphas)], subdivisions = 500 )$value) })
+	outafx <- lapply(out, function(w) {
+		outm <- apply(
+			sapply(w, function(a) {
+				sapply(1:length(a), function(y) {
+					a[y]
+				})
+			})
+			,1, function(i) {
+				if( all(is.na(i)) ) {
+					NA
+				} else {
+					integrate(approxfun(y=i,x=alphas), lower=alphas[1], upper=alphas[max(alphas)], subdivisions = 500)$value
+				}
+			})
+		return(outm)
+	})
 
-	if(rasterAUC==TRUE & class(x)[[1]]=="RasterLayer") {
-		outR <- raster(matrix(outafx,ncol=ncol(x),nrow=nrow(x)),template=x)
+	if( rasterAUC==TRUE & class(x)[[1]]=="RasterLayer" ) {
+		outR <- lapply(outafx, function(insm) {
+			y <- raster(matrix(insm,ncol=ncol(x),nrow=nrow(x)),template=x)
+		})
 		return(outR)
-	}else{
-		return(outafx)
+	} else {
+		outM <- lapply(outafx, function(insm) {
+			y <- matrix(insm,ncol=ncol(x),nrow=nrow(x))
+		})
+		return(outM)
 	}
 }

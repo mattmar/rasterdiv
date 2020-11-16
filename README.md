@@ -22,7 +22,7 @@ install_github("mattmar/rasterdiv")
 
 ## What is rasterdiv?
 
-*rasterdiv* is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indeces on RasterLayer or numerical matrices, such as Shannon's entropy or Cumulative Residual Entropy (CRE).
+*rasterdiv* is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indexes on RasterLayer or numerical matrices, such as Shannon's entropy or Cumulative Residual Entropy (CRE).
 
 ## Rasterdiv basics. Derive indices of diversity from NDVI.
 Here, we show how to use **rasterdiv** to derive global series of indices of diversity based on Information Theory. The input dataset is the Copernicus Long-term (1999-2017) average Normalise Difference Vegetation Index for the 21st of June (copNDVI).

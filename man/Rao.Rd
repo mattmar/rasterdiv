@@ -2,7 +2,7 @@
 \alias{Rao}
 \title{Rao's index of quadratic entropy (Q)}
 \description{
-Computes Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
+Deprecated, use \code{paRao(..., alpha=1)}. Computes Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
 }
 \usage{
 Rao(x, dist_m="euclidean", window=9, rasterOut = TRUE,
@@ -13,12 +13,12 @@ Rao(x, dist_m="euclidean", window=9, rasterOut = TRUE,
 \arguments{
   \item{x}{input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, if \code{mode="classic"} only the first element of the list will be considered.}
   \item{dist_m}{define the type of distance to be calculated between numerical categories. \code{dist_m} can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, \code{dist_m} can be a function which calculates an user defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If \code{mode="multidimension"} then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean".}
-  \item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the center of the moving window. Default value is 3. If \code{proxy::dist} is a matrix then the function will assume that this is the distance matrix, and therefore no distance will be derived.}
+  \item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3. If \code{proxy::dist} is a matrix then the function will assume that this is the distance matrix, and therefore no distance will be derived.}
   \item{rasterOut}{Boolean, if TRUE the output will be in RasterLayer format with \emph{x} as template.}
   \item{mode}{currently, there are two modes to calculate Rao's index. If mode is "classic", then the classic Rao's index will be calculated on one single matrix. If mode is "multidimension" (experimental!) a list of matrices must be provided as input. In this latter case, the overall distance matrix will be calculated in a multi- or hyper-dimensional system by using the measure defined through the function argument \code{dist_m}. Each pairwise distance is then multiplied by the inverse of the squared number of pixels in the considered moving window, and the Rao's Q is finally derived by applying a summation. Default value is "classic".}
   \item{lambda}{the value of the lambda of Minkowski's distance. Considered only if \code{dist_m = "minkowski"} and \code{mode="multidimension". Default value is 0.}}
   \item{shannon}{a boolean variable set to FALSE by default. If TRUE, a matrix with Shannon index will be also calculated.  Default value is FALSE.}
-  \item{rescale}{a boolean variable set to FALSE by default. If TRUE, \emph{x} will be scaled and centered to standardise different matrices if mode is "multidimension". Default value is FALSE.}
+  \item{rescale}{a boolean variable set to FALSE by default. If TRUE, \emph{x} will be scaled and centred to standardise different matrices if mode is "multidimension". Default value is FALSE.}
   \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 1.0 (i.e., full tolerance for NA's).}
   \item{simplify}{Number of decimal places to be retained to calculate distances in Rao's index. Only if \emph{x} is floats.}
   \item{np}{the number of processes (cores) which will be spawned. Default value is 1.}
@@ -41,21 +41,17 @@ Duccio Rocchini \email{duccio.rocchini@unibo.it}
 }
 
 \examples{
-#Minimal example; compute Rao's index 
-a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
-out <- Rao(x=a,window=3,dist_m="euclidean",na.tolerance=0,shannon=FALSE,mode="classic")
+# #Minimal example; compute Rao's index 
+# a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
+# out <- Rao(x=a,window=3,dist_m="euclidean",na.tolerance=0,shannon=FALSE,mode="classic")
 
-#Compute both Rao and Shannon index 
-a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
-out <- Rao(x=a,window=3,dist_m="euclidean",na.tolerance=0,shannon=TRUE,mode="classic")
+# #Compute both Rao and Shannon index 
+# a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
+# out <- Rao(x=a,window=3,dist_m="euclidean",na.tolerance=0,shannon=TRUE,mode="classic")
 
-#Compute multidimension Rao's index rescaling the input matrices
-a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
-b <- matrix(c(0.5,0.5,0.1,0.1,0.3,0.3,0.3,0.3,0.3),ncol=3,nrow=3)
-out <- Rao(x=list(a,b),window=3,dist_m="euclidean",na.tolerance=0,
-  mode="multidimension",rescale=TRUE,debugging=TRUE)
+# #Compute multidimension Rao's index rescaling the input matrices
+# a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
+# b <- matrix(c(0.5,0.5,0.1,0.1,0.3,0.3,0.3,0.3,0.3),ncol=3,nrow=3)
+# out <- Rao(x=list(a,b),window=3,dist_m="euclidean",na.tolerance=0,
+#   mode="multidimension",rescale=TRUE,debugging=TRUE)
 }
-
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{methods}% use one of  RShowDoc("KEYWORDS")

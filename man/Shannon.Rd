@@ -12,7 +12,7 @@ Shannon(x, window=3, rasterOut=TRUE, np=1, na.tolerance=1,
 }
 \arguments{
 \item{x}{input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, only the first element of the list will be considered.}
-\item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the center of the moving window. Default value is 3.}
+\item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.}
  \item{rasterOut}{Boolean, if TRUE the output will be in RasterLayer format with \emph{x} as template.}
 \item{np}{the number of processes (cores) which will be spawned. Default value is 1.}
 \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).}

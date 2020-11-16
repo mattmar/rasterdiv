@@ -30,19 +30,19 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     if( dist_m=="euclidean" | dist_m=="manhattan" | dist_m=="canberra" | dist_m=="minkowski" | dist_m=="mahalanobis" ) {
         ## Decide what function to use
         if( dist_m=="euclidean" ) {
-            distancef <- get("multieuclidean")
+            distancef <- get(".meuclidean")
         } else if( dist_m=="manhattan" ) {
-            distancef <- get("multimanhattan")
+            distancef <- get(".mmanhattan")
         } else if( dist_m=="canberra" ) {
-            distancef <- get("multicanberra")
+            distancef <- get(".mcanberra")
         } else if( dist_m=="minkowski" ) {
             if( lambda==0 ) {
                 stop("The Minkowski distance for lambda = 0 is infinity; please choose another value for lambda.")
             } else {
-                distancef <- get("multiminkowski") 
+                distancef <- get(".mminkowski") 
             }
         } else if( dist_m=="mahalanobis" ) {
-            distancef <- get("multimahalanobis")
+            distancef <- get(".mmahalanobis")
             warning("Multimahalanobis distance is not fully supported...")
         }
     } else {
@@ -53,7 +53,7 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         print(distancef)
     }
     # Add additional columns and rows to account for moving window size
-    hor <-matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
+    hor <- matrix(NA,ncol=dim(x[[1]])[2],nrow=w)
     ver <- matrix(NA,ncol=w,nrow=dim(x[[1]])[1]+w*2)
     trastersm <- lapply(x, function(x) {
         cbind(ver,rbind(hor,x,hor),ver)
@@ -104,53 +104,4 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         return(mpaRaoOP)
     }
     return(do.call(cbind,out))
-}
-
-# Supporting distance function
-# euclidean
-multieuclidean <- function(x) {
-    tmp <- lapply(x, function(y) {
-        (y[[1]]-y[[2]])^2
-    })
-    return(sqrt(Reduce(`+`,tmp)))
-}
-# manhattan
-multimanhattan <- function(x) {
-    tmp <- lapply(x, function(y) {
-        abs(y[[1]]-y[[2]])
-    })
-    return(Reduce(`+`,tmp))
-}
-# canberra
-multicanberra <- function(x) {
-    tmp <- lapply(x, function(y) {
-        abs(y[[1]] - y[[2]]) / (abs(y[[1]]) + abs(y[[2]]))
-    })
-    return(Reduce(`+`,tmp))
-}
-# minkowski
-multiminkowski <- function(x) {
-    tmp <- lapply(x, function(y) {
-        abs((y[[1]]-y[[2]])^lambda)
-    })
-    return(Reduce(`+`,tmp)^(1/lambda))
-}
-# mahalanobis
-multimahalanobis <- function(x){
-    tmp <- matrix(unlist(lapply(x,function(y) as.vector(y))),ncol=2)
-    tmp <- tmp[!is.na(tmp[,1]),] 
-    if( length(tmp)==0 | is.null(dim(tmp)) ) {
-        return(NA)
-    } else if(rcond(cov(tmp)) <= 0.001) {
-        return(NA)
-    } else {
-                # return the inverse of the covariance matrix of tmp; aka the precision matrix
-        inverse<-solve(cov(tmp)) 
-        if(debugging){
-            print(inverse)
-        }
-        tmp<-scale(tmp,center=T,scale=F)
-        tmp<-as.numeric(t(tmp[1,])%*%inverse%*%tmp[1,])
-        return(sqrt(tmp))
-    }
 }

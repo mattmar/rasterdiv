@@ -13,7 +13,7 @@ RenyiP(rasterm, w, alpha, base, na.tolerance, debugging)
 \item{rasterm}{input data.}
 \item{w}{half of the side of the square moving window.}
 \item{alpha}{alpha value for order of diversity in Renyi's Index.}
-\item{base}{base of the logarigthm to calculate the index.}
+\item{base}{base of the logarithm to calculate the index.}
 \item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).}
 \item{debugging}{a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For de-bugging only.}
 }

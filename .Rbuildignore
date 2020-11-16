@@ -11,3 +11,5 @@
 ^doc\.tex$
 ^doc\.html$
 ^doc$
+^revdep$
+^CRAN-RELEASE$

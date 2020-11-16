@@ -2,18 +2,14 @@
 #####################################
 ##               Import            ##
 #####################################
-import(doParallel)
-importFrom("methods", "is")
+import("raster")
+import("methods")
 importFrom("parallel", "makeCluster", "stopCluster")
-importFrom("raster", "raster", "getValues")
-importFrom("stats", "cov", "median", "window", "xtabs", "approxfun", "integrate")
-importFrom("utils", "combn", "setTxtProgressBar", "txtProgressBar","globalVariables")
+importFrom("stats", "cov", "median", "window", "xtabs", "approxfun", "integrate", "sd")
+importFrom("utils", "combn", "setTxtProgressBar", "txtProgressBar","globalVariables", "type.convert")
 importFrom("foreach", "%dopar%", "foreach")
-importFrom("proxy", "dist")
-importFrom("svMisc", "progress")
-importFrom("pbapply", "pblapply")
-importFrom("pbmcapply", "pbmclapply")
-import("progress")
+import("svMisc", "progress")
+importFrom("progress", "progress_bar")
 
 #####################################
 ##               Export            ##
@@ -21,9 +17,9 @@ import("progress")
 export(Hill, HillS, HillP)
 export(Rao)
 export(paRao, paRaoS, paRaoP, mpaRaoS, accRao)
+export(.meuclidean, .mmanhattan, .mcanberra, .mminkowski, .mmahalanobis)
 export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
 export(Renyi, RenyiS, RenyiP)
 export(Shannon, ShannonS, ShannonP)
 export(Pielou, PielouS, PielouP)
 export(BergerParker, BergerParkerS, BergerParkerP)
-export(progress_bar)

@@ -14,7 +14,6 @@ knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "
 ```
 
 ```{r results='hide', message=FALSE, warning=FALSE}
-#Required packages
 require(rasterdiv)
 require(rasterVis)
 require(RColorBrewer)
@@ -32,7 +31,7 @@ Pixels with values 253, 254 and 255 (water) will be set as NA's.
 copNDVI <- raster::reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
 ```
 
-## Resample NDVI to coarser resolution 
+## Resample NDVI to a coarser resolution 
 To speed up the calculation, the RasterLayer will be "resampled" at a resolution 20 times coarser than original.
 
 ```{r}
@@ -50,7 +49,7 @@ levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~150km 
 ```
 
 ## Compute all indexes in rasterdiv
-**rasterdiv** allows the computation of 8 diversity indexes based on information theory. In the following section, all these indexes will be computed for *copNDVIlr* using a moving window of 81 pixels (9 px side). Alpha values for the Hill, Renyi and parametric Rao indexes will be set from 0 to 2 every 0.5. In addition, we will set `na.tolerance=0.1`, meaning that all moving windows with more than 10% of pixels equal NA will be set to NA.
+**rasterdiv** allows the computation of 8 diversity indexes based on information theory. In the following section, all these indexes will be computed for *copNDVIlr* using a moving window of 81 pixels (9 px side). Alpha values for the Hill, Rényi and parametric Rao indexes will be set from 0 to 2 every 0.5. In addition, we will set `na.tolerance=0.1`, meaning that all moving windows with more than 10% of pixels equal NA will be set to NA.
 
 ```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
 #Shannon's Diversity
@@ -62,9 +61,6 @@ pie <- Pielou(copNDVIlr,window=9,na.tolerance=0.1,np=1)
 #Berger-Parker's Index
 ber <- BergerParker(copNDVIlr,window=9,na.tolerance=0.1,np=1)
 
-#Rao's quadratic Entropy
-rao <- Rao(copNDVIlr,window=9,na.tolerance=0.1,dist_m="euclidean",shannon=FALSE,np=1)
-
 #Parametric Rao's quadratic entropy with alpha ranging from 1 to 5
 prao <- paRao(copNDVIlr,window=9,alpha=1:5,na.tolerance=0.1,dist_m="euclidean",np=1)
 
@@ -74,7 +70,7 @@ cre <- CRE(copNDVIlr,window=9,na.tolerance=0.1,np=1)
 #Hill's numbers
 hil <- Hill(copNDVIlr,window=9,alpha=seq(0,2,0.5),na.tolerance=0.1,np=1)
 
-#Renyi's Index
+#Rényi's Index
 ren <- Renyi(copNDVIlr,window=9,alpha=seq(0,2,0.5),na.tolerance=0.1,np=1)
 ```
 
@@ -97,26 +93,21 @@ levelplot(ber,main="Berger-Parker's index from Copernicus NDVI 5 km (9 px-side m
 ```
 
 ```{r fig05}
-#Rao's quadratic Entropy
-levelplot(rao,main="Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,1,1), ylim=c(-60,75), margin = list(draw = TRUE))
+#Parametric Rao's quadratic Entropy
+levelplot(stack(prao[[1]]),main="Parametric Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75), margin = list(draw = TRUE))
 ```
 
 ```{r fig06}
-#Parametric Rao's quadratic Entropy
-levelplot(stack(prao),main="Parametric Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75), margin = list(draw = TRUE))
-```
-
-```{r fig07}
 #Cumulative Residual Entropy
 levelplot(cre,main="Cumulative Residual Entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,1,1), ylim=c(-60,75), margin = list(draw = TRUE))
 ```
 
-```{r fig08}
-#Hill's numbers (alpha=0, 1, 1.5 and 2)
-levelplot(stack(hil),main="Hill's numbers from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1),names.attr=paste("alpha",seq(0,2,0.5),sep=" "), ylim=c(-60,75))
+```{r fig07}
+#Hill's numbers (alpha=0, 0.5, 1, 1.5 and 2)
+levelplot(stack(hil),main="Hill's numbers from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75))
 ```
 
-```{r fig09}
+```{r fig08}
 #Renyi' Index (alpha=0, 1, 1.5 and 2)
 levelplot(stack(ren),main="Renyi's entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1),names.attr=paste("alpha",seq(0,2,0.5),sep=" "), ylim=c(-60,75), margin = list(draw = FALSE))
 ```

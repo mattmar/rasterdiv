@@ -11,7 +11,7 @@ Hill(x, window = 3, alpha = 1, rasterOut=TRUE,
 }
 \arguments{
 \item{x}{input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, only the first element of the list will be considered.}
-\item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the center of the moving window. Default value is 3.}
+\item{window}{the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.}
 \item{alpha}{Order of the Hill number to compute the index. If \code{"alpha"} is a vector with length greater than 1, then the index will be calculated over \code{x} for each value in the sequence.}
 \item{rasterOut}{Boolean, if TRUE output will be in RasterLayer format with \emph{x} as template.}
 \item{np}{the number of processes (cores) which will be spawned. Default value is 1.}

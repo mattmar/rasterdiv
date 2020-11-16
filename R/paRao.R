@@ -13,17 +13,17 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 	} else if( is(x,"list") & method=="multidimension" ) {
 		rasterm <- x
 	} else if( is(x,"list") & method=="classic" ) {
-		stop("If x is a list then method must be *multidimensional*")
-	}
+		stop("If x is a list then method should be *multidimension*?")
+	} else stop("Please provide a valid input object.")
 	if( na.tolerance>1.0 | na.tolerance<0.0 ){
-		stop("na.tolerance must be in the [0-1] interval. Exiting...")
+		stop("na.tolerance must be in the [0-1] interval.")
 	}
     # Alpha's check
 	if ( any(!is.numeric(alpha)) ){
-		stop("alpha must be a numeric vector. Exiting...")
+		stop("alpha must be a numeric vector.")
 	}
 	if ( any(alpha<0) ){
-		stop("alphas must be only positive numbers. Exiting...")
+		stop("alphas must be only positive numbers.")
 	}
     # Deal with matrix and RasterLayer in different ways
     # If data are raster layers

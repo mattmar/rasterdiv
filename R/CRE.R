@@ -1,12 +1,12 @@
 CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.tolerance=1.0, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
 {
-#
-## Define function to check if a number is an integer
-#
+    #
+    ## Define function to check if a number is an integer
+    #
     is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
-#
-## Initial checks
-#
+    #
+    ## Initial checks
+    #
     if( !(is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list")) ) {
         stop("\nNot a valid x object.")
     }
@@ -27,8 +27,8 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
         stop("na.tolerance must be in the [0-1] interval. Exiting...")
     }
 
-# Deal with matrices and RasterLayer in a different way
-# If data are raster layers
+    # Deal with matrices and RasterLayer in a different way
+    # If data are raster layers
     if( is(x[[1]],"RasterLayer") ) {
         if( mode=="classic" ){
             isfloat <- FALSE # If data are float numbers, transform them in integer, this may allow for a shorter computation time on big datasets.
@@ -52,7 +52,7 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
         }else{
             stop("Matrix check failed: \nNot a valid x | method | distance, please check all these options...")
         }
-# If data are a matrix or a list
+    # If data are a matrix or a list
     }else if( is(x,"matrix") | is(x,"list") ) {
         if( mode=="classic" ){ 
             isfloat<-FALSE # If data are float numbers, transform them in integer
@@ -86,44 +86,44 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
 ##################### Starting parallel calculation #######################")
         }
     }
-#
-## Derive operational moving window
-#
+    #
+    ## Derive operational moving window
+    #
     if( window%%2==1 ){
         w <- (window-1)/2
     } else {
         stop("The size of moving window must be an odd number. Exiting...")
     }
-#
-## Preparation of output matrices
-#
+    #
+    ## Preparation of output matrices
+    #
     if(np==1) {
         raoqe<-matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
     }
-#
-## If mode is classic Rao
-#
+    #
+    ## If mode is classic Rao
+    #
     if(mode=="classic") {
-#
-# If classic Cumulative Residual Entropy is parallelized
-#
+        #
+        ## If classic Cumulative Residual Entropy is parallelized
+        #
         if(np>1) {
-#
-## Reshape values
-#
+            #
+            ## Reshape values
+            #
             values<-as.numeric(as.factor(rasterm))
             rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-#
-## Add additional columns and rows to match moving window
-#
+            #
+            ## Add additional columns and rows to match moving window
+            #
             hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
             ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
             trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
             rm(hor,ver,rasterm_1,values); gc()
             if(debugging){cat("#check: Cumulative Residual Entropy parallel function.")}
-#       
-## Create cluster object with given number of slaves
-#
+            #       
+            ## Create cluster object with given number of slaves
+            #
             if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
                 cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
             } else if( cluster.type=="MPI" ) {
@@ -132,11 +132,9 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
             doParallel::registerDoParallel(cls)
             on.exit(stopCluster(cls)) # Close the clusters on exit
             gc()
-#
-## Start the parallelized loop over iter
-#           
-            print(dim(rasterm))
-            print(w)
+            #
+            ## Start the parallelized loop over iter
+            #           
             pb <- txtProgressBar(min = (1+w), max = dim(rasterm)[2], style = 3)
             progress <- function(n) setTxtProgressBar(pb, n)
             opts <- list(progress = progress)
@@ -173,20 +171,20 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
                 return(raout)
             } # End classic RaoQ - parallelized
             message(("\n\nCalculation of Cumulative Residual Entropy complete.\n"))
-#
-## If classic RaoQ is sequential
-#
+        #
+        ## If classic RaoQ is sequential
+        #
         } else if(np==1) {
-# Reshape values
+            # Reshape values
             values<-as.numeric(as.factor(rasterm))
             rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-# Add additional columns and rows for moving window
+            # Add additional columns and rows for moving window
             hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
             ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
             trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
-# Derive distance matrix
+            # Derive distance matrix
             classes<-levels(as.factor(rasterm))
-# Loop over each pixel
+            # Loop over each pixel
             for (cl in (1+w):(dim(rasterm)[2]+w)) {
                 for(rw in (1+w):(dim(rasterm)[1]+w)) {
                     if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
@@ -222,11 +220,11 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
         if(debugging) {
             message("#check: Into multidimensional clause.")
         }
-#----------------------------------------------------#
-#
-## If multimensional Cumulative Residual Entropy
-#
-# Check if there are NAs in the matrices
+        #----------------------------------------------------#
+        #
+        ## If multimensional Cumulative Residual Entropy
+        #
+        # Check if there are NAs in the matrices
         if ( is(rasterm,"RasterLayer") ){
             if(any(sapply(lapply(unlist(x),length),is.na)==TRUE))
                 message("\n Warning: One or more RasterLayers contain NA's which will be treated as 0")
@@ -235,13 +233,13 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
                 message("\n Warning: One or more matrices contain NA's which will be treated as 0")
             }
         }
-#
-## Reshape values
-#
+        #
+        ## Reshape values
+        #
         vls<-lapply(x, function(x) {raster::as.matrix(x)})
-#
-## Rescale and add additional columns and rows for moving w
-#
+        #
+        ## Rescale and add additional columns and rows for moving w
+        #
         hor<-matrix(NA,ncol=dim(vls[[1]])[2],nrow=w)
         ver<-matrix(NA,ncol=w,nrow=dim(vls[[1]])[1]+w*2)
         if(rescale) {
@@ -258,9 +256,9 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
         if(debugging) {
             message("#check: After rescaling in multimensional clause.")
         }
-#
-## Loop over all the pixels in the matrices
-#
+        #
+        ## Loop over all the pixels in the matrices
+        #
         if( (ncol(vls[[1]])*nrow(vls[[1]]))> 10000) {
             message("\n Warning: ",ncol(vls[[1]])*nrow(vls[[1]])*length(vls), " cells to be processed, it may take some time... \n")
         }
@@ -271,9 +269,9 @@ CRE <- function(x, window=3, mode="classic", rasterOut=TRUE, rescale=FALSE, na.t
                 } else {
                     tw<-lapply(trastersm, function(x) { x[(rw-w):(rw+w),(cl-w):(cl+w)]
                 })
-#
-##Vectorize the matrices in the list and calculate
-#Among matrix pairwase distances
+                    #
+                    ##Vectorize the matrices in the list and calculate
+                    #Among matrix pairwase distances
                     lv <- lapply(tw, function(x) {as.vector(t(x))})
                     raoqe[rw-w,cl-w] <- .CRE_(data.frame(lv))
                 }
@@ -405,4 +403,4 @@ table(C)/L
   D=dim(a)
   dimen=1:length(D)
   .Reorder(apply(a, dimen[-ax], rev),ax)
-}
+}   

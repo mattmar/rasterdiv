@@ -7,7 +7,7 @@ import("methods")
 importFrom("parallel", "makeCluster", "stopCluster")
 importFrom("stats", "cov", "median", "window", "xtabs", "approxfun", "integrate", "sd")
 importFrom("utils", "combn", "setTxtProgressBar", "txtProgressBar","globalVariables", "type.convert")
-importFrom("foreach", "%dopar%", "foreach")
+importFrom("foreach", "%dopar%", "foreach" , "%do%")
 import("svMisc", "progress")
 importFrom("progress", "progress_bar")
 

@@ -14,7 +14,7 @@ np=1, na.tolerance=, cluster.type="SOCK", debugging=FALSE)}
 \item{base}{a numerical value which defines the base of the logarithm in Renyi's entropy formula. Default value is exp(1).}
 \item{rasterOut}{Boolean, if TRUE output will be in RasterLayer format with \emph{x} as template.}
 \item{np}{the number of processes (cores) which will be spawned. Default value is 1.}
-\item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).}
+\item{na.tolerance}{a numeric value \eqn{(0.0-1.0)} which indicates the proportion of NA values that will be tolerated to calculate Renyi's index in each moving window over \emph{x}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).}
 \item{cluster.type}{the type of cluster which will be created. The options are "MPI" (calls "makeMPIcluster"), "FORK" and "SOCK" (call "makeCluster"). Default type is "SOCK".}
 \item{debugging}{a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.}
 }

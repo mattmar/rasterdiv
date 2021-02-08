@@ -5,6 +5,10 @@ paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
 	mfactor <- ifelse(isfloat,mfactor,1) 
 	window = 2*w+1
 	diagonal <- ifelse(diag==TRUE,0,NA)
+	tdist <- proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
+	# Min and max dist for initial checks on possible infinite or 0 operations
+	maxd <- max(proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m))
+	mind <- min(tdist[tdist>0])
 	# Set a progress bar
 	pb <- progress_bar$new(
 		format = "\n [:bar] :elapsed -- Approximate ETA: :eta \n",
@@ -13,7 +17,7 @@ paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
 		width = 80, 
 		force = TRUE)
 	# If alpha ~ +infinite
-	if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
+	if( alpha >= .Machine$integer.max | is.infinite(alpha) | is.infinite(maxd^alpha) | (dist_m=="canberra" & mind^alpha==0) ) {
 		paRaoOS <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
 		# Reshape values
 		values <- as.numeric(as.factor(rasterm))
@@ -58,9 +62,9 @@ paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
 			}
 		}
 		return(paRaoOS)
-	# If alpha > 0
-	}else if( alpha>0 ){
-		paRaoOS<-matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+	#If alpha is >0
+	}else if( alpha > 0 ){
+		paRaoOS <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
 		# Reshape values
 		values<-as.numeric(as.factor(rasterm))
 		rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
@@ -101,14 +105,13 @@ paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
 						p1 <- diag(diagonal,length(tw_values))
 						p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod,na.rm=TRUE))
 						d2 <- unname(proxy::as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
-						paRaoOS[rw-w,cl-w] <- ( (sum((p1)*(d2^alpha)*2,na.rm=TRUE))^(1/alpha) ) / mfactor
+						paRaoOS[rw-w,cl-w] <- (sum((p1)*(d2^alpha)*2,na.rm=TRUE))^(1/alpha) / mfactor
 					}
-				}			
-			} 
-		}
+				}
+			}			
+		} 
 		return(paRaoOS)
-			#message(("\nCalculation of sequential Parametric Rao's index complete.\n"))
-		# If alpha == 0
+	# If alpha == 0
 	}else if( alpha==0 ){
 		paRaoOS <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
 			# Reshape values

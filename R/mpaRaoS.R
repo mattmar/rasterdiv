@@ -6,10 +6,11 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     diagonal <- ifelse(diag==TRUE,0,NA)
     rasterm <- x[[1]]
     # Evaluate Rao's method given alpha
-    if( alpha>=.Machine$integer.max | is.infinite(alpha) ) {
+    if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
         alphameth <- "max(vout*2,na.rm=TRUE)"
     } else if( alpha>0 ) {
-        alphameth <- "sum(rep(vout^alpha,2) * (1/(window)^4),na.rm=TRUE) ^ (1/alpha)"
+        if( alpha >100 ) warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
+        alphameth <- "sum(rep(vout^alpha,2)*(1/(window)^4),na.rm=TRUE)^(1/alpha)"
     } else if( alpha==0 ) {
         alphameth <- "prod(vout,na.rm=TRUE)^(1/(window^4))"
     }
@@ -25,10 +26,10 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     # Check if there are NAs in the matrices
     if ( is(x[[1]],"RasterLayer") ){
         if(any(sapply(lapply(unlist(x),length),is.na)==TRUE))
-            message("\n Warning: One or more RasterLayers contain NAs which will be treated as 0s")
+            warning("\n One or more RasterLayers contain NAs which will be treated as 0s")
     } else if ( is(x[[1]],"matrix") ){
         if(any(sapply(x, is.na)==TRUE) ) {
-            message("\n Warning: One or more matrices contain NAs which will be treated as 0s")
+            warning("\n One or more matrices contain NAs which will be treated as 0s")
         }
     }
     # Check whether the chosen distance metric is valid or not

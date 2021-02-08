@@ -1,3 +1,7 @@
+# rasterdiv 0.2.2p1
+## Major changes
+* Fixed issue due to high alphas which caused parametric Rao's to go to infinite (just added a warning for the multidimensional version).
+
 # rasterdiv 0.2.2
 ## Major changes
 * *Rao()* is now deprecated, replaced by *paRao(...,alpha=1)*.

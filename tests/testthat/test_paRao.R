@@ -46,7 +46,7 @@ test_that("Negative alpha is an error", {
 		paRao(tmat,window=3,alpha=-1))
 })
 
-test_that("Rao alpha=2 > Rao alpha=1", {
+test_that("Rao alpha==2 > Rao alpha==1", {
 	expect_gt(
 		sum(unlist(paRao(tmat,window=3,alpha=2))),
 		sum(unlist(paRao(tmat,window=3,alpha=1)))
@@ -57,5 +57,12 @@ test_that("multi paRao uni and multicore many alphas", {
 	expect_equal(
 		paRao(list(tmat,tmat),method="multidimension",na.tolerance=1,alpha=c(1:5,Inf),np=1),
 		paRao(list(tmat,tmat),method="multidimension",na.tolerance=1,alpha=c(1:5,Inf),np=2)
+		)
+})
+
+test_that("Rao alpha==2^31 is equal to Rao alpha==(2^31)-1", {
+	expect_equal(
+		sum(unlist(paRao(tmat,window=3,alpha=(.Machine$integer.max)-1,rasterOut=FALSE))),
+		sum(unlist(paRao(tmat,window=3,alpha=(.Machine$integer.max),rasterOut=FALSE)))
 		)
 })

@@ -4,10 +4,14 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     mfactor <- ifelse(isfloat,mfactor,1) 
     window = 2*w+1
     diagonal <- ifelse(diag==TRUE,0,NA)
-    # Set a progress bar
+    tdist <- proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
+    # Min and max dist for initial checks on possible infinite or 0 operations
+    maxd <- max(proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m))
+    mind <- min(tdist[tdist>0])
+    # Set up a progress bar
     pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
     # If alpha ~ +infinite
-    if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
+    if( alpha >= .Machine$integer.max | is.infinite(alpha) | is.infinite(maxd^alpha) | (dist_m=="canberra" & mind^alpha==0) ) {
       # Reshape values
       values <- as.numeric(as.factor(rasterm))
       rasterm_1 <- matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
@@ -24,9 +28,9 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     if( is.character( dist_m) | is.function(dist_m) ) {
         d1 <- proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m) 
     } else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
-     d1 <- stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
- }
- out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+       d1 <- stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
+   }
+   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
     if(debugging) {cat(paste(cl))}
     # Update progress bar
     setTxtProgressBar(pb, cl)
@@ -59,6 +63,7 @@ paRaoP <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mf
     return(paRaoOP)
 } #End classic Parametric Rao - parallelized
 return(do.call(cbind,out))
+# If alpha is > 0
 }else if( alpha>0 ) {
     #
     ##Reshape values
@@ -77,11 +82,11 @@ return(do.call(cbind,out))
     ##Derive distance matrix
     #
     if( is.character( dist_m) | is.function(dist_m) ) {
-     d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
- }else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
-     d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
- }
- out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+       d1<-proxy::dist(as.numeric(levels(as.factor(rasterm))),method=dist_m)
+   }else if( is.matrix(dist_m) | is.data.frame(dist_m) ) {
+       d1<-stats::as.dist(xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
+   }
+   out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
     if(debugging) {
         cat(paste(cl))
     }
@@ -111,13 +116,12 @@ return(do.call(cbind,out))
                 p1 <- diag(0,length(tw_values))
                 p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod,na.rm=TRUE))
                 d2 <- unname(as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])
-                vv <- (sum(p1*(d2^alpha)*2,na.rm=TRUE)^(1/alpha)) / mfactor
+                vv <- (sum((p1)*(d2^alpha)*2,na.rm=TRUE)^(1/alpha) ) / mfactor
                 return(vv)
             }
         }
     })
     return(paRaoOP)
-    Sys.sleep(5)
 } #End classic Parametric Rao - parallelized
 return(do.call(cbind,out))
 }else if( alpha==0 ) {

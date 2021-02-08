@@ -34,6 +34,7 @@ A RasterLayer called copNDVI is loaded together with package **rasterdiv**. *cop
 Pixels with values 253, 254 and 255 (water) will be set as NA's.
 
 ```{r}
+library(raster)
 copNDVI <- reclassify(copNDVI, cbind(252, 255, NA), right=TRUE)
 ```
 
@@ -49,6 +50,7 @@ storage.mode(copNDVIlr[]) = "integer"
 
 ### Compare NDVI low and high resolution
 ```{r fig01}
+library(rasterVis)
 levelplot(copNDVI,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~8km pixel resolution")
 levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~150km pixel resolution")`
 ```

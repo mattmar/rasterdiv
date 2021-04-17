@@ -110,7 +110,7 @@ paRao <- function(x, dist_m="euclidean", window=9, alpha=1, method="classic", ra
 			})
 		} else if(method=="multidimension") {
 			out <- lapply(X=w, function(win){
-				lapply(X=alpha, FUN=mpaRaoS, x=rasterm, w=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging,isfloat=isfloat, mfactor=mfactor)
+				lapply(X=alpha, FUN=mpaRaoS, x=rasterm, w=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
 			})
 		}
 	} else if( np>1 ) {

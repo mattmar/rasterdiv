@@ -28,7 +28,7 @@ RaoAUC <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic"
 		return(outR)
 	} else {
 		outM <- lapply(outafx, function(insm) {
-			y <- matrix(insm,ncol=ncol(x),nrow=nrow(x))
+			y <- matrix(insm,ncol=ncol(x[[1]]),nrow=nrow(x[[1]]))
 		})
 		return(outM)
 	}

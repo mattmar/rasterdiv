@@ -1,3 +1,6 @@
+## v0.2.4
+# Reduce length of vignette checks.
+# Add testthat example for RaoAUC multidimentional.
 ## v0.2.2p1
 # Add spiral graphs?
 # Fix multimahalanobis distance

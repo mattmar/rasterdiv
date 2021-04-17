@@ -1,10 +1,11 @@
 # rasterdiv 0.2.2p1
 ## Major changes
 * Fixed issue due to high alphas which caused parametric Rao's to go to infinite (just added a warning for the multidimensional version).
+* Rao still deprecated but connected in the background with *paRao(..., alpha=1)* for continuity with older versions.
 
 # rasterdiv 0.2.2
 ## Major changes
-* *Rao()* is now deprecated, replaced by *paRao(...,alpha=1)*.
+* *Rao()* is now deprecated, replaced by *paRao(..., alpha=1)*.
 * Multiple window sizes can now be indicated in paRao(..., window=c(3,5)).
 * Multidimension paRao now working for np>1.
 

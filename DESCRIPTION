@@ -8,7 +8,7 @@ Imports: methods, proxy, foreach, progress, svMisc
 Suggests: parallel, doParallel, knitr, rmarkdown, rasterVis, RColorBrewer, gridExtra, gstat
 LazyData: TRUE
 BugReports: https://github.com/mattmar/rasterdiv
-Description: Providing functions to calculate indices of diversity on numerical matrices based on information theory. The rationale behind the package is described in Rocchini, Marcantonio and Ricotta (2017) <doi:10.1016/j.ecolind.2016.07.039> and Rocchini, Marcantonio..., Ricotta (2021) <https://doi.org/10.1101/2021.01.23.427872>.
+Description: Providing functions to calculate indices of diversity on numerical matrices based on information theory. The rationale behind the package is described in Rocchini, Marcantonio and Ricotta (2017) <doi:10.1016/j.ecolind.2016.07.039> and Rocchini, Marcantonio,..., Ricotta (2021) <doi:10.1101/2021.01.23.427872>.
 VignetteBuilder: knitr
 Encoding: UTF-8
 Language: en-GB

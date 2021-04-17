@@ -16,7 +16,7 @@ importFrom("progress", "progress_bar")
 #####################################
 export(Hill, HillS, HillP)
 export(Rao)
-export(paRao, paRaoS, paRaoP, mpaRaoS, accRao)
+export(paRao, paRaoS, paRaoP, mpaRaoS, RaoAUC)
 export(.meuclidean, .mmanhattan, .mcanberra, .mminkowski, .mmahalanobis)
 export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
 export(Renyi, RenyiS, RenyiP)

@@ -28,7 +28,7 @@ install_github("mattmar/rasterdiv")
 Here, we show how to use **rasterdiv** to derive global series of indices of diversity based on Information Theory. The input dataset is the Copernicus Long-term (1999-2017) average Normalise Difference Vegetation Index for the 21st of June (copNDVI).
 
 ### Overview
-A RasterLayer called copNDVI is loaded together with package **rasterdiv**. *copNDVI* is at 8-bit meaning that pixel values range from 0 to 255. You could *stretch* it to a more familiar (-1,1) range using `raster::stretch(copNDVI,minv=-1,maxv=1)` .  
+A RasterLayer called copNDVI is loaded together with package **rasterdiv**. *copNDVI* is at 8-bit meaning that pixel values range from 0 to 255. You could *stretch* it to a more familiar (-1,1) range using `raster::stretch(copNDVI,minv=0,maxv=2)-1` .  
 
 ### Reclassify NDVI 
 Pixels with values 253, 254 and 255 (water) will be set as NA's.

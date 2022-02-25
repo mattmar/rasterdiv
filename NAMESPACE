@@ -5,18 +5,19 @@
 import("raster")
 import("methods")
 importFrom("parallel", "makeCluster", "stopCluster")
-importFrom("stats", "cov", "median", "window", "xtabs", "approxfun", "integrate", "sd")
+importFrom("stats", "cov", "median", "window", "xtabs", "approxfun", "integrate", "sd", "dist")
 importFrom("utils", "combn", "setTxtProgressBar", "txtProgressBar","globalVariables", "type.convert")
 importFrom("foreach", "%dopar%", "foreach" , "%do%")
 import("svMisc", "progress")
 importFrom("progress", "progress_bar")
+importFrom("terra", "split", "crop")
 
 #####################################
 ##               Export            ##
 #####################################
 export(Hill, HillS, HillP)
 export(Rao)
-export(paRao, paRaoS, paRaoP, mpaRaoS, mpaRaoP, RaoAUC)
+export(paRao, paRaoS, paRaoP, mpaRaoS, mpaRaoP, RaoAUC, paRaoAreaS)
 export(.meuclidean, .mmanhattan, .mcanberra, .mminkowski, .mmahalanobis)
 export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
 export(Renyi, RenyiS, RenyiP)

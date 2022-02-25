@@ -1,4 +1,4 @@
-paRaoS <- function(rasterm,alpha,w,dist_m,na.tolerance,diag,debugging,isfloat,mfactor) 
+paRaoS <- function(rasterm, alpha, w, dist_m, na.tolerance, diag, debugging, isfloat, mfactor) 
 {
 	# Some initial housekeeping
 	message("\n\nProcessing alpha: ",alpha, " Moving Window: ", 2*w+1)

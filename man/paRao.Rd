@@ -5,13 +5,15 @@
 It computes the parametric version of Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
 }
 \usage{
-paRao(x, dist_m="euclidean", window=9, alpha=1,
-  method="classic", rasterOut=TRUE, lambda=0,
+paRao(x, area=NULL, field=NULL, dist_m="euclidean",
+ window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0,
   na.tolerance=1.0, rescale=FALSE, diag=TRUE, 
   simplify=1, np=1,cluster.type="SOCK", debugging=FALSE)
   }
   \arguments{
   \item{x}{input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects.}
+  \item{area}{input vector area layer for area-based calculation.}
+  \item{field}{column name of the vector area layer to use to calculate the index.}
   \item{dist_m}{define the type of distance to be calculated between numerical categories. \code{dist_m} can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, \code{dist_m} can be a function which calculates an user defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If \code{method="multidimension"} then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If \code{dist_m} is a matrix then the function will assume that the matrix contains the distances.}
   \item{window}{the side of the square moving window, it must be a vector of odd numeric values greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3. \emph{window} can be a vector with length greater than 1, in this case Rao's index will be calculated over \emph{x} for each value in the vector.}
   \item{alpha}{weight for the distance matrix. If \code{alpha = 0}, distances will be averaged with a geometric average, if \code{alpha=1} with an arithmetic mean, if \code{alpha = 2} with a quadratic mean, \code{alpha = 3} with a cubic mean and so on. if \code{alpha} tends to infinite (i.e., higher than the maximum integer allowed in R) or \code{alpha=Inf}, then the maximum distance will be taken. \emph{"alpha"} can be a vector with length greater than 1, in this case Rao's index will be calculated over \emph{x} for each value in the vector.}

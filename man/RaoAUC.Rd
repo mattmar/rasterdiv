@@ -42,5 +42,5 @@ RaoAUC(alphas=1:5, x, dist_m="euclidean", window=9,
   \examples{
   #Minimal example; RaoAUC with alphas ranging from 1 to 10
   a <- matrix(c(10,10,10,20,20,20,20,30,30), ncol=3, nrow=3)
-  out <- RaoAUC(alphas=1:10,x=a, window=3, dist_m="euclidean", na.tolerance=1, rasterAUC=TRUE)
+  out <- RaoAUC(alphas=1:10, x=a, window=3, dist_m="euclidean", na.tolerance=1, rasterAUC=TRUE)
   }

@@ -10,7 +10,7 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         alphameth <- "max(vout*2,na.rm=TRUE)"
     } else if( alpha>0 ) {
         if( alpha >100 ) warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
-        alphameth <- "sum(rep(vout^alpha,2)*(1/(window)^4),na.rm=TRUE)^(1/alpha)"
+            alphameth <- "sum(rep(vout^alpha,2)*(1/(window)^4),na.rm=TRUE)^(1/alpha)"
     } else if( alpha==0 ) {
         alphameth <- "prod(vout,na.rm=TRUE)^(1/(window^4))"
     }
@@ -51,7 +51,10 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
             distancef <- get(".mmahalanobis")
             warning("Multimahalanobis distance is not fully supported...")
         }
-    } else {
+    } else if (is.matrix(dist_m)) {
+        distancef=dist_m
+    }
+    else {
         stop("Distance function not defined for multidimensional Rao's Q; please choose among euclidean, manhattan, canberra, minkowski, mahalanobis...")
     }
     if(debugging) {

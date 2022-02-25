@@ -1,3 +1,11 @@
+# rasterdiv 0.2.5
+## Major changes
+* Starting to implement area-based paRao.
+
+## Minor changes
+* Vignettes reduced
+* Added world vector dataset
+
 # rasterdiv 0.2.4
 ## Major changes
 * accRao now *RaoAUC*

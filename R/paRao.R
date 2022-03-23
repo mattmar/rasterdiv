@@ -120,8 +120,6 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 				out <- lapply(X=split_layers, function(are){
 					lapply(X=alpha, area=are, FUN=paRaoAreaS, rasterm=rasterm[[1]], simplify=simplify)
 				})
-				message(alpha)
-				message(length(out[[1]]))
 			} else {
 				out <- lapply(X=w, function(win){
 					lapply(X=alpha, FUN=paRaoS, rasterm=rasterm[[1]], w=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)

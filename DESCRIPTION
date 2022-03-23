@@ -1,6 +1,6 @@
 Package: rasterdiv
-Version: 0.2-5
-Date: 2022-02-23
+Version: 0.2-5.1
+Date: 2022-03-23
 Title: Diversity Indices for Numerical Matrices
 Authors@R: c(person("Matteo", "Marcantonio", role = c("aut", "cre"), email = "marcantoniomatteo@gmail.com"), person("Martina", "Iannacito", role = c("aut","ctb"), email = "martina.iannacito@inria.fr"), person("Elisa", "Marchetto", role = c("ctb"), email = "elisa.marchetto2@studio.unibo.it "), person("Elisa", "Thouverai", role = c("aut","ctb"), email = "elisa.th95@gmail.com"), person("Michele", "Torresani", role = c("aut","ctb"), email = "michele.torresani@unibo.it"), person("Daniele", "Da Re", role = "aut", email = "daniele.dare@uclouvain.be"), person("Clara", "Tattoni", role = "aut", email = "clara.tattoni@gmail.com"), person("Giovanni", "Bacaro", role = "aut", email = "gbacaro@units.it"), person("Saverio", "Vicario", role = c("aut","ctb"), email = "saverio.vicario@cnr.it"), person("Carlo", "Ricotta", role = c("aut"), email = "carlo.ricotta@uniroma1.it"), person("Duccio", "Rocchini", role = c("aut","ctb"), email = "duccio.rocchini@unibo.it"))
 Depends: R (>= 3.6.0), raster

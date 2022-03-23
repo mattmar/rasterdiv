@@ -25,7 +25,7 @@ paRaoS <- function(rasterm, alpha, w, dist_m, na.tolerance, diag, debugging, isf
 		# Add additional columns and rows for moving window
 		hor <- matrix(NA,ncol=dim(rasterm)[2],nrow=w)
 		ver <- matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-		trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
+		trasterm <- cbind(ver,rbind(hor,rasterm_1,hor),ver)
 		# Derive distance matrix
 		classes <- levels(as.factor(rasterm))
 		if( is.character(dist_m) | is.function(dist_m) ) {
@@ -46,13 +46,13 @@ paRaoS <- function(rasterm, alpha, w, dist_m, na.tolerance, diag, debugging, isf
 					if( "NA's"%in%names(tw) ) {
 						tw <- tw[-length(tw)]
 					}
-					if(debugging) {
+					if( debugging ) {
 						message("Working on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=",window^2)
 					}
 					tw_labels <- names(tw)
 					tw_values <- as.vector(tw)
           			# Exclude windows with only 1 category
-					if(length(tw_values) == 1) {
+					if( length(tw_values) == 1 ) {
 						paRaoOS[rw-w,cl-w] <- 0
 					}else{
 						d2 <- unname(proxy::as.matrix(d1)[as.numeric(tw_labels),as.numeric(tw_labels)])

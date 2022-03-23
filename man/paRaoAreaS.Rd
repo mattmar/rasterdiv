@@ -7,12 +7,13 @@ Area-Based Sequential Parametric Rao's index of quadratic entropy (Q)
 Area-Based Sequential Parametric Rao's index of quadratic entropy (Q)
 }
 \usage{
-paRaoAreaS(rasterm, area, alpha)
+paRaoAreaS(rasterm, area, alpha, simplify)
 }
 \arguments{
 \item{rasterm}{input raster data.}
 \item{area}{input vector data.}
 \item{alpha}{alpha value for order of diversity in Hill's Index.}
+\item{simplify}{Rounding parameter.}
 }
 \value{
 A vector as the input with Rao's index pasted additional columns.

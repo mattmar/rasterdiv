@@ -118,8 +118,10 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 				if( debugging ){cat("#check: Inside area clause.")}
 				split_layers <- split(area, area[[field]])
 				out <- lapply(X=split_layers, function(are){
-					lapply(X=alpha, area=are, FUN=paRaoAreaS, rasterm=rasterm[[1]])
+					lapply(X=alpha, area=are, FUN=paRaoAreaS, rasterm=rasterm[[1]], simplify=simplify)
 				})
+				message(alpha)
+				message(length(out[[1]]))
 			} else {
 				out <- lapply(X=w, function(win){
 					lapply(X=alpha, FUN=paRaoS, rasterm=rasterm[[1]], w=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
@@ -160,7 +162,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 		if( !is.null(area) )
 		{
 			y <- do.call(rbind.data.frame, lapply(out, function(x) rbind(x)))
-			y <- as.data.frame(sapply(y,unlist))
+			if(nrow(y)>1) y <- as.data.frame(sapply(y,unlist))
 			names(y) <- paste("alpha.",alpha, sep="")
 			area@data <- cbind.data.frame(area@data,y)
 			return(area)

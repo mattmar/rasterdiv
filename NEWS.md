@@ -1,3 +1,7 @@
+# rasterdiv 0.2.5.2
+## Minor changes
+* Adding testthat tests for area-based Rao.
+
 # rasterdiv 0.2.5.1
 ## Minor changes
 * Made area-based *paRao* more efficient.

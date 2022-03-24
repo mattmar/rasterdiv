@@ -1,3 +1,6 @@
+## v0.2.5
+# Add alpha!=1 for area-based rao
+# Add multidimensional methods to area-based rao
 ## v0.2.4
 # Reduce length of vignette checks.
 # Add testthat example for RaoAUC multidimentional.

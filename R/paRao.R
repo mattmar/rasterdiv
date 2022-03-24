@@ -2,6 +2,8 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 {
     # Define function to check if a number is an integer
 	is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
+    # Warning on numeric "simplification"
+    message(paste0("Warning: simplify=", simplify,". You're rounding data to ",simplify," decimal place."))
     # Initial checks on type of input data
 	if( !(is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list")) ) {
 		stop("\nNot a valid x object.")
@@ -64,7 +66,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 						y <- z * mfactor
 						storage.mode(y) <- "integer"
 					} else{
-						y <- type.convert(matrix(getValues(z),ncol=nc,nrow=nr,byrow=TRUE))
+						y <- type.convert(matrix(getValues(z),ncol=nc,nrow=nr,byrow=TRUE), as.is= TRUE)
 					}
 					return(y)
 				})
@@ -99,7 +101,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 						y <- z * mfactor
 						storage.mode(y) <- "integer"
 					}
-					type.convert(as.matrix(z))
+					type.convert(as.matrix(z), as.is=TRUE)
 				})
 			}
 		}

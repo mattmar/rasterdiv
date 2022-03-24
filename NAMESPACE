@@ -10,7 +10,7 @@ importFrom("utils", "combn", "setTxtProgressBar", "txtProgressBar","globalVariab
 importFrom("foreach", "%dopar%", "foreach" , "%do%")
 import("svMisc", "progress")
 importFrom("progress", "progress_bar")
-importFrom("terra", "split", "crop")
+importFrom("terra", "split", "crop", "as.polygons")
 
 #####################################
 ##               Export            ##

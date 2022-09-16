@@ -17,7 +17,7 @@ importFrom("terra", "split", "crop", "as.polygons")
 #####################################
 export(Hill, HillS, HillP)
 export(Rao)
-export(paRao, paRaoS, paRaoP, mpaRaoS, mpaRaoP, RaoAUC, paRaoAreaS)
+export(paRao, paRaoS, paRaoP, mpaRaoS, mpaRaoP, RaoAUC, paRaoAreaS, mpaRaoAreaS)
 export(.meuclidean, .mmanhattan, .mcanberra, .mminkowski, .mmahalanobis)
 export(CRE, .CRE_, .Prob, .Deltas, .CumRes, .Reorder, .Cumsum, .Rev)
 export(Renyi, RenyiS, RenyiP)

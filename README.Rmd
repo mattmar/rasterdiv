@@ -1,0 +1,38 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-"
+)
+```
+<!-- badges: start -->
+<!-- [![cran version](http://www.r-pkg.org/badges/version/rasterdiv)](https://cran.r-project.org/package=rasterdiv) -->
+<!-- [![downloads](http://cranlogs.r-pkg.org/badges/rasterdiv)](http://cranlogs.r-pkg.org/badges/rasterdiv) -->
+<!--[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/rasterdiv)](http://cranlogs.r-pkg.org/badges/grand-total/rasterdiv) -->
+<!-- [![Rdoc](https://www.rdocumentation.org/packages/rasterdiv/versions/0.2-5.2)](https://www.rdocumentation.org/packages/rasterdiv/versions/0.2-5.2) -->
+<!-- badges: end -->
+
+# How to install?
+
+### Stable versions can be installed from the CRAN:
+
+```{r, eval = FALSE}
+install.packages("rasterdiv")
+```
+
+### Development versions can be installed with:
+
+```{r, eval = FALSE}
+library(devtools)
+install_github("mattmar/rasterdiv")
+```
+
+## What is rasterdiv?
+
+__rasterdiv__ is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indexes on RasterLayer or numerical matrices, such as Shannon's entropy or Cumulative Residual Entropy (CRE).

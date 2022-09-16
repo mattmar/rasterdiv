@@ -10,7 +10,7 @@ Multidimensional parametric Rao's index of quadratic entropy (Q).
 mpaRaoS(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor)
 }
 \arguments{
-\item{x}{input list.}
+\item{rasterm}{input RasterStack.}
 \item{alpha}{alpha value for order of diversity in Hill's Index.}
 \item{w}{half of the side of the square moving window.}
 \item{dist_m}{Type of distance used.}

@@ -56,10 +56,10 @@ values(r1)=xyz$sim2
 
 Now we calculate multidimension Rao's index for two different moving windows and alpha values.
 ```{r results='hide', message=FALSE, warning=FALSE}
-mRao <- paRao(x=list(r,r1), window=c(3,5), alpha=c(1,Inf), na.tolerance=1, method="multidimension",simplify=3)
+mRao <- paRao(x=list(r,r1), window=c(3,5), alpha=c(1,Inf), na.tolerance=1, method="multidimension",simplify=3, debugging=TRUE)
 ```
 
-The output is a nested list of RasterLayers which we can transform in a stack of RasterLayers and plot together with the input layers, as follows:
+The output is a nested list of RasterLayers which we can transform in a stack of RasterLayers and plotted together with the input layers, as follows:
 ```{r}
 plot(stack(r,r1,stack(mRao[[1]]),stack(mRao[[2]])), nc = 2, nr = 3)
 ```

@@ -23,7 +23,6 @@ paRaoAreaS <- function(rasterm, area, alpha, simplify) {
 	p1 <- diag(TRUE,length(tw_values))
 	p1[lower.tri(p1)] <- c(combn(p,m=2,FUN=prod,na.rm=TRUE))
 	paRaoOareaS <- (sum((p1)*(d1^alpha)*2,na.rm=TRUE))^(1/alpha) / mfactor
-
 	gc()
 	return(paRaoOareaS)
 }

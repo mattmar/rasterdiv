@@ -1,0 +1,12 @@
+pandoc: 2.14.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  rasterdiv_advanced_multidimension_Rao: rasterdiv_advanced_multidimension_Rao.html
+  rasterdiv_area_based_Rao: rasterdiv_area_based_Rao.html
+  rasterdiv_basics: rasterdiv_basics.html
+last_built: 2022-09-16T15:54Z
+urls:
+  reference: https://mattmar.github.io/rasterdiv/reference
+  article: https://mattmar.github.io/rasterdiv/articles
+

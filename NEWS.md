@@ -1,6 +1,7 @@
-# rasterdiv 0.3
+# rasterdiv 0.3.0
 ## Major changes
-* Adding classic and multimension area-based Rao's index in *paRao()*.
+* Adding multidimension area-based Rao's index in *paRao()*.
+
 ## Minor changes
 * Reorganisation of vignettes.
 * New GitHub site with *pkgdown()*.

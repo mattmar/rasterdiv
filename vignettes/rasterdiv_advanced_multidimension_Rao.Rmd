@@ -1,10 +1,10 @@
 ---
-title: "Rasterdiv: Derive multidimension Rao's Index."
+title: "Multidimension Rao's Index."
 author: "Matteo Marcantonio, Daniele da Re, Duccio Rocchini"
 output: rmarkdown::html_vignette
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Rasterdiv: Derive multidimension Rao's Index.}
+  %\VignetteIndexEntry{Multidimension Rao's Index.}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

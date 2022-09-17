@@ -12,27 +12,43 @@ knitr::opts_chunk$set(
 )
 ```
 <!-- badges: start -->
-<!-- [![cran version](http://www.r-pkg.org/badges/version/rasterdiv)](https://cran.r-project.org/package=rasterdiv) -->
-<!-- [![Downloads (monthly)](https://cranlogs.r-pkg.org/badges/last-month/rasterdiv?color=brightgreen)](https://cranlogs.r-pkg.org/badges/last-month/rasterdiv)
- -->
-<!--[![Downloads (total)](https://cranlogs.r-pkg.org/badges/grand-total/rasterdiv?color=brightgreen)](https://www.r-pkg.org/pkg/rasterdiv) -->
+[![cran version](http://www.r-pkg.org/badges/version/rasterdiv)](https://cran.r-project.org/package=rasterdiv)
+[![Downloads (monthly)](https://cranlogs.r-pkg.org/badges/last-month/rasterdiv?color=brightgreen)](https://cranlogs.r-pkg.org/badges/last-month/rasterdiv)
+[![Downloads (total)](https://cranlogs.r-pkg.org/badges/grand-total/rasterdiv?color=brightgreen)](https://www.r-pkg.org/pkg/rasterdiv)
+
 <!-- badges: end -->
 
-# How to install?
+# rasterdiv
 
-### Stable versions can be installed from the CRAN:
+## How to install?
+
+### The stable version can be installed from the [CRAN](https://cran.microsoft.com/):
 
 ```{r, eval = FALSE}
 install.packages("rasterdiv")
 ```
 
-### Development versions can be installed with:
+### The development version can be installed from [GitHub](https://github.com/):
 
 ```{r, eval = FALSE}
 library(devtools)
-install_github("mattmar/rasterdiv")
+remote::install_github("mattmar/rasterdiv")
 ```
 
 ## What is rasterdiv?
 
-__rasterdiv__ is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indexes on RasterLayer or numerical matrices, such as Shannon's entropy or Cumulative Residual Entropy (CRE).
+*__rasterdiv__* is an R package that provides functions to apply diversity indexes based on Information Theory on RasterLayer or numerical matrices. Supported indexes are:
+
+- Parametric Rao’s quadratic entropy (classical and multidimensional);
+- Shannon's diversity index;
+- Pielou's evenness index;
+- Hill's generalised entropy;
+- Rényi's generalised entropy;
+- Berger-Parker index;
+- Cumulative Residual Entropy (CRE)
+
+*__rasterdiv__* uses a "moving window" approach to derive such indexes; however, area-based (e.g., by using vector layers) Parametric Rao’s quadratic entropy is also possible through the [*paRao()*](https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html) function. Read more on *__rasterdiv__*:
+
+- [*__rasterdiv__—An Information Theory tailored R package for measuring ecosystem heterogeneity from space: To the origin and back*](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13583);
+- [*Measuring diversity from space: a global view of the free and open source rasterdiv R package under a coding perspective*](https://link.springer.com/article/10.1007/s42974-021-00042-x);
+- [*From zero to infinity: Minimum to maximum diversity of the planet by spatio-parametric Rao’s quadratic entropy*](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13270)

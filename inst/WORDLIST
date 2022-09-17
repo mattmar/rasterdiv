@@ -9,7 +9,7 @@ Pielou's
 RaoAUC
 RasterLayer
 RasterLayers
-Rdoc
+RasterStack
 Renyi
 Renyi's
 Rényi
@@ -39,6 +39,7 @@ np
 paRao
 pbapply
 pbmcapply
+pkgdown
 px
 rasterstack
 rmpi

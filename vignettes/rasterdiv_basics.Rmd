@@ -1,10 +1,10 @@
 ---
-title: "Rasterdiv: Derive indices of diversity from NDVI."
+title: "Indices of diversity from NDVI."
 author: "Matteo Marcantonio, Duccio Rocchini"
 output: rmarkdown::html_vignette
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Rasterdiv: Derive indices of diversity from NDVI.}
+  %\VignetteIndexEntry{Indices of diversity from NDVI.}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,10 +1,10 @@
 ---
-title: "Rasterdiv: Area-based Rao's index."
-author: "Matteo Marcantonio, Duccio Rocchini"
+title: "Area-based Rao's index."
+author: "Matteo Marcantonio"
 output: rmarkdown::html_vignette
 date: "`r Sys.Date()`"
 vignette: >
- %\VignetteIndexEntry{Rasterdiv: Area-based Rao's index.}
+ %\VignetteIndexEntry{Area-based Rao's index.}
  %\VignetteEngine{knitr::rmarkdown}
  %\VignetteEncoding{UTF-8}
 ---
@@ -51,7 +51,7 @@ plot(RaoC, col=hcl(RaoC$alpha.1*10), main="Classic Rao's index per continent alp
 text(RaoC, label=paste("Rao'Q =", round(RaoC$alpha.1,1)), col="black", family="Arial", halo=TRUE)
 ```
 
-## Compute multimension area-based Rao's Index
+## Compute multidimension area-based Rao's Index
 ```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
 # The second layers is NDVI/100 (just as an example)
 RaoMC <- paRao(x=stack(copNDVIlr,copNDVIlr/2), area=world, field='CONTINENT', alpha=5, method="multidimension", simplify=1)

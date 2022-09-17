@@ -31,8 +31,8 @@ install.packages("rasterdiv")
 ### The development version can be installed from [GitHub](https://github.com/):
 
 ```{r, eval = FALSE}
-library(devtools)
-remote::install_github("mattmar/rasterdiv")
+# install.packages("remotes")
+remotes::install_github("mattmar/rasterdiv")
 ```
 
 ## What is rasterdiv?

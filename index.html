@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,9 +41,9 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/rasterdiv_advanced_multidimension_Rao.html">Rasterdiv: Derive multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="articles/rasterdiv_area_based_Rao.html">Rasterdiv: Area-based Rao's index.</a>
-    <a class="dropdown-item" href="articles/rasterdiv_basics.html">Rasterdiv: Derive indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
   </div>
 </li>
 <li class="nav-item">
@@ -68,28 +68,51 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="how-to-install">How to install?<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
+  <main id="main" class="col-md-9">
+<!-- badges: end --><div class="section level1">
+<div class="page-header"><h1 id="rasterdiv">rasterdiv<a class="anchor" aria-label="anchor" href="#rasterdiv"></a>
 </h1></div>
+<div class="section level2">
+<h2 id="how-to-install">How to install?<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
+</h2>
 <div class="section level3">
-<h3 id="stable-versions-can-be-installed-from-the-cran">Stable versions can be installed from the CRAN:<a class="anchor" aria-label="anchor" href="#stable-versions-can-be-installed-from-the-cran"></a>
+<h3 id="the-stable-version-can-be-installed-from-the-cran">The stable version can be installed from the <a href="https://cran.microsoft.com/" class="external-link">CRAN</a>:<a class="anchor" aria-label="anchor" href="#the-stable-version-can-be-installed-from-the-cran"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rasterdiv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="development-versions-can-be-installed-with">Development versions can be installed with:<a class="anchor" aria-label="anchor" href="#development-versions-can-be-installed-with"></a>
+<h3 id="the-development-version-can-be-installed-from-github">The development version can be installed from <a href="https://github.com/" class="external-link">GitHub</a>:<a class="anchor" aria-label="anchor" href="#the-development-version-can-be-installed-from-github"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
-<span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mattmar/rasterdiv"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remote</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mattmar/rasterdiv"</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="what-is-rasterdiv">What is rasterdiv?<a class="anchor" aria-label="anchor" href="#what-is-rasterdiv"></a>
 </h2>
-<p><strong>rasterdiv</strong> is a package for the R statistical software and environment. It aims to provide functions to apply Information Theory based diversity indexes on RasterLayer or numerical matrices, such as Shannon’s entropy or Cumulative Residual Entropy (CRE).</p>
+<p><strong><em>rasterdiv</em></strong> is an R package that provides functions to apply diversity indexes based on Information Theory on RasterLayer or numerical matrices. Supported indexes are:</p>
+<ul>
+<li>Parametric Rao’s quadratic entropy (classical and multidimensional);</li>
+<li>Shannon’s diversity index;</li>
+<li>Pielou’s evenness index;</li>
+<li>Hill’s generalised entropy;</li>
+<li>Rényi’s generalised entropy;</li>
+<li>Berger-Parker index;</li>
+<li>Cumulative Residual Entropy (CRE)</li>
+</ul>
+<p><strong><em>rasterdiv</em></strong> uses a “moving window” approach to derive such indexes; however, area-based (e.g., by using vector layers) Parametric Rao’s quadratic entropy is also possible through the <a href="https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html"><em>paRao()</em></a> function. Read more on <strong><em>rasterdiv</em></strong>:</p>
+<ul>
+<li>
+<a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13583" class="external-link"><em><strong>rasterdiv</strong>—An Information Theory tailored R package for measuring ecosystem heterogeneity from space: To the origin and back</em></a>;</li>
+<li>
+<a href="https://link.springer.com/article/10.1007/s42974-021-00042-x" class="external-link"><em>Measuring diversity from space: a global view of the free and open source rasterdiv R package under a coding perspective</em></a>;</li>
+<li><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13270" class="external-link"><em>From zero to infinity: Minimum to maximum diversity of the planet by spatio-parametric Rao’s quadratic entropy</em></a></li>
+</ul>
 </div>
 </div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
@@ -131,7 +154,14 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/package=rasterdiv" class="external-link"><img src="http://www.r-pkg.org/badges/version/rasterdiv" alt="cran version"></a></li>
+<li><a href="https://cranlogs.r-pkg.org/badges/last-month/rasterdiv" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/last-month/rasterdiv?color=brightgreen" alt="Downloads (monthly)"></a></li>
+<li><a href="https://www.r-pkg.org/pkg/rasterdiv" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/rasterdiv?color=brightgreen" alt="Downloads (total)"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

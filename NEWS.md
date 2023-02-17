@@ -1,3 +1,7 @@
+# rasterdiv 0.3.1
+## Minor changes
+* Fixing repetition in paRao() manual
+
 # rasterdiv 0.3.0
 ## Major changes
 * Adding multidimension area-based Rao's index in *paRao()*.

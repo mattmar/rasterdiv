@@ -61,7 +61,7 @@ tw <- apply(crop1dt, 2,function(x) {
     return(y)
     })
 
-vcomb <- combn(nrow(tw),2)
+vcomb <- combn(length(tw),2)
 vout <- c()
 for( p in 1:ncol(vcomb) ) {
     lpair <- list(cbind(vcomb[1,p],vcomb[2,p]))

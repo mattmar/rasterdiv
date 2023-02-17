@@ -20,7 +20,6 @@ paRaoS(rasterm,alpha,w,dist_m,
 \item{diag}{Boolean. Diagonal of the distance matrix.}
 \item{debugging}{a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For de-bugging only.}
 \item{isfloat}{Are the input data floats?}
-\item{debugging}{Debugging mode, TRUE or FALSE.}
 }
 \value{
 A list of matrices of dimension \code{dim(x)} with length equal to the length of \code{alpha}.

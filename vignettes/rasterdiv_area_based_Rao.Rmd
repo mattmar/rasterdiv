@@ -88,6 +88,6 @@ values(rr) <- RaoGRID$alpha.2
 
 ```{r fig03}
 #Plot Rao's per grid cell
-levelplot(rr,col.regions=viridis::viridis_pal(option = "D"),margin=FALSE,scales=list(draw=FALSE),xlab=NULL,ylab=NULL) +
+levelplot(rr,col.regions=viridis_pal(option = "D"),margin=FALSE,scales=list(draw=FALSE),xlab=NULL,ylab=NULL) +
 layer(sp.polygons(world,col="black"))
 ```

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Matteo
 Marcantonio</h4>
             
-            <h4 data-toc-skip class="date">2023-02-17</h4>
+            <h4 data-toc-skip class="date">2023-05-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/HEAD/vignettes/rasterdiv_area_based_Rao.Rmd" class="external-link"><code>vignettes/rasterdiv_area_based_Rao.Rmd</code></a></small>
       <div class="d-none name"><code>rasterdiv_area_based_Rao.Rmd</code></div>
@@ -88,7 +88,9 @@ Marcantonio</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://mattmar.github.io/rasterdiv/">rasterdiv</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://oscarperpinan.github.io/rastervis/" class="external-link">rasterVis</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="http://latticeextra.r-forge.r-project.org/" class="external-link">latticeExtra</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette uses <strong>rasterdiv</strong> to derive classic and
 multidimension area-based Rao’s index from an input vector layer and
 multiple raster layers.</p>
@@ -141,6 +143,33 @@ resolution 10 times coarser than original and cut on Africa.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">RaoMC</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grDevices/hcl.html" class="external-link">hcl</a></span><span class="op">(</span><span class="va">RaoMC</span><span class="op">$</span><span class="va">alpha.5</span><span class="op">*</span><span class="fl">10000</span><span class="op">)</span>, main<span class="op">=</span><span class="st">"Multidimension Rao's index per continent alpha 5"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span><span class="va">RaoMC</span>, label<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Rao'Q ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">RaoMC</span><span class="op">$</span><span class="va">alpha.5</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"black"</span>, family<span class="op">=</span><span class="st">"Arial"</span>, halo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rasterdiv_area_based_Rao_files/figure-html/fig02-1.png" width="95%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="additional-example-subsetting-on-a-continent-and-then-using-a-grid-vector-to-derive-raos-in-each-cell">Additional example subsetting on a continent and then using a grid
+vector to derive Rao’s in each cell<a class="anchor" aria-label="anchor" href="#additional-example-subsetting-on-a-continent-and-then-using-a-grid-vector-to-derive-raos-in-each-cell"></a>
+</h2>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Subset</span></span>
+<span><span class="va">africa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">world</span>, <span class="va">CONTINENT</span><span class="op">==</span><span class="st">"Africa"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Make the raster grid</span></span>
+<span><span class="va">africa.r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="va">africa</span><span class="op">)</span>, nrow<span class="op">=</span><span class="fl">20</span>, ncol<span class="op">=</span><span class="fl">20</span>, crs <span class="op">=</span> <span class="st">"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"</span><span class="op">)</span></span>
+<span><span class="va">africa.r</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">africa.r</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Transform it in a vector</span></span>
+<span><span class="va">africa.v</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">africa.r</span>, <span class="st">"SpatialPolygonsDataFrame"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Derive Rao's (alpha=2) for each grid cell</span></span>
+<span><span class="va">RaoGRID</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/paRao.html">paRao</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">copNDVIlr</span>, area<span class="op">=</span><span class="va">africa.v</span>, field<span class="op">=</span><span class="st">'layer'</span>, alpha<span class="op">=</span><span class="fl">2</span>, simplify<span class="op">=</span><span class="fl">1</span>, na.tolerance<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Transform the spatial polygon data frame in a raster layer that can be used in levelplot</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">RaoGRID</span>,ncol<span class="op">=</span><span class="fl">20</span>, nrow<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">RaoGRID</span><span class="op">$</span><span class="va">alpha.2</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Plot Rao's per grid cell</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/levelplot.html" class="external-link">levelplot</a></span><span class="op">(</span><span class="va">rr</span>,col.regions<span class="op">=</span><span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/viridis_pal.html" class="external-link">viridis_pal</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"D"</span><span class="op">)</span>,margin<span class="op">=</span><span class="cn">FALSE</span>,scales<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>draw<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>,xlab<span class="op">=</span><span class="cn">NULL</span>,ylab<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/latticeExtra/man/layer.html" class="external-link">layer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/sp/man/panel.html" class="external-link">sp.polygons</a></span><span class="op">(</span><span class="va">world</span>,col<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="rasterdiv_area_based_Rao_files/figure-html/fig03-1.png" width="95%" style="display: block; margin: auto;"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

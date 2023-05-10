@@ -1,18 +1,23 @@
+# rasterdiv 0.3.2
+## Minor changes
+* Fixes minor "bug" for area based Rao that did not allow for polygons containing raster matricex with just one value.
+* Adds an additional examples for Area based Rao.
+
 # rasterdiv 0.3.1
 ## Minor changes
-* Fixing repetition in paRao() manual
+* Fixes repetition in paRao() manual
 
 # rasterdiv 0.3.0
 ## Major changes
-* Adding multidimension area-based Rao's index in *paRao()*.
+* Adds multidimension area-based Rao's index in *paRao()*.
 
 ## Minor changes
-* Reorganisation of vignettes.
-* New GitHub site with *pkgdown()*.
+* Reorganises vignettes.
+* Adds new GitHub site with *pkgdown()*.
 
 # rasterdiv 0.2.5.2
 ## Minor changes
-* Adding testthat tests for area-based Rao.
+* Adds testthat tests for area-based Rao.
 
 # rasterdiv 0.2.5.1
 ## Minor changes

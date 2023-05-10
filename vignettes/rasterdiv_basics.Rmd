@@ -41,7 +41,7 @@ copNDVIlr <- raster::aggregate(copNDVI, fact=30)
 #Set float numbers as integers to further speed up the calculation
 storage.mode(copNDVIlr[]) = "integer"
 ```
-## Show resmpled NDVI data
+## Show resampled NDVI data
 
 ```{r fig01}
 levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~150km pixel resolution")

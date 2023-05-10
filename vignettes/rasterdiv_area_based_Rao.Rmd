@@ -17,6 +17,8 @@ knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "
 require(rasterdiv)
 require(rasterVis)
 require(RColorBrewer)
+require(viridis)
+require(latticeExtra)
 ```
 This vignette uses **rasterdiv** to derive classic and multidimension area-based Rao's index from an input vector layer and multiple raster layers.
 
@@ -61,4 +63,31 @@ RaoMC <- paRao(x=stack(copNDVIlr,copNDVIlr/2), area=world, field='CONTINENT', al
 #Plot area-based RAo's index
 plot(RaoMC, col=hcl(RaoMC$alpha.5*10000), main="Multidimension Rao's index per continent alpha 5")
 text(RaoMC, label=paste("Rao'Q =", round(RaoMC$alpha.5,3)), col="black", family="Arial", halo=TRUE)
+```
+
+## Additional example subsetting on a continent and then using a grid vector to derive Rao's in each cell
+
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
+#Subset
+africa <- subset(world, CONTINENT=="Africa")
+
+#Make the raster grid
+africa.r <- raster(extent(africa), nrow=20, ncol=20, crs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+africa.r[] <- 1:ncell(africa.r)
+
+#Transform it in a vector
+africa.v = as(africa.r, "SpatialPolygonsDataFrame")
+
+#Derive Rao's (alpha=2) for each grid cell
+RaoGRID <- paRao(x=copNDVIlr, area=africa.v, field='layer', alpha=2, simplify=1, na.tolerance=0.5)
+
+#Transform the spatial polygon data frame in a raster layer that can be used in levelplot
+rr <- raster(RaoGRID,ncol=20, nrow=20)
+values(rr) <- RaoGRID$alpha.2
+```
+
+```{r fig03}
+#Plot Rao's per grid cell
+levelplot(rr,col.regions=viridis_pal(option = "D"),margin=FALSE,scales=list(draw=FALSE),xlab=NULL,ylab=NULL) +
+layer(sp.polygons(world,col="black"))
 ```

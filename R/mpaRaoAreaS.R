@@ -7,17 +7,21 @@ mfactor <- 100^simplify
 crop1 <- crop(rasterm, area)
 crop1dt <- raster::as.matrix(crop1)*mfactor
 storage.mode(crop1dt) <- "integer"
-classes <- levels(as.factor(crop1dt))
 
-# Evaluate Rao's method given alpha
-window <- nrow(crop1dt) #Temporary patch?
-if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
-    alphameth <- "max(vout*2,na.rm=TRUE)"
-} 
-if( alpha>0 ) {
-    alphameth <- "sum(rep(vout^alpha,2)*(1/(window)^4),na.rm=TRUE)^(1/alpha)"
-}
-if( alpha>100 ) warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
+# Check for only 1 value in the matrix
+if( any(is.na(crop1dt)) & all(apply(crop1dt, 2, function(a) length(unique(a))<=2)) ) {
+    mpaRaoOareaS <- NA
+    } else {
+        # Evaluate Rao's method given alpha
+        classes <- levels(as.factor(crop1dt))
+        window <- nrow(crop1dt) #Temporary patch?
+        if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
+            alphameth <- "max(vout*2,na.rm=TRUE)"
+        } 
+        if( alpha>0 ) {
+            alphameth <- "sum(rep(vout^alpha,2)*(1/(window)^4),na.rm=TRUE)^(1/alpha)"
+        }
+        if( alpha>100 ) warning("With this alpha value you may get integer overflow: consider decreasing it.")
 
 # Check if there are NAs in the matrices
 if ( is(rasterm[[1]],"RasterLayer") ){
@@ -70,5 +74,6 @@ for( p in 1:ncol(vcomb) ) {
 # Evaluate the parsed alpha method
 mpaRaoOareaS <- eval(parse(text=alphameth))
 gc()
+}
 return(mpaRaoOareaS)
 }

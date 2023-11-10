@@ -1,3 +1,21 @@
+#' Sequential Hill's diversity index
+#'
+#' Computes Hill's diversity index in a non-parallelized (sequential) manner.
+#'
+#' @param rasterm Input data.
+#' @param w Half of the side of the square moving window.
+#' @param alpha Alpha value for the order of diversity in Hill's Index.
+#' @param na.tolerance A numeric value between 0.0 and 1.0, which indicates the proportion of NA values that will be tolerated to calculate Hill's index in each moving window over \code{rasterm}. If the relative proportion of NA's in a moving window is greater than na.tolerance, then the value of the window will be set as NA; otherwise, the index will be calculated considering the non-NA values. Default value is 1.0 (i.e., full tolerance for NA's).
+#' @param debugging A boolean variable set to FALSE by default. If TRUE, additional messages will be printed for debugging purposes.
+#'
+#' @return Matrix or a list of matrices with the Hill index computed through a moving window of the given size.
+#'
+#' @author Marcantonio Matteo \email{marcantoniomatteo@@gmail.com}, Martina Iannacito \email{martina.iannacito@@inria.fr}, Duccio Rocchini \email{duccio.rocchini@@unibo.it}
+#'
+#' @seealso \code{\link{Hill}}
+#'
+#' @keywords internal
+
 HillS <- function(rasterm, w, alpha, na.tolerance, debugging){
 
   out <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])

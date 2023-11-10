@@ -41,11 +41,16 @@ numerical matrices. Supported indexes are:
   - Hill’s generalised entropy;
   - Rényi’s generalised entropy;
   - Berger-Parker index;
-  - Cumulative Residual Entropy (CRE)
+  - ~~Cumulative Residual Entropy (CRE)~~
 
-***rasterdiv*** uses a “moving window” approach to derive such indexes;
-however, area-based (e.g., by using vector layers) Parametric Rao’s
-quadratic entropy is also possible through the
+:partying\_face: ***rasterdiv*** now integrates also functions to
+prepare and plot time series with “helical graphs”, check out this
+vignette for more infos: [Visualising rasterdiv indexes with Helical
+Plots](https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html).
+
+:window: ***rasterdiv*** uses a “moving window” approach to derive such
+indexes; however, area-based (e.g., by using vector layers) Parametric
+Rao’s quadratic entropy is also possible through the
 [*paRao()*](https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html)
 function. Read more on ***rasterdiv***:
 
@@ -58,3 +63,6 @@ function. Read more on ***rasterdiv***:
   - [*From zero to infinity: Minimum to maximum diversity of the planet
     by spatio-parametric Rao’s quadratic
     entropy*](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13270)
+  - [*Helical graphs to visualize the NDVI temporal variation of forest
+    vegetation in an open source
+    space*](https://www.sciencedirect.com/science/article/abs/pii/S157495412200406X)

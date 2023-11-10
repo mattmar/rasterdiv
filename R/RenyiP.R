@@ -1,9 +1,31 @@
+#' Parallelised Renyi's diversity index
+#'
+#' This function provides a parallelised computation of Renyi's diversity index.
+#'
+#' @param rasterm Input data, expected to be in a specific format suitable for the calculations.
+#' @param w Half of the side of the square moving window used in the computation.
+#' @param alpha The alpha value for the order of diversity in Renyi's Index calculations.
+#' @param base The base of the logarithm used in the diversity index calculations.
+#' @param na.tolerance A numeric value between 0.0 and 1.0 indicating the proportion of NA values 
+#' that are acceptable in each moving window over \code{rasterm} during the calculation of Rao's index.
+#' If the proportion of NAs in a window exceeds this value, the result for that window is set as NA.
+#' Otherwise, the index is calculated using the non-NA values. The default is 0.0, indicating no tolerance for NAs.
+#' @param debugging Boolean; controls the generation of additional, diagnostic messages. 
+#' If TRUE, extra messages are printed primarily for debugging purposes. Default is FALSE.
+#' @return A matrix or a list of matrices, each containing the Renyi index values computed using a moving 
+#' window of the specified size.
+#' @author Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}, 
+#' Martina Iannacito \email{martina.iannacito@@inria.fr}, 
+#' Duccio Rocchini \email{duccio.rocchini@@unibo.it}
+#' @seealso \code{\link{Renyi}} for the non-parallelised version of the Renyi diversity index calculation.
+#' @keywords internal
+
 RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
   # Some initial housekeeping
   window = 2*w+1
   message("\n\nProcessing alpha ",alpha, " Window ", window)
   # Set a progress bar
-  pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
+  pb <- utils::txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
   #
   ## Reshape values
   #
@@ -19,8 +41,8 @@ RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
   #
   ## Start the parallelized loop over iter
   #
-  RenyiOP <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
-    setTxtProgressBar(pb, cl)
+  RenyiOP <- foreach::foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
+    utils::setTxtProgressBar(pb, cl)
     if(debugging) {
       cat(paste(cl))
     }

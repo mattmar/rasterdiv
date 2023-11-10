@@ -1,6 +1,21 @@
+# rasterdiv 0.3.3
+## Major changes
+* Adds heliPrep and heliPlot for helical graphs
+* Temporarily removes CRE function
+* Adds a vignettes for accRao (4)
+* Adds a vignettes for helical plots (5)
+
+## Minor changes
+* Small changes in all vignettes
+* Updated documentation to Roxygen style
+* Uses terra in the place of raster
+* Changes data type of copNDVI (SpatRaster now)
+* Changes data type of world (SpatVector now)
+* Improves documentation
+
 # rasterdiv 0.3.2
 ## Minor changes
-* Fixes minor "bug" for area based Rao that did not allow for polygons containing raster matricex with just one value.
+* Fixes minor "bug" for area based Rao that did not allow for polygons containing raster matrices with just one value.
 * Adds an additional examples for Area based Rao.
 
 # rasterdiv 0.3.1

@@ -33,11 +33,11 @@
     tmp <- tmp[!is.na(tmp[,1]),] 
     if( length(tmp)==0 | is.null(dim(tmp)) ) {
         return(NA)
-    } else if(rcond(cov(tmp)) <= 0.001) {
+    } else if(rcond(stats::cov(tmp)) <= 0.001) {
         return(NA)
     } else {
         # return the inverse of the covariance matrix of tmp; aka the precision matrix
-        inverse <- solve(cov(tmp)) 
+        inverse <- solve(stats::cov(tmp)) 
         if(debugging){
             print(inverse)
         }

@@ -1,3 +1,30 @@
+#' Multidimensional sequential Parametric Rao's index of quadratic entropy (Q)
+#'
+#' This function calculates the multidimensional parametric Rao's index of quadratic entropy (Q) using a 
+#' sequential method. It is particularly useful in contexts where parallel computation is not feasible or desired.
+#' The function applies a moving window approach to the provided raster data stack.
+#'
+#' @param x input list.
+#' @param alpha Numeric; alpha value for order of diversity in Hill's Index.
+#' @param w Numeric; half of the side of the square moving window used for calculation.
+#' @param dist_m Character; type of distance used in the analysis.
+#' @param na.tolerance Numeric; a threshold between 0.0 and 1.0 indicating the allowable proportion of NA 
+#' values within each moving window. If the proportion of NA values exceeds this, the window's value is set as 
+#' NA; otherwise, the computation uses the non-NA values.
+#' @param rescale Logical; if TRUE, scales and centres the values in each element of 'x'.
+#' @param lambda Numeric; lambda value used for Minkowski distance calculation.
+#' @param diag Logical; if TRUE, includes the diagonal of the distance matrix in computations.
+#' @param debugging Logical; if TRUE, additional diagnostic messages are output, useful for debugging. Default 
+#' is FALSE.
+#' @param isfloat Logical; specifies if the input data are floats.
+#' @param mfactor Numeric; multiplication factor applied if input data are float numbers.
+#' @return A list of matrices, each representing a layer of the input RasterStack, containing calculated 
+#' Rao's index values. The dimensions correspond to those of the input, and the list length is equal to the 
+#' length of 'alpha'.
+#' @seealso \code{\link{paRao}} for the parallelized version of the Rao's index computation.
+#' @author Duccio Rocchini \email{duccio.rocchini@@unibo.it}, 
+#' Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}
+
 mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor) {
     # Some initial housekeeping
     message("\n\nProcessing alpha: ",alpha, " Moving Window: ", 2*w+1)
@@ -15,7 +42,7 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         alphameth <- "prod(vout,na.rm=TRUE)^(1/(window^4))"
     }
     # Set a progress bar
-    pb <- progress_bar$new(
+    pb <- progress::progress_bar$new(
         format = "\n [:bar] :elapsed -- Approximate ETA: :eta \n",
         total = (dim(rasterm)[2]+w), 
         clear = FALSE, 
@@ -24,9 +51,9 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
     # Define output matrix
     raoqe <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
     # Check if there are NAs in the matrices
-    if ( is(x[[1]],"RasterLayer") ){
+    if ( is(x[[1]],"SpatRaster") ){
         if(any(sapply(lapply(unlist(x),length),is.na)==TRUE))
-            warning("\n One or more RasterLayers contain NAs which will be treated as 0s")
+            warning("\n One or more SpatRasters contain NAs which will be treated as 0s")
     } else if ( is(x[[1]],"matrix") ){
         if(any(sapply(x, is.na)==TRUE) ) {
             warning("\n One or more matrices contain NAs which will be treated as 0s")
@@ -86,7 +113,7 @@ mpaRaoS <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
                 })
                 ## Vectorise the matrices in the list and calculate among matrix pairwase distances
                 lv <- lapply(tw, function(x) {as.vector(t(x))})
-                vcomb <- combn(length(lv[[1]]),2)
+                vcomb <- utils::combn(length(lv[[1]]),2)
                 vout <- c()
                 # Exclude windows with only 1 category
                 if( sum(sapply(lv, function(x) length(unique(x))))<3 ) {

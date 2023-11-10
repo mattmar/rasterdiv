@@ -1,3 +1,23 @@
+#' Parallelised Shannon's diversity index
+#'
+#' This function computes Shannon's diversity index in a parallelized manner, allowing for
+#' enhanced performance on suitable hardware. It is especially useful for large datasets.
+#'
+#' @param rasterm Input data; a matrix of raster data values.
+#' @param w Numeric; half of the side of the square moving window used in the calculation.
+#' @param na.tolerance Numeric; a tolerance level (between 0.0 and 1.0) for NA values in the moving
+#' window. If the proportion of NA values in a window exceeds this level, the result for that
+#' window is set as NA; otherwise, the calculation excludes the NA values. The default is 0.0,
+#' which allows no NA values.
+#' @param debugging Boolean; if TRUE, additional debugging information is printed during the 
+#' function's execution. This is helpful for debugging and is FALSE by default.
+#' @return A matrix or a list of matrices, each containing the Shannon diversity index values
+#' calculated using a moving window approach.
+#' @seealso \code{\link{Shannon}} for the non-parallelized version of the Shannon diversity index.
+#' @author Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}, 
+#' Martina Iannacito \email{martina.iannacito@@inria.fr}, 
+#' Duccio Rocchini \email{duccio.rocchini@@unibo.it}
+
 ShannonP <- function(rasterm, w, na.tolerance, debugging){
   #
   ## Reshape values
@@ -15,10 +35,10 @@ ShannonP <- function(rasterm, w, na.tolerance, debugging){
   #
   ## Progression bar
   #
-  pb <- txtProgressBar(min = (1+w), max = ncol(rasterm), style = 3)
-  progress <- function(n) setTxtProgressBar(pb, n)
+  pb <- utils::txtProgressBar(min = (1+w), max = ncol(rasterm), style = 3)
+  progress <- function(n) utils::setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
-  ShannonOP <- foreach(cl=(1+w):(ncol(rasterm)+w),.options.parallel = opts,.verbose = F) %dopar% {
+  ShannonOP <- foreach::foreach(cl=(1+w):(ncol(rasterm)+w),.options.parallel = opts,.verbose = F) %dopar% {
     ShannonOut <- sapply((1+w):(nrow(rasterm)+w), function(rw) {
       if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
         vv <- NA

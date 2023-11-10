@@ -1,3 +1,36 @@
+#' Multidimensional parallel Parametric Rao's index of quadratic entropy (Q)
+#'
+#' Multidimensional parametric Rao's index of quadratic entropy (Q).
+#'
+#' @param x input list.
+#' @param alpha alpha value for order of diversity in Hill's Index.
+#' @param w half of the side of the square moving window.
+#' @param dist_m Type of distance used.
+#' @param na.tolerance a numeric value \eqn{(0.0-1.0)} which indicates the proportion
+#'   of NA values that will be tolerated to calculate Rao's index in each moving
+#'   window over \emph{x}. If the relative proportion of NA's in a moving window is
+#'   bigger than na.tolerance, then the value of the window will be set as NA,
+#'   otherwise Rao's index will be calculated considering the non-NA values.
+#'   Default values is 0.0 (i.e., no tolerance for NA's).
+#' @param rescale Scale and centre values in each of the element of x.
+#' @param lambda Lambda value for Minkowski distance.
+#' @param diag Boolean. Diagonal of the distance matrix.
+#' @param debugging a boolean variable set to FALSE by default. If TRUE, additional
+#'   messages will be printed. For de-bugging only.
+#' @param isfloat Are the input data floats?
+#' @param mfactor Multiplication factor in case of input data as float numbers.
+#' @param np the number of processes (cores) which will be spawned.
+#'
+#' @return A list of matrices of dimension \code{dim(x)} with length equal to the
+#'   length of \code{alpha}.
+#'
+#' @author Duccio Rocchini \email{duccio.rocchini@unibo.it}, Marcantonio Matteo
+#'   \email{marcantoniomatteo@gmail.com}
+#'
+#' @seealso \code{\link{paRao}}
+#'
+#' @keywords internal
+
 mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor,np) {
     # Some initial housekeeping
     message("\n\nProcessing alpha: ",alpha, " Moving Window: ", 2*w+1)
@@ -17,11 +50,11 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         stop()
     }
     # Set a progress bar
-    pb <- txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
+    pb <- utils::txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
     # Check if there are NAs in the matrices
-    if ( is(x[[1]],"RasterLayer") ){
+    if ( is(x[[1]],"SpatRaster") ){
         if(any(sapply(lapply(unlist(x),length),is.na)==TRUE))
-            warning("\n One or more RasterLayers contain NA's which will be treated as 0")
+            warning("\n One or more SpatRasters contain NA's which will be treated as 0")
     } else if ( is(x[[1]],"matrix") ){
         if(any(sapply(x, is.na)==TRUE) ) {
             warning("\n One or more matrices contain NA's which will be treated as 0")
@@ -68,9 +101,9 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
         message("\n Warning: ",ncol(x[[1]])*nrow(x[[1]])*length(x), " cells to be processed, it may take some time... \n")
     }
     # Parallelised parametric multidimensional Rao
-    out <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F, .export="alpha") %dopar% {
+    out <- foreach::foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F, .export="alpha") %dopar% {
         # Update progress bar
-        setTxtProgressBar(pb, cl)
+        utils::setTxtProgressBar(pb, cl)
         # Row loop
         mpaRaoOP <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
             if(debugging) {
@@ -85,7 +118,7 @@ mpaRaoP <- function(x,alpha,w,dist_m,na.tolerance,rescale,lambda,diag,debugging,
                 })
                 # Vectorise the matrices in the list and calculate between matrices pairwase distances
                 lv <- lapply(tw, function(x) {as.vector(t(x))})
-                vcomb <- combn(length(lv[[1]]),2)
+                vcomb <- utils::combn(length(lv[[1]]),2)
                 # Exclude windows with only 1 category in all lists
                 if( sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1) ) {
                     vv <- 0

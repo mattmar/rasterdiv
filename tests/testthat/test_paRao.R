@@ -1,8 +1,7 @@
 # Prepare object for area-based test
-testpol <- as.polygons(rast(raster(matrix(c(2,2,2,4,4,4,2,3,4),ncol=3))))
-testras <- raster(matrix(c(2,2,2,4,4,4,2,3,4),ncol=3))
-testpol <- as(testpol, "Spatial")
-testpol@data <- data.frame(id=c(1))
+testpol <- as.polygons(terra::rast(terra::rast(matrix(c(2,2,2,4,4,4,2,3,4),ncol=3))))
+testras <- terra::rast(matrix(c(2,2,2,4,4,4,2,3,4),ncol=3))
+testpol[["id"]] <- 1
 
 paramrao <- function(x,size,alpha) 
 {
@@ -75,7 +74,7 @@ test_that("Rao alpha==2^31 is equal to Rao alpha==(2^31)-1", {
 
 test_that("Area-based Rao against human-deriverd results...", {
 	expect_equal(
-		paRao(x=testras, area = testpol, window = 3, field = 'id', alpha=c(1:5), debugging=FALSE)$alpha.1$x,
+		as.numeric(paRao(x=testras, area = testpol, window = 3, field = 'id', alpha=c(1:5), debugging=FALSE)$alpha.1[1]),
 		c(((4/9*4/9)*2 + (1/9*4/9)*1 + (1/9*4/9)*1)*2)
 		)
 })

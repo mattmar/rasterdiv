@@ -1,3 +1,31 @@
+#' Sequential Berger-Parker's diversity index
+#'
+#' Berger-Parker's diversity index calculated sequentially over a raster matrix.
+#'
+#' @param rasterm Input data in the form of a raster matrix.
+#' @param w The half of the side of the square moving window. It defines the size of the area (neighbourhood) over which the diversity index is calculated.
+#' @param na.tolerance A numeric value between 0.0 and 1.0, indicating the proportion of NA values that will be tolerated in each moving window over \emph{rasterm} during the calculation of the diversity index. If the proportion of NA's in a moving window exceeds na.tolerance, the value for that window will be set as NA; otherwise, the diversity index is calculated considering the non-NA values. The default value is 0.0, indicating no tolerance for NA's.
+#' @param debugging A boolean that controls the display of additional messages for debugging purposes. Set to FALSE by default. If TRUE, messages detailing the function's progress and computations will be printed.
+#'
+#' @return A matrix or a list of matrices containing the Berger-Parker diversity index values, computed for each pixel using a moving window of the specified size.
+#'
+#' @seealso \code{\link{BergerParker}} for the non-sequential version of the Berger-Parker diversity index calculation.
+#'
+#' @author Marcantonio Matteo \email{marcantoniomatteo@gmail.com}, Martina Iannacito \email{martina.iannacito@inria.fr}, Duccio Rocchini \email{duccio.rocchini@unibo.it}
+#' 
+#' @examples
+#' \dontrun{
+#' # Create a sample raster matrix
+#' a <- matrix(c(10, 10, 10, 20, 20, 20, 20, 30, 30), ncol = 3, nrow = 3)
+#' 
+#' # Calculate the Berger-Parker index using a moving window of size 1 (w = 1)
+#' result <- BergerParkerS(rasterm = a, w = 1, na.tolerance = 0.1, debugging = FALSE)
+#' print(result)
+#' }
+#' 
+#' @importFrom methods is
+#' @importFrom stats setNames
+
 BergerParkerS <- function(rasterm, w, na.tolerance, debugging){
 
   # Reshape values

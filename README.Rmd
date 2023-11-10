@@ -45,10 +45,17 @@ remotes::install_github("mattmar/rasterdiv")
 - Hill's generalised entropy;
 - Rényi's generalised entropy;
 - Berger-Parker index;
-- Cumulative Residual Entropy (CRE)
+- ~~Cumulative Residual Entropy (CRE)~~
 
-*__rasterdiv__* uses a "moving window" approach to derive such indexes; however, area-based (e.g., by using vector layers) Parametric Rao’s quadratic entropy is also possible through the [*paRao()*](https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html) function. Read more on *__rasterdiv__*:
+:partying_face: *__rasterdiv__* now integrates also functions to prepare and plot time series with "helical graphs", check out this vignette for more infos: `r if(knitr::is_html_output()) {
+  "[Visualising rasterdiv indexes with Helical Plots](https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html)"
+} else {
+  "\\href{https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html}{Visualising rasterdiv indexes with Helical Plots}"
+}`.
+
+:window: *__rasterdiv__* uses a "moving window" approach to derive such indexes; however, area-based (e.g., by using vector layers) Parametric Rao’s quadratic entropy is also possible through the [*paRao()*](https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html) function. Read more on *__rasterdiv__*:
 
 - [*__rasterdiv__—An Information Theory tailored R package for measuring ecosystem heterogeneity from space: To the origin and back*](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13583);
 - [*Measuring diversity from space: a global view of the free and open source rasterdiv R package under a coding perspective*](https://link.springer.com/article/10.1007/s42974-021-00042-x);
 - [*From zero to infinity: Minimum to maximum diversity of the planet by spatio-parametric Rao’s quadratic entropy*](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13270)
+- [*Helical graphs to visualize the NDVI temporal variation of forest vegetation in an open source space*](https://www.sciencedirect.com/science/article/abs/pii/S157495412200406X)

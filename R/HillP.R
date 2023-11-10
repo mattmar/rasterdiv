@@ -1,3 +1,21 @@
+#' Parallelised Hill's diversity index
+#'
+#' Parallelised computation of Hill's diversity index.
+#'
+#' @param rasterm Input data.
+#' @param w Half of the side of the square moving window.
+#' @param alpha Alpha value for the order of diversity in Hill's Index.
+#' @param na.tolerance A numeric value between 0.0 and 1.0, which indicates the proportion of NA values that will be tolerated to calculate the index in each moving window over \code{rasterm}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA; otherwise, the index will be calculated considering the non-NA values. Default value is 0.0 (i.e., no tolerance for NA's).
+#' @param debugging A boolean variable set to FALSE by default. If TRUE, additional messages will be printed for debugging purposes.
+#'
+#' @return Matrix or a list of matrices with the Hill index computed through a moving window of the given size.
+#'
+#' @author Marcantonio Matteo \email{marcantoniomatteo@@gmail.com}, Martina Iannacito \email{martina.iannacito@@inria.fr}, Duccio Rocchini \email{duccio.rocchini@@unibo.it}
+#'
+#' @seealso \code{\link{Hill}}
+#'
+#' @keywords internal
+
 HillP<-function(rasterm, w, alpha, na.tolerance,debugging){
   #
   ## Reshape values
@@ -15,13 +33,13 @@ HillP<-function(rasterm, w, alpha, na.tolerance,debugging){
   #
   ## Progression bar
   #
-  pb <- txtProgressBar(min = (1+w), max = dim(rasterm)[2], style = 3)
-  progress <- function(n) setTxtProgressBar(pb, n)
+  pb <- utils::txtProgressBar(min = (1+w), max = dim(rasterm)[2], style = 3)
+  progress <- function(n) utils::setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
   #
   ## Start the parallelized loop over iter
   #
-  HillOP <- foreach(cl=(1+w):(dim(rasterm)[2]+w),.options.parallel = opts,.verbose = F) %dopar% {
+  HillOP <- foreach::foreach(cl=(1+w):(dim(rasterm)[2]+w),.options.parallel = opts,.verbose = F) %dopar% {
     if(debugging) {
       cat(paste(cl))
     }

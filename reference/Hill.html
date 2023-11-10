@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,9 +24,11 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_01_Basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_02_Area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_03_Advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_04_Accumulation_Rao.html">Derive the Accumulation Rao's Index</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_05_Helical_Plots.html">Visualising rasterdiv indexes with Helical Plots</a>
   </div>
 </li>
 <li class="nav-item">
@@ -49,7 +51,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Hill's index of diversity - Hill numbers (D)</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/HEAD/R/Hill.R" class="external-link"><code>R/Hill.R</code></a></small>
       <div class="d-none name"><code>Hill.Rd</code></div>
     </div>
 
@@ -59,42 +61,52 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Hill</span><span class="op">(</span><span class="va">x</span>, window <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">1</span>, rasterOut<span class="op">=</span><span class="cn">TRUE</span>, </span>
-<span>  np <span class="op">=</span> <span class="fl">1</span>, na.tolerance<span class="op">=</span><span class="fl">1.0</span>, cluster.type <span class="op">=</span> <span class="st">"SOCK"</span>, </span>
-<span>  debugging <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Hill</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  window <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rasterOut <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  np <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  na.tolerance <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cluster.type <span class="op">=</span> <span class="st">"SOCK"</span>,</span>
+<span>  debugging <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, only the first element of the list will be considered.</p></dd>
+<dd><p>Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects. In the latter case, only the first element of the list will be considered.</p></dd>
+
 
 <dt>window</dt>
-<dd><p>the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.</p></dd>
+<dd><p>The side of the square moving window. It must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.</p></dd>
+
 
 <dt>alpha</dt>
-<dd><p>Order of the Hill number to compute the index. If <code>"alpha"</code> is a vector with length greater than 1, then the index will be calculated over <code>x</code> for each value in the sequence.</p></dd>
+<dd><p>Order of the Hill number to compute the index. If <code>alpha</code> is a vector with length greater than 1, then the index will be calculated over <code>x</code> for each value in the sequence.</p></dd>
+
 
 <dt>rasterOut</dt>
-<dd><p>Boolean, if TRUE output will be in RasterLayer format with <em>x</em> as template.</p></dd>
+<dd><p>Boolean; if TRUE, the output will be in SpatRaster format with <code>x</code> as the template.</p></dd>
+
 
 <dt>np</dt>
-<dd><p>the number of processes (cores) which will be spawned. Default value is 1.</p></dd>
+<dd><p>The number of processes (cores) which will be spawned. Default value is 1.</p></dd>
+
 
 <dt>na.tolerance</dt>
-<dd><p>a numeric value \((0.0-1.0)\) which indicates the proportion of NA values that will be tolerated to calculate Hill's index in each moving window over <em>x</em>. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 1.0 (i.e., no tolerance for NA's).</p></dd>
+<dd><p>A numeric value between 0.0 and 1.0, which indicates the proportion of NA values that will be tolerated to calculate Hill's index in each moving window over <code>x</code>. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA; otherwise, Hill's index will be calculated considering the non-NA values. Default value is 1.0 (i.e., full tolerance for NA's).</p></dd>
+
 
 <dt>cluster.type</dt>
-<dd><p>the type of cluster which will be created. The options are "MPI" (calls "makeMPIcluster"), "FORK" and "SOCK" (call "makeCluster"). Default type is "SOCK".</p></dd>
+<dd><p>The type of cluster which will be created. Options are "MPI" (calls "makeMPIcluster"), "FORK," and "SOCK" (call "makeCluster"). Default type is "SOCK".</p></dd>
+
 
 <dt>debugging</dt>
-<dd><p>a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.</p></dd>
+<dd><p>A boolean variable set to FALSE by default. If TRUE, additional messages will be printed for debugging purposes.</p></dd>
 
 </dl></div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Hill numbers (\({}^qD\)) are calculated on a numerical matrices as \({}^qD = (\sum_{i=1}^{R} {p^q}_i)^{1/(1-q)}\),where <em>q</em> is the order of the Hill number, <em>R</em> is the total number of categories (i.e., unique numerical values in a numerical matrix), <em>p</em> is the relative abundance of each category. When q=1, Shannon.R is called to calculate \(exp(H^1)\) instead of the indefinite \({}^1D\). if \(q &gt; 2*10^9\), BerkgerParker.R is called to calculate \(1/{{}^\infty D}\). Hill numbers of low order weight more rare categories, whereas Hill numbers of higher order weight more dominant categories.</p>
-    </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
@@ -102,32 +114,28 @@
 <p>A list of matrices of dimension <code>dim(x)</code> with length equal to the length of <code>alpha</code>.</p>
     </div>
     <div class="section level2">
-    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Hill, M.O. (1973). Diversity and evenness: a unifying notation and its consequences. Ecology 54, 427-431.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Marcantonio Matteo <a href="mailto:marcantoniomatteo@gmail.com">marcantoniomatteo@gmail.com</a> <br>
-Martina Iannacito <a href="mailto:martina.iannacito@inria.fr">martina.iannacito@inria.fr</a> <br>
-Duccio Rocchini <a href="mailto:duccio.rocchini@unibo.it">duccio.rocchini@unibo.it</a> <br></p>
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Hill numbers (\({}^qD\)) are calculated on numerical matrices as \({}^qD = (\sum_{i=1}^{R} {p^q}_i)^{1/(1-q)}\), where <em>q</em> is the order of the Hill number, <em>R</em> is the total number of categories (i.e., unique numerical values in a numerical matrix), and <em>p</em> is the relative abundance of each category. When q=1, Shannon.R is called to calculate \(exp(H^1)\) instead of the indefinite \({}^1D\). If \(q &gt; 2*10^9\), BergerParker.R is called to calculate \(1/{{}^\infty D}\). Hill numbers of low order weight more rare categories, whereas Hill numbers of higher order weight more dominant categories.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>Linux users need to install libopenmpi for MPI parallel computing. Linux Ubuntu users may try:
-apt-get update; apt-get upgrade; apt-get install mpi; apt-get install libopenmpi-dev; apt-get install r-cran-rmpi</p>
-<p>Microsoft Windows users may need some additional work to use "MPI", see:<br>
-https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-mac-and-windows/</p>
+<code>apt-get update; apt-get upgrade; apt-get install mpi; apt-get install libopenmpi-dev; apt-get install r-cran-rmpi</code></p>
+<p>Microsoft Windows users may need some additional work to use "MPI". For more details, see:
+<a href="https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-mac-and-windows/" class="external-link">https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-mac-and-windows/</a></p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Hill, M.O. (1973). Diversity and evenness: a unifying notation and its consequences. Ecology 54, 427-432.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><!-- %% ~~objects to See Also as , ~~~ -->
-<code><a href="BergerParker.html">BergerParker</a></code>
-<code><a href="Shannon.html">Shannon</a></code></p></div>
+    <div class="dont-index"><p><code><a href="BergerParker.html">BergerParker</a></code>, <code><a href="Shannon.html">Shannon</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#Minimal example; compute Hill's index with alpha 1:5 </span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Minimal example; compute Hill's index with alpha 1:5 </span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hill</span> <span class="op">&lt;-</span> <span class="fu">Hill</span><span class="op">(</span>x<span class="op">=</span><span class="va">a</span>,window<span class="op">=</span><span class="fl">3</span>,alpha<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -156,6 +164,7 @@ https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-ma
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculation complete.</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,9 +24,11 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_01_Basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_02_Area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_03_Advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_04_Accumulation_Rao.html">Derive the Accumulation Rao's Index</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_05_Helical_Plots.html">Visualising rasterdiv indexes with Helical Plots</a>
   </div>
 </li>
 <li class="nav-item">
@@ -49,7 +51,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Parametric Rao's index of quadratic entropy (Q)</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/HEAD/R/paRao.R" class="external-link"><code>R/paRao.R</code></a></small>
       <div class="d-none name"><code>paRao.Rd</code></div>
     </div>
 
@@ -59,145 +61,119 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">paRao</span><span class="op">(</span><span class="va">x</span>, area<span class="op">=</span><span class="cn">NULL</span>, field<span class="op">=</span><span class="cn">NULL</span>, dist_m<span class="op">=</span><span class="st">"euclidean"</span>,</span>
-<span> window<span class="op">=</span><span class="fl">9</span>, alpha<span class="op">=</span><span class="fl">1</span>, method<span class="op">=</span><span class="st">"classic"</span>, rasterOut<span class="op">=</span><span class="cn">TRUE</span>, lambda<span class="op">=</span><span class="fl">0</span>,</span>
-<span>  na.tolerance<span class="op">=</span><span class="fl">1.0</span>, rescale<span class="op">=</span><span class="cn">FALSE</span>, diag<span class="op">=</span><span class="cn">TRUE</span>, </span>
-<span>  simplify<span class="op">=</span><span class="fl">1</span>, np<span class="op">=</span><span class="fl">1</span>,cluster.type<span class="op">=</span><span class="st">"SOCK"</span>, debugging<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">paRao</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  area <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  field <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dist_m <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
+<span>  window <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"classic"</span>,</span>
+<span>  rasterOut <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  na.tolerance <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rescale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  diag <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  simplify <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  np <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cluster.type <span class="op">=</span> <span class="st">"SOCK"</span>,</span>
+<span>  debugging <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects.</p></dd>
+<dd><p>Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects.</p></dd>
 
-  <dt>area</dt>
-<dd><p>input vector area layer for area-based calculation.</p></dd>
 
-  <dt>field</dt>
-<dd><p>column name of the vector area layer to use to calculate the index.</p></dd>
+<dt>area</dt>
+<dd><p>Input vector area layer for area-based calculation.</p></dd>
 
-  <dt>dist_m</dt>
-<dd><p>define the type of distance to be calculated between numerical categories. <code>dist_m</code> can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for <code>proxy::dist</code>. Alternatively, <code>dist_m</code> can be a function which calculates an user defined distance, (i.e., <code>function(x,y) {return(cos(y-x)-sin(y-x))}</code>) or a matrix of distances. If <code>method="multidimension"</code> then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If <code>dist_m</code> is a matrix then the function will assume that the matrix contains the distances.</p></dd>
 
-  <dt>window</dt>
-<dd><p>the side of the square moving window, it must be a vector of odd numeric values greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3. <em>window</em> can be a vector with length greater than 1, in this case Rao's index will be calculated over <em>x</em> for each value in the vector.</p></dd>
+<dt>field</dt>
+<dd><p>Column name of the vector area layer to use to calculate the index.</p></dd>
 
-  <dt>alpha</dt>
-<dd><p>weight for the distance matrix. If <code>alpha = 0</code>, distances will be averaged with a geometric average, if <code>alpha=1</code> with an arithmetic mean, if <code>alpha = 2</code> with a quadratic mean, <code>alpha = 3</code> with a cubic mean and so on. if <code>alpha</code> tends to infinite (i.e., higher than the maximum integer allowed in R) or <code>alpha=Inf</code>, then the maximum distance will be taken. <em>"alpha"</em> can be a vector with length greater than 1, in this case Rao's index will be calculated over <em>x</em> for each value in the vector.</p></dd>
 
-  <dt>method</dt>
-<dd><p>Currently there are two ways to calculate the parametric version of Rao's index. If <code>method="classic"</code>, then the normal parametric Rao's index will be calculated on a single matrix. If <code>method="multidimension"</code> (experimental!) a list of matrices must be provided as input. In the latter case, the overall distance matrix will be calculated in a multi- or hyper-dimensional system by using the distance measure defined through the function argument <code>dist_m</code>. Each pairwise distance is then multiplied by the inverse of the squared number of pixels in the considered moving window, and the Rao's Q is finally derived by applying a summation. Default value is <em>"classic"</em></p></dd>
-</dl><p>.</p>
-<dl><dt>rasterOut</dt>
-<dd><p>Boolean, if TRUE the output will be a RasterLayer object with <em>x</em> as a template.</p></dd>
+<dt>dist_m</dt>
+<dd><p>Define the type of distance to be calculated between numerical categories. `dist_m` can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for <code>proxy::dist</code>. Alternatively, `dist_m` can be a function which calculates a user-defined distance, (i.e., <code>function(x,y) {return(cos(y-x)-sin(y-x))}</code>) or a matrix of distances. If `method="multidimension"` then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If `dist_m` is a matrix, then the function will assume that the matrix contains the distances.</p></dd>
 
-  <dt>lambda</dt>
-<dd><p>the value of the lambda of Minkowski's distance. Considered only if <code>dist_m = "minkowski"</code> and <code>method="multidimension". Default value is 0.</code></p></dd>
 
-  <dt>na.tolerance</dt>
-<dd><p>Numeric value \((0.0-1.0)\) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over <em>x</em>. If the relative proportion of NA's in a moving window is bigger than <code>na.tolerance</code>, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default value is 1.0.</p></dd>
+<dt>window</dt>
+<dd><p>The side of the square moving window, it must be a vector of odd numeric values greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3. `window` can be a vector with length greater than 1, in this case, Rao's index will be calculated over `x` for each value in the vector.</p></dd>
 
-  <dt>rescale</dt>
-<dd><p>Boolean. Considered only if <code>method="multidimension"</code>. If TRUE, each element of <code>x</code> is rescaled and centred.</p></dd>
 
-  <dt>diag</dt>
-<dd><p>Boolean. If TRUE then the diagonal of the distance matrix is filled with 0's, otherwise with NA's. If <code>diag=TRUE</code> and <code>alpha=0</code>, the output matrix will inexorably be 0's.</p></dd>
+<dt>alpha</dt>
+<dd><p>Weight for the distance matrix. If `alpha = 0`, distances will be averaged with a geometric average, if `alpha=1` with an arithmetic mean, if `alpha = 2` with a quadratic mean, `alpha = 3` with a cubic mean, and so on. if `alpha` tends to infinite (i.e., higher than the maximum integer allowed in R) or `alpha=Inf`, then the maximum distance will be taken. `alpha` can be a vector with length greater than 1, in this case, Rao's index will be calculated over `x` for each value in the vector.</p></dd>
 
-  <dt>simplify</dt>
-<dd><p>Number of decimal places to be retained to calculate distances in Rao's index.</p></dd>
 
-  <dt>np</dt>
-<dd><p>the number of processes (cores) which will be spawned. Default value is 2.</p></dd>
+<dt>method</dt>
+<dd><p>Currently, there are two ways to calculate the parametric version of Rao's index. If `method="classic"`, then the normal parametric Rao's index will be calculated on a single matrix. If `method="multidimension"` (experimental!), a list of matrices must be provided as input. In the latter case, the overall distance matrix will be calculated in a multi- or hyper-dimensional system by using the distance measure defined through the function argument `dist_m`. Each pairwise distance is then multiplied by the inverse of the squared number of pixels in the considered moving window, and the Rao's Q is finally derived by applying a summation. Default value is `"classic"`.</p></dd>
 
-  <dt>cluster.type</dt>
-<dd><p>the type of cluster which will be created. The options are <em>"MPI"</em> (which calls "makeMPIcluster"), <em>"FORK"</em> and <em>"SOCK"</em> (which call "makeCluster"). Default type is <em>"SOCK"</em>.</p></dd>
 
-  <dt>debugging</dt>
-<dd><p>a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.</p></dd>
+<dt>rasterOut</dt>
+<dd><p>Boolean, if TRUE the output will be a SpatRaster object with `x` as a template.</p></dd>
 
-  </dl></div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The parametric Rao's Index (\(Q\)) is an extension of Rao's Index which considers a generalised mean between distances. The generalised formula for the parametric Rao's index is \(Q_a = (\sum_{i,j=1}^{N}{1/N^2}\times{d^{\alpha}_{j,j}})^{1/{\alpha}}\). Where <em>N</em> is the number of numerical categories, <em>i</em> and <em>j</em> are pair of numerical categories in the same moving window and <em>alpha</em> is a weight given to distances. In the "multidimension" Rao's index, first the distances among categories are calculated considering more than one layer, then the pairwise distance between each pair of numerical categories is multiplied to the square of the size of the moving window (this is somewhat the same as to calculate the variance of the multidimensional distance [1].).<br>
-  The theoretical minimum of Rao's Q is 0, when all categories in a window have distance 0. If the distance chosen to calculate Rao's Index ranges between 0 and 1, the maximum value of Rao's Index equals the Simpson Index of Diversity \(1-1/S_i\) where <em>S</em> is the number of categories in window <em>i</em> (given alpha=1).</p>
-    </div>
+
+<dt>lambda</dt>
+<dd><p>The value of the lambda of Minkowski's distance. Considered only if `dist_m = "minkowski"` and `method="multidimension"`. Default value is 0.</p></dd>
+
+
+<dt>na.tolerance</dt>
+<dd><p>Numeric value (0.0-1.0) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over `x`. If the relative proportion of NA's in a moving window is bigger than `na.tolerance`, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default value is 1.0.</p></dd>
+
+
+<dt>rescale</dt>
+<dd><p>Boolean. Considered only if `method="multidimension"`. If TRUE, each element of `x` is rescaled and centred.</p></dd>
+
+
+<dt>diag</dt>
+<dd><p>Boolean. If TRUE then the diagonal of the distance matrix is filled with 0's, otherwise with NA's. If `diag=TRUE` and `alpha=0`, the output matrix will inexorably be 0's.</p></dd>
+
+
+<dt>simplify</dt>
+<dd><p>Number of decimal places to be retained to calculate distances in Rao's index. Default `simplify=0`.</p></dd>
+
+
+<dt>np</dt>
+<dd><p>The number of processes (cores) which will be spawned. Default value is 2.</p></dd>
+
+
+<dt>cluster.type</dt>
+<dd><p>The type of cluster which will be created. The options are `"MPI"` (which calls "makeMPIcluster"), `"FORK"`, and `"SOCK"` (which call "makeCluster"). Default type is `"SOCK"`.</p></dd>
+
+
+<dt>debugging</dt>
+<dd><p>A boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A list of matrices of dimension <code>dim(x)</code> with length equal to the length of <em>alpha</em>. If <code>rasterOut=TRUE</code> and <code>x</code> is a RasterLayer, then the output is a list of RasterLayer objects.</p>
-<p></p>
+<p>A list of matrices of dimension `dim(x)` with length equal to the length of `alpha`. If `rasterOut=TRUE` and `x` is a SpatRaster, then the output is a list of SpatRaster objects.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The parametric Rao's Index (Q) is an extension of Rao's Index which considers a generalized mean between distances. The general formula for the parametric Rao's index is Q_a = $$Q = \sum_{i, j} p_i p_j d_{ij}^{\alpha}$$. Where `N` is the number of numerical categories, `i` and `j` are pair of numerical categories in the same moving window, and `alpha` is a weight given to distances. In the "multidimension" Rao's index, first the distances among categories are calculated considering more than one feature, and then the overall Rao's Q is derived by using these distances.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>[1] Rocchini, D., M. Marcantonio, and C. Ricotta (2017). Measuring Rao’s Q diversity index from remote sensing: An open source solution. Ecological Indicators. 72: 234–238.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Matteo Marcantonio <a href="mailto:marcantoniomatteo@gmail.com">marcantoniomatteo@gmail.com</a><br>
-  Duccio Rocchini <a href="mailto:duccio.rocchini@unibo.it">duccio.rocchini@unibo.it</a></p>
+    <p>Rao, C. R. (1982). Diversity and dissimilarity coefficients: A unified approach. Theoretical Population Biology, 21(1), 24-43.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span>  <span class="co"># Minimal example; compute classic Rao's index</span></span></span>
-<span class="r-in"><span>  <span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">paRao</span><span class="op">(</span>x<span class="op">=</span><span class="va">a</span>,window<span class="op">=</span><span class="fl">3</span>,dist_m<span class="op">=</span><span class="st">"euclidean"</span>,na.tolerance<span class="op">=</span><span class="fl">1</span>,alpha<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Warning: simplify=1. You're rounding data to 1 decimal place.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Numerical matrix ready: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Parametric Rao output will be returned</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 1 Moving Window: 3</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># loading data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Compute classic Rao's index for two moving window sizes</span></span></span>
-<span class="r-in"><span>  <span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">paRao</span><span class="op">(</span>x<span class="op">=</span><span class="va">a</span>,window<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span>,dist_m<span class="op">=</span><span class="st">"euclidean"</span>,na.tolerance<span class="op">=</span><span class="fl">1</span>,alpha<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Warning: simplify=1. You're rounding data to 1 decimal place.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Numerical matrix ready: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Parametric Rao output will be returned</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 1 Moving Window: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 1 Moving Window: 5</span>
+<span class="r-in"><span><span class="co"># we want to compute Rao's index on this data using a 3x3 window</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">paRao</span><span class="op">(</span>x <span class="op">=</span> <span class="va">r</span>, window <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">2</span>, method <span class="op">=</span> <span class="st">"classic"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Compute Rao's index with a vector of alpha values for two moving windows</span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">paRao</span><span class="op">(</span>x<span class="op">=</span><span class="va">a</span>,window<span class="op">=</span><span class="fl">3</span>,dist_m<span class="op">=</span><span class="st">"euclidean"</span>,na.tolerance<span class="op">=</span><span class="fl">1</span>,alpha<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Warning: simplify=1. You're rounding data to 1 decimal place.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Numerical matrix ready: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Parametric Rao output will be returned</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 1 Moving Window: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 2 Moving Window: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 3 Moving Window: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 4 Moving Window: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 5 Moving Window: 3</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Compute multidimensional Rao's index with alpha = 1 </span></span></span>
-<span class="r-in"><span>  <span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="fl">100</span>,<span class="fl">200</span>,<span class="fl">200</span>,<span class="fl">200</span>,<span class="fl">200</span>,<span class="fl">300</span>,<span class="fl">300</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">paRao</span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span>,window<span class="op">=</span><span class="fl">3</span>,dist_m<span class="op">=</span><span class="st">"euclidean"</span>,</span></span>
-<span class="r-in"><span>    na.tolerance<span class="op">=</span><span class="fl">1</span>,alpha<span class="op">=</span><span class="fl">1</span>,method<span class="op">=</span><span class="st">"multidimension"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Warning: simplify=1. You're rounding data to 1 decimal place.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multidimension Rao's index is experimental. Use with caution!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Numerical matrix ready: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Parametric Rao output will be returned</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing alpha: 1 Moving Window: 3</span>
-<span class="r-in"><span>    </span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

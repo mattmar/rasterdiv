@@ -2,10 +2,12 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
-  rasterdiv_advanced_multidimension_Rao: rasterdiv_advanced_multidimension_Rao.html
-  rasterdiv_area_based_Rao: rasterdiv_area_based_Rao.html
-  rasterdiv_basics: rasterdiv_basics.html
-last_built: 2023-05-10T09:50Z
+  rasterdiv_01_Basics: rasterdiv_01_Basics.html
+  rasterdiv_02_Area_based_Rao: rasterdiv_02_Area_based_Rao.html
+  rasterdiv_03_Advanced_multidimension_Rao: rasterdiv_03_Advanced_multidimension_Rao.html
+  rasterdiv_04_Accumulation_Rao: rasterdiv_04_Accumulation_Rao.html
+  rasterdiv_05_Helical_Plots: rasterdiv_05_Helical_Plots.html
+last_built: 2023-11-10T12:23Z
 urls:
   reference: https://mattmar.github.io/rasterdiv/reference
   article: https://mattmar.github.io/rasterdiv/articles

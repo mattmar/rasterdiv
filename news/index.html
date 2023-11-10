@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,9 +24,11 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_01_Basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_02_Area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_03_Advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_04_Accumulation_Rao.html">Derive the Accumulation Rao's Index</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_05_Helical_Plots.html">Visualising rasterdiv indexes with Helical Plots</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -53,10 +55,29 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3" id="rasterdiv-033">rasterdiv 0.3.3<a class="anchor" aria-label="anchor" href="#rasterdiv-033"></a></h2>
+<div class="section level3">
+<h3 id="major-changes-0-3-3">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-0-3-3"></a></h3>
+<ul><li>Adds heliPrep and heliPlot for helical graphs</li>
+<li>Temporarily removes CRE function</li>
+<li>Adds a vignettes for accRao (4)</li>
+<li>Adds a vignettes for helical plots (5)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-changes-0-3-3">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-3"></a></h3>
+<ul><li>Small changes in all vignettes</li>
+<li>Updated documentation to Roxygen style</li>
+<li>Uses terra in the place of raster</li>
+<li>Changes data type of copNDVI (SpatRaster now)</li>
+<li>Changes data type of world (SpatVector now)</li>
+<li>Improves documentation</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.2" id="rasterdiv-032">rasterdiv 0.3.2<a class="anchor" aria-label="anchor" href="#rasterdiv-032"></a></h2>
 <div class="section level3">
 <h3 id="minor-changes-0-3-2">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-2"></a></h3>
-<ul><li>Fixes minor “bug” for area based Rao that did not allow for polygons containing raster matricex with just one value.</li>
+<ul><li>Fixes minor “bug” for area based Rao that did not allow for polygons containing raster matrices with just one value.</li>
 <li>Adds an additional examples for Area based Rao.</li>
 </ul></div>
 </div>

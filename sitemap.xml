@@ -7,13 +7,19 @@
     <loc>https://mattmar.github.io/rasterdiv/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_advanced_multidimension_Rao.html</loc>
+    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_01_Basics.html</loc>
   </url>
   <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html</loc>
+    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_02_Area_based_Rao.html</loc>
   </url>
   <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_basics.html</loc>
+    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_03_Advanced_multidimension_Rao.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_04_Accumulation_Rao.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html</loc>
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/authors.html</loc>
@@ -55,9 +61,6 @@
     <loc>https://mattmar.github.io/rasterdiv/reference/PielouS.html</loc>
   </url>
   <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/Rao.html</loc>
-  </url>
-  <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/RaoAUC.html</loc>
   </url>
   <url>
@@ -82,7 +85,19 @@
     <loc>https://mattmar.github.io/rasterdiv/reference/copNDVI.html</loc>
   </url>
   <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/heliPlot.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/heliPrep.html</loc>
+  </url>
+  <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/load_copNDVI.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/load_world.html</loc>
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoAreaS.html</loc>
@@ -92,6 +107,9 @@
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoS.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/ndviForestTS.html</loc>
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/paRao.html</loc>
@@ -104,6 +122,9 @@
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/paRaoS.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/process_raster_result.html</loc>
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/world.html</loc>

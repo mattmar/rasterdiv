@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,9 +24,11 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_01_Basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_02_Area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_03_Advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_04_Accumulation_Rao.html">Derive the Accumulation Rao's Index</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_05_Helical_Plots.html">Visualising rasterdiv indexes with Helical Plots</a>
   </div>
 </li>
 <li class="nav-item">
@@ -49,7 +51,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Cumulative Residual Entropy (CRE)</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/HEAD/R/CRE.R" class="external-link"><code>R/CRE.R</code></a></small>
       <div class="d-none name"><code>CRE.Rd</code></div>
     </div>
 
@@ -59,59 +61,80 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CRE</span><span class="op">(</span><span class="va">x</span>, window<span class="op">=</span><span class="fl">3</span>, mode<span class="op">=</span><span class="st">"classic"</span>, rasterOut<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>  rescale<span class="op">=</span><span class="cn">FALSE</span>, na.tolerance<span class="op">=</span><span class="fl">1.0</span>, simplify<span class="op">=</span><span class="fl">2</span>, np<span class="op">=</span><span class="fl">1</span>, </span>
-<span>  cluster.type<span class="op">=</span><span class="st">"SOCK"</span>, debugging<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CRE</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  window <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  mode <span class="op">=</span> <span class="st">"classic"</span>,</span>
+<span>  rasterOut <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rescale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  na.tolerance <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  simplify <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  np <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cluster.type <span class="op">=</span> <span class="st">"SOCK"</span>,</span>
+<span>  debugging <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>input data may be a matrix, a Spatial Grid Data Frame, a RasterLayer or a list of these objects. In the latter case, if <em>mode="classic"</em> only the first element of the list will be considered.</p></dd>
+<dd><p>Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects. 
+In the latter case, if mode = "classic", only the first element of the list will be considered.</p></dd>
 
-  <dt>window</dt>
-<dd><p>the side of the square moving window, it must be a odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.</p></dd>
 
-  <dt>mode</dt>
-<dd><p>currently, there are two modes to calculate Cumulative Residual Entropy (CRE). If mode is "classic", then the monodimension CRE will be calculated on one single matrix. If mode is "multidimension" (experimental!) a list of matrices must be provided as input. In this latter case, the multidimensional cumulative residual probability will be calculated. Default value is "classic".</p></dd>
+<dt>window</dt>
+<dd><p>The side of the square moving window; it must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.</p></dd>
 
-  <dt>rasterOut</dt>
-<dd><p>Boolean, if TRUE output will be in RasterLayer format with <em>x</em> as template.</p></dd>
 
-  <dt>rescale</dt>
-<dd><p>a boolean variable set to FALSE by default. If TRUE, <em>x</em> will be scaled and centred to standardise different matrices if mode is "multidimension". Default value is FALSE.</p></dd>
+<dt>mode</dt>
+<dd><p>There are two modes to calculate CRE: "classic" and "multidimension" (experimental). "classic" computes the monodimension CRE on a single matrix. "multidimension" requires a list of matrices and calculates the multidimensional cumulative residual probability. Default is "classic".</p></dd>
 
-  <dt>na.tolerance</dt>
-<dd><p>a numeric value \((0.0-1.0)\) which indicates the proportion of NA values that will be tolerated to calculate CRE in each moving window over <em>x</em>. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise CRE will be calculated considering the non-NA values. Default values is 1.0 (i.e., full tolerance for NA's).</p></dd>
 
-  <dt>simplify</dt>
-<dd><p>Number of decimal places to be retained to calculate CRE. Only if <em>x</em> is floats.</p></dd>
+<dt>rasterOut</dt>
+<dd><p>Boolean; if TRUE, the output will be in SpatRaster format with <code>x</code> as the template.</p></dd>
 
-  <dt>np</dt>
-<dd><p>the number of processes (cores) which will be spawned. Default value is 1.</p></dd>
 
-  <dt>cluster.type</dt>
-<dd><p>the type of cluster which will be created. The options are <em>"MPI"</em> (which calls "makeMPIcluster"), <em>"FORK"</em> and <em>"SOCK"</em> (which call "makeCluster"). Default type is <em>"SOCK"</em>.</p></dd>
+<dt>rescale</dt>
+<dd><p>Boolean; if TRUE, <code>x</code> will be scaled and centred to standardise different matrices if mode is "multidimension". Default is FALSE.</p></dd>
 
-  <dt>debugging</dt>
-<dd><p>a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.</p></dd>
 
-  </dl></div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Unidimension Cumulative Residual Entropy (\(CRE\)) is calculated on a numerical vector  as \(CRE = CRE=-\sum_{i=1}^{N}{P(X\geq x_i)\log{P(X\geq x_i)dx}}\) [1] where  \( dx=(x_i -x_{i-1})\) and <em>P</em> is a vector of probabilities that the vector of observations is larger or equal to each value of the vector.
-In the "multidimension" CRE, <em>P</em> becomes an array with as many dimensions as the one of the observations. In each cell of <em>P</em> the probability estimates with the frequency of the number of observation that as the same time satisfy the larger or equal requirement for the different combination of values along the dimension. <em>dx</em> becomes the products of the difference along each dimension.<br>
-The theoretical minimum of CRE is 0, when all values are identical in a window. The values of CRE increases with the range of observations, thus the more the observations are equally spread (even) across values the higher CRE will be.</p>
-    </div>
+<dt>na.tolerance</dt>
+<dd><p>Numeric value between 0.0 and 1.0 indicating the proportion of NA values tolerated in each moving window over <code>x</code> for CRE calculation. If the proportion of NAs exceeds <code>na.tolerance</code>, the value for that window is set as NA. Default is 1.0 (full tolerance for NAs).</p></dd>
+
+
+<dt>simplify</dt>
+<dd><p>Number of decimal places retained in the CRE calculation. Applies only if <code>x</code> is floats.</p></dd>
+
+
+<dt>np</dt>
+<dd><p>Number of processes (cores) to be used. Default is 1.</p></dd>
+
+
+<dt>cluster.type</dt>
+<dd><p>Specifies the type of cluster to create. Options are "MPI" (for "makeMPIcluster"), "FORK", and "SOCK" (for "makeCluster"). Default is "SOCK".</p></dd>
+
+
+<dt>debugging</dt>
+<dd><p>Boolean; if TRUE, additional debug messages will be printed. Default is FALSE.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A matrix of dimension <em>dim(x)</em>.</p>
+<p>A matrix with the same dimensions as <code>x</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The unidimensional Cumulative Residual Entropy (CRE) is calculated on a numerical vector as follows:
+$$CRE = -\sum_{i=1}^{N}{P(X \geq x_i) \log{P(X \geq x_i)dx}}$$
+where \(dx = (x_i - x_{i-1})\) and <code>P</code> is a vector of probabilities that the vector of observations is larger or equal to each value of the vector.
+In "multidimension" CRE, <code>P</code> becomes an array with as many dimensions as the observations, estimating probabilities based on the frequency of observations satisfying the larger/equal condition for value combinations along the dimensions. <code>dx</code> becomes the product of differences along each dimension.
+CRE values increase with the range of observations; the more evenly spread the observations are across values, the higher the CRE.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>[1] Rao M, Chen Y, Vemuri BC, Wang F (2004) Cumulative Residual Entropy: A New Measure of Information. IEEE Trans Inf Theory 50:1220–1228.</p>
+    <p>Rao M, Chen Y, Vemuri BC, Wang F (2004) Cumulative Residual Entropy: A New Measure of Information. IEEE Transactions on Information Theory 50:1220–1228.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -120,37 +143,20 @@ The theoretical minimum of CRE is 0, when all values are identical in a window. 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#Minimum example; compute CRE</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">CRE</span><span class="op">(</span>x<span class="op">=</span><span class="va">a</span>,window<span class="op">=</span><span class="fl">3</span>,na.tolerance<span class="op">=</span><span class="fl">0</span>,mode<span class="op">=</span><span class="st">"classic"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Converting x data in an integer matrix...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Matrix check OK: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Cumulative Residual Entropy output matrix will be returned</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Progress:  50 on 100  Progress:  50 on 100  Progress:  50 on 100  Progress:  75 on 100  Progress:  75 on 100  Progress:  75 on 100  Progress: 100 on 100  Progress: 100 on 100  Progress: 100 on 100  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculation of Cumulative Residual Entropy complete.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Minimum example; compute CRE</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">30</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">3</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">CRE</span><span class="op">(</span>x <span class="op">=</span> <span class="va">a</span>, window <span class="op">=</span> <span class="fl">3</span>, na.tolerance <span class="op">=</span> <span class="fl">0</span>, mode <span class="op">=</span> <span class="st">"classic"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#Minimum example; compute CRE in paralllel</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">CRE</span><span class="op">(</span>x<span class="op">=</span><span class="va">a</span>,window<span class="op">=</span><span class="fl">3</span>,na.tolerance<span class="op">=</span><span class="fl">0</span>,mode<span class="op">=</span><span class="st">"classic"</span>,np<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Converting x data in an integer matrix...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Matrix check OK: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Cumulative Residual Entropy output matrix will be returned</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Progress:  50 on 100  Progress:  50 on 100  Progress:  50 on 100  Progress:  75 on 100  Progress:  75 on 100  Progress:  75 on 100  Progress: 100 on 100  Progress: 100 on 100  Progress: 100 on 100  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculation of Cumulative Residual Entropy complete.</span>
+<span class="r-in"><span><span class="co"># Minimum example; compute CRE in parallel</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">CRE</span><span class="op">(</span>x <span class="op">=</span> <span class="va">a</span>, window <span class="op">=</span> <span class="fl">3</span>, na.tolerance <span class="op">=</span> <span class="fl">0</span>, mode <span class="op">=</span> <span class="st">"classic"</span>, np <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># Using 2 cores</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#Compute multidimension Rao's index rescaling the input matrices</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.3</span>,<span class="fl">0.3</span>,<span class="fl">0.3</span>,<span class="fl">0.3</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">CRE</span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span>,window<span class="op">=</span><span class="fl">3</span>,na.tolerance<span class="op">=</span><span class="fl">0</span>,</span></span>
-<span class="r-in"><span>  mode<span class="op">=</span><span class="st">"multidimension"</span>,rescale<span class="op">=</span><span class="cn">TRUE</span>,debugging<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Matrix check OK: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> A matrix with multimension Cumulative Residual Entropy will be returned</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> #check: Into multidimensional clause.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> #check: After rescaling in multimensional clause.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Progress: 2 on 4  Progress: 3 on 4  Progress: 4 on 4  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> #check: return function.</span>
+<span class="r-in"><span><span class="co"># Compute multidimension Rao's index rescaling the input matrices</span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">3</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">CRE</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span>, window <span class="op">=</span> <span class="fl">3</span>, na.tolerance <span class="op">=</span> <span class="fl">0</span>, mode <span class="op">=</span> <span class="st">"multidimension"</span>, </span></span>
+<span class="r-in"><span>rescale <span class="op">=</span> <span class="cn">TRUE</span>, debugging <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

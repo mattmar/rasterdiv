@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,9 +24,11 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_01_Basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_02_Area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_03_Advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_04_Accumulation_Rao.html">Derive the Accumulation Rao's Index</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_05_Helical_Plots.html">Visualising rasterdiv indexes with Helical Plots</a>
   </div>
 </li>
 <li class="nav-item">
@@ -69,6 +71,11 @@
         <dd>Berger-Parker's diversity index</dd>
       </dl><dl><dt>
           
+          <code><a href="BergerParkerS.html">BergerParkerS()</a></code> 
+        </dt>
+        <dd>Sequential Berger-Parker's diversity index</dd>
+      </dl><dl><dt>
+          
           <code><a href="CRE.html">CRE()</a></code> 
         </dt>
         <dd>Cumulative Residual Entropy (CRE)</dd>
@@ -84,9 +91,14 @@
         <dd>Pielou's evenness index (E')</dd>
       </dl><dl><dt>
           
-          <code><a href="Rao.html">Rao()</a></code> 
+          <code><a href="PielouP.html">PielouP()</a></code> 
         </dt>
-        <dd>Rao's index of quadratic entropy (Q)</dd>
+        <dd>Parallelised Pielou's diversity index</dd>
+      </dl><dl><dt>
+          
+          <code><a href="PielouS.html">PielouS()</a></code> 
+        </dt>
+        <dd>Sequential Pielou's diversity index</dd>
       </dl><dl><dt>
           
           <code><a href="RaoAUC.html">RaoAUC()</a></code> 
@@ -96,7 +108,7 @@
           
           <code><a href="Renyi.html">Renyi()</a></code> 
         </dt>
-        <dd>Renyi's entropy (\(H\))</dd>
+        <dd>Renyi's entropy (H)</dd>
       </dl><dl><dt>
           
           <code><a href="Shannon.html">Shannon()</a></code> 
@@ -104,9 +116,54 @@
         <dd>Shannon's diversity index (H')</dd>
       </dl><dl><dt>
           
-          <code><a href="copNDVI.html">copNDVI</a></code> 
+          <code><a href="ShannonP.html">ShannonP()</a></code> 
+        </dt>
+        <dd>Parallelised Shannon's diversity index</dd>
+      </dl><dl><dt>
+          
+          <code><a href="ShannonS.html">ShannonS()</a></code> 
+        </dt>
+        <dd>Sequential Shannon's diversity index</dd>
+      </dl><dl><dt>
+          
+          <code><a href="copNDVI.html">load_copNDVI()</a></code> 
         </dt>
         <dd>Copernicus Long Term (1999-2017) NDVI Overview (5km)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="heliPlot.html">heliPlot()</a></code> 
+        </dt>
+        <dd>Helical Plot for Time Series Data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="heliPrep.html">heliPrep()</a></code> 
+        </dt>
+        <dd>Prepare Data for Helical Plotting</dd>
+      </dl><dl><dt>
+          
+          <code><a href="load_copNDVI.html">load_copNDVI()</a></code> 
+        </dt>
+        <dd>Load Copernicus NDVI data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="load_world.html">load_world()</a></code> 
+        </dt>
+        <dd>Load Natural Earth world dataset</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mpaRaoAreaS.html">mpaRaoAreaS()</a></code> 
+        </dt>
+        <dd>Area-Based Sequential Parametric Rao's index of quadratic entropy (Q)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mpaRaoS.html">mpaRaoS()</a></code> 
+        </dt>
+        <dd>Multidimensional sequential Parametric Rao's index of quadratic entropy (Q)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="ndviForestTS.html">ndviForestTS</a></code> 
+        </dt>
+        <dd>Simulated NDVI dataset</dd>
       </dl><dl><dt>
           
           <code><a href="paRao.html">paRao()</a></code> 
@@ -114,7 +171,22 @@
         <dd>Parametric Rao's index of quadratic entropy (Q)</dd>
       </dl><dl><dt>
           
-          <code><a href="world.html">copNDVI</a></code> 
+          <code><a href="paRaoP.html">paRaoP()</a></code> 
+        </dt>
+        <dd>Parallelized Parametric Rao's index of quadratic entropy (Q)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="paRaoS.html">paRaoS()</a></code> 
+        </dt>
+        <dd>Sequential Parametric Rao's index of quadratic entropy (Q)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="process_raster_result.html">process_raster_result()</a></code> 
+        </dt>
+        <dd>Process Raster Results</dd>
+      </dl><dl><dt>
+          
+          <code><a href="world.html">load_world()</a></code> 
         </dt>
         <dd>Natural Earth world dataset</dd>
       </dl></div>

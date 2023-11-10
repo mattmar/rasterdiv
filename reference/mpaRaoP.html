@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,9 +24,11 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/rasterdiv_advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_area_based_Rao.html">Area-based Rao's index.</a>
-    <a class="dropdown-item" href="../articles/rasterdiv_basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_01_Basics.html">Indices of diversity from NDVI.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_02_Area_based_Rao.html">Area-based Rao's index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_03_Advanced_multidimension_Rao.html">Multidimension Rao's Index.</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_04_Accumulation_Rao.html">Derive the Accumulation Rao's Index</a>
+    <a class="dropdown-item" href="../articles/rasterdiv_05_Helical_Plots.html">Visualising rasterdiv indexes with Helical Plots</a>
   </div>
 </li>
 <li class="nav-item">
@@ -49,7 +51,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Multidimensional parallel Parametric Rao's index of quadratic entropy (Q)</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/HEAD/R/mpaRaoP.R" class="external-link"><code>R/mpaRaoP.R</code></a></small>
       <div class="d-none name"><code>mpaRaoP.Rd</code></div>
     </div>
 
@@ -59,7 +61,20 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mpaRaoP</span><span class="op">(</span><span class="va">x</span>,<span class="va">alpha</span>,<span class="va">w</span>,<span class="va">dist_m</span>,<span class="va">na.tolerance</span>,<span class="va">rescale</span>,<span class="va">lambda</span>,<span class="va">diag</span>,<span class="va">debugging</span>,<span class="va">isfloat</span>,<span class="va">mfactor</span>,<span class="va">np</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mpaRaoP</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">alpha</span>,</span>
+<span>  <span class="va">w</span>,</span>
+<span>  <span class="va">dist_m</span>,</span>
+<span>  <span class="va">na.tolerance</span>,</span>
+<span>  <span class="va">rescale</span>,</span>
+<span>  <span class="va">lambda</span>,</span>
+<span>  <span class="va">diag</span>,</span>
+<span>  <span class="va">debugging</span>,</span>
+<span>  <span class="va">isfloat</span>,</span>
+<span>  <span class="va">mfactor</span>,</span>
+<span>  <span class="va">np</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,35 +82,52 @@
     <dl><dt>x</dt>
 <dd><p>input list.</p></dd>
 
+
 <dt>alpha</dt>
 <dd><p>alpha value for order of diversity in Hill's Index.</p></dd>
+
 
 <dt>w</dt>
 <dd><p>half of the side of the square moving window.</p></dd>
 
+
 <dt>dist_m</dt>
 <dd><p>Type of distance used.</p></dd>
 
+
 <dt>na.tolerance</dt>
-<dd><p>a numeric value \((0.0-1.0)\) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over <em>x</em>. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default values is 0.0 (i.e., no tolerance for NA's).</p></dd>
+<dd><p>a numeric value \((0.0-1.0)\) which indicates the proportion
+of NA values that will be tolerated to calculate Rao's index in each moving
+window over <em>x</em>. If the relative proportion of NA's in a moving window is
+bigger than na.tolerance, then the value of the window will be set as NA,
+otherwise Rao's index will be calculated considering the non-NA values.
+Default values is 0.0 (i.e., no tolerance for NA's).</p></dd>
+
 
 <dt>rescale</dt>
 <dd><p>Scale and centre values in each of the element of x.</p></dd>
 
+
 <dt>lambda</dt>
 <dd><p>Lambda value for Minkowski distance.</p></dd>
+
 
 <dt>diag</dt>
 <dd><p>Boolean. Diagonal of the distance matrix.</p></dd>
 
+
 <dt>debugging</dt>
-<dd><p>a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For de-bugging only.</p></dd>
+<dd><p>a boolean variable set to FALSE by default. If TRUE, additional
+messages will be printed. For de-bugging only.</p></dd>
+
 
 <dt>isfloat</dt>
 <dd><p>Are the input data floats?</p></dd>
 
+
 <dt>mfactor</dt>
 <dd><p>Multiplication factor in case of input data as float numbers.</p></dd>
+
 
 <dt>np</dt>
 <dd><p>the number of processes (cores) which will be spawned.</p></dd>
@@ -105,16 +137,17 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A list of matrices of dimension <code>dim(x)</code> with length equal to the length of <code>alpha</code>.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Duccio Rocchini <a href="mailto:duccio.rocchini@unibo.it">duccio.rocchini@unibo.it</a> <br>
-Marcantonio Matteo <a href="mailto:marcantoniomatteo@gmail.com">marcantoniomatteo@gmail.com</a> <br></p>
+<p>A list of matrices of dimension <code>dim(x)</code> with length equal to the
+  length of <code>alpha</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="paRao.html">paRao</a></code></p></div>
+    </div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Duccio Rocchini <a href="mailto:duccio.rocchini@unibo.it">duccio.rocchini@unibo.it</a>, Marcantonio Matteo
+  <a href="mailto:marcantoniomatteo@gmail.com">marcantoniomatteo@gmail.com</a></p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

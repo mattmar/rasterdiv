@@ -85,6 +85,21 @@
     <loc>https://mattmar.github.io/rasterdiv/reference/copNDVI.html</loc>
   </url>
   <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/dot-CRE_.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/dot-CumRes.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/dot-Deltas.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/dot-Prob.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/dot-Reorder.html</loc>
+  </url>
+  <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/heliPlot.html</loc>
   </url>
   <url>
@@ -112,6 +127,9 @@
     <loc>https://mattmar.github.io/rasterdiv/reference/ndviForestTS.html</loc>
   </url>
   <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/openCluster.html</loc>
+  </url>
+  <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/paRao.html</loc>
   </url>
   <url>
@@ -125,6 +143,9 @@
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/process_raster_result.html</loc>
+  </url>
+  <url>
+    <loc>https://mattmar.github.io/rasterdiv/reference/validateInputs.html</loc>
   </url>
   <url>
     <loc>https://mattmar.github.io/rasterdiv/reference/world.html</loc>

@@ -45,10 +45,10 @@ if( any(is.na(crop1dt)) & all(apply(crop1dt, 2, function(a) length(unique(a))<=2
         if( alpha>100 ) warning("With this alpha value you may get integer overflow: consider decreasing it.")
 
 # Check if there are NAs in the matrices
-if ( is(rasterm[[1]],"SpatRaster") ){
+if ( methods::is(rasterm[[1]],"SpatRaster") ){
     if(any(sapply(lapply(unlist(rasterm),length),is.na)==TRUE))
     warning("\n One or more SpatRasters contain NAs which will be treated as 0s")
-    } else if ( is(rasterm[[1]],"matrirasterm") ){
+    } else if ( methods::is(rasterm[[1]],"matrirasterm") ){
         if(any(sapply(rasterm, is.na)==TRUE) ) {
             warning("\n One or more matrices contain NAs which will be treated as 0s")
         }

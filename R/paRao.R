@@ -17,6 +17,7 @@
 #' @param simplify Number of decimal places to be retained to calculate distances in Rao's index. Default `simplify=0`.
 #' @param np The number of processes (cores) which will be spawned. Default value is 2.
 #' @param cluster.type The type of cluster which will be created. The options are `"MPI"` (which calls "makeMPIcluster"), `"FORK"`, and `"SOCK"` (which call "makeCluster"). Default type is `"SOCK"`.
+#' @param progBar logical. If TRUE a progress bar is shown.
 #' @param debugging A boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.
 #' @return A list of matrices of dimension `dim(x)` with length equal to the length of `alpha`. If `rasterOut=TRUE` and `x` is a SpatRaster, then the output is a list of SpatRaster objects.
 #' @details The parametric Rao's Index (Q) is an extension of Rao's Index which considers a generalized mean between distances. The general formula for the parametric Rao's index is Q_a = \deqn{Q = \sum_{i, j} p_i p_j d_{ij}^{\alpha}}. Where `N` is the number of numerical categories, `i` and `j` are pair of numerical categories in the same moving window, and `alpha` is a weight given to distances. In the "multidimension" Rao's index, first the distances among categories are calculated considering more than one feature, and then the overall Rao's Q is derived by using these distances.
@@ -36,52 +37,84 @@
 #'
 #' @export
 
-paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", debugging=FALSE) {
+paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE) {
 
-# Define function to check if a number is an integer
-is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
-# Warning on numeric "simplification" and multimensional Rao's
-message(paste0("Warning: simplify=", simplify,". You're rounding data to ",simplify," decimal place."))
-if( method=="multidimension" ) {warning("Multidimension Rao's index is experimental. Use with caution!")}
-# Initial checks on type of input data
-if( !(is(x,"matrix") | is(x,"SpatialGridDataFrame") | is (x,"SpatRaster") | is(x,"list") | is(x,"RasterStack")) ) { 
-	stop("\nNot a valid xobject.") 
-} 
-if( is(x,"SpatialGridDataFrame") ) {
-	rasterm <- list(terra::rast(x)) 
-	} else if( is(x,"matrix") | is(x,"SpatRaster") & method=="classic" ){ 
-		rasterm <- list(x) 
-		} else if( is(x,"list") | is(x,"SpatRaster") | is(x,"RasterStack") & method=="multidimension" ) {
-			rasterm <- x 
-			} else if( is(x,"list") & method=="classic" ) { 
-				stop ("If x is a list then method should be *multidimension*?") 
-				} else stop ("Please provide a valid raster input object.") 
-				if( na.tolerance>1.0 | na.tolerance<0.0 ) { 
-					stop("na.tolerance must be in the [0-1] interval.") 
-				}
-# Area check
-if( !is.null(area) ) {
-	if( !is(area,"SpatialPolygonsDataFrame") & !is(area, "SpatVector") ) {stop("area must be SpatialPolygonsDataFrame|SpatVector.")}
-	if( !field%in%names(area) ) {stop("field must be a valid variable name of `area`.")}
-	if( np>1 ) {stop("Parallell Area-based Rao's index not implemented yet.")}
-	message("Area-based Rao's index")
+# Warning for using experimental features
+if (method == "multidimension") {
+	warning("Multidimension Rao's index is experimental and should be used with caution.")
 }
-# Alpha's check
-if ( any(!is.numeric(alpha)) ){
+
+# Warning for data rounding
+if (!is.null(simplify)) {
+	warning(paste0("Simplify=", simplify, ". Rounding data to ", simplify, " decimal places."))
+}
+
+# Validate input data type
+if (!(methods::is(x, "matrix") || methods::is(x, "SpatRaster") || methods::is(x, "list") )) {
+	stop("\nInvalid input: x must be a matrix, a SpatRaster or a list.")
+} 
+
+# Processing based on input type and method
+if ((methods::is(x, "matrix") || methods::is(x, "SpatRaster")) && method == "classic") {
+	rasterm <- list(x)
+	} else if ((methods::is(x, "list") || methods::is(x, "SpatRaster")) && method == "multidimension") {
+		rasterm <- x
+		} else if (methods::is(x, "list") && method != "multidimension") {
+			stop("Invalid input: For a list input, method must be set to 'multidimension'.")
+			} else {
+				stop("Invalid raster input object provided.")
+			}
+
+# Validate na.tolerance
+if (na.tolerance > 1.0 || na.tolerance < 0.0) {
+	stop("na.tolerance must be a value in the [0, 1] interval.")
+}
+
+# Validate area input if provided
+if (!is.null(area)) {
+	if (!methods::is(area, "SpatVector") ) {
+		stop("area must be a SpatVector.")
+	}
+	if (!field %in% names(area)) {
+		stop("field must be a valid variable name in 'area'.")
+	}
+	if (np > 1) {
+		stop("Parallel area-based Rao's index is not yet implemented.")
+	}
+	message("Processing area-based Rao's index.")
+}
+
+# Validate alpha
+if (any(!is.numeric(alpha))) {
 	stop("alpha must be a numeric vector.")
 }
-if ( any( alpha<0 ) ){
-	stop("alphas must be only positive numbers.")
+if (any(alpha < 0)) {
+	stop("Alpha values must be non-negative numbers.")
 }
+
+# Area Check
+if ( !is.null(area) ) {
+	if (!methods::is(area, "SpatVector")) {
+		stop("Error: 'area' must be a SpatVector.")
+	}
+	if (!field %in% names(area)) {
+		stop("Error: 'field' must be a valid variable name within 'area'.")
+	}
+	if (np > 1) {
+		stop("Error: Parallel computation for area-based Rao's index is not yet implemented.")
+	}
+	message("Processing area-based Rao's index.")
+}
+
 # Deal with matrix and SpatRaster in different ways
 # If data are raster layers
 if( is.null(area) ){
-	if( any(sapply(rasterm, is,"SpatRaster")) ) {
+	if( any(sapply(rasterm, methods::is,"SpatRaster")) ) {
 		isfloat <- FALSE
 		israst <- TRUE
 # If data are float numbers, transform them to integers.
 if( !any(sapply(rasterm, terra::is.int)) ){
-	message("Input data are float numbers. Converting data to integer matrices...")
+	warning("Input data are float numbers. Converting data to integer matrices.")
 	isfloat <- TRUE
 	mfactor <- 100^simplify
 	rasterm <- lapply(rasterm, function(z) {
@@ -111,16 +144,16 @@ if( !any(sapply(rasterm, terra::is.int)) ){
 			})
 }
 # If data are in a matrix or a list
-}else if( any(sapply(rasterm, is,"matrix")) ) {
+}else if( any(sapply(rasterm, methods::is,"matrix")) ) {
 	isfloat <- FALSE
 	israst <- FALSE
 # If data are float numbers, transform them in integer
 if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
-	message("Input data are float numbers. Converting data to integer matrices...")
+	warning("Input data are float numbers. Converting data to integer matrices...")
 	isfloat <- TRUE
 	mfactor <- 100^simplify
 	rasterm <- lapply(rasterm, function(z) {
-		if(rescale) {
+		if(rescale & method=="multidimension") {
 			message("Centring and scaling data...")
 			z <- (z-mean(z))/stats::sd(z)
 		}
@@ -130,7 +163,7 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 # If data are integers, just be sure that the storage mode is integer
 }else{
 	rasterm <- lapply(rasterm, function(z) {
-		if(rescale) {
+		if(rescale & method=="multidimension") {
 			message("Centring and scaling data...")
 			z <- (z-mean(z))/stats::sd(z)
 			mfactor <- 100^simplify
@@ -140,7 +173,6 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 		})
 }
 }
-message("Numerical matrix ready: \nParametric Rao output will be returned")
 } else ("The class of x is not recognized. Exiting...") 
 # Derive operational moving window
 if( all(window%%2==1) ){
@@ -160,9 +192,10 @@ if( np==1 ) {
 				})
 			} else {
 				out <- lapply(X=w, function(win){
-					lapply(X=alpha, FUN=paRaoS, rasterm=rasterm[[1]], w=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
+					lapply(X=alpha, FUN=paRaoS, x=rasterm[[1]], window=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
 					})
 			}
+			
 			} else if( method=="multidimension" ) {
 				if( !is.null(area) ) {
 					if( debugging ){ cat("#check: Inside multi area clause.") }
@@ -172,35 +205,19 @@ if( np==1 ) {
 						})
 					} else {
 						out <- lapply(X=w, function(win){
-							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, w=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
+							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
 							})
 					}
-				}
-
-				} else if( np>1 ) {
-					message("\n##################### Starting parallel calculation #######################")
-					if( debugging ){cat("#check: Before parallel function.")}     
-# Opening the cluster
-if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
-	cls <- invisible(parallel::makeCluster(np,type=cluster.type, outfile= ' '))
-} 
-else if( cluster.type=="MPI" ) {
-	cls <- invisible(makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output=""))
-} 
-else {
-	message("Wrong definition for 'cluster.type'. Exiting...")
-}
-doParallel::registerDoParallel(cls)
-# Close clusters on exit
-on.exit(stopCluster(cls))
-gc()
+				} 
+} else if( np>1 ) {
+cls <- openCluster(cluster.type, np, progBar, debugging); on.exit(stopCluster(cls)); gc()
 if( method=="classic" ) {
 	out <- lapply(X=w, function(win){
-		lapply(X=alpha, FUN=paRaoP, rasterm=rasterm[[1]], w=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
+		lapply(X=alpha, FUN=paRaoP, x=rasterm[[1]], window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np=np)
 		})
 	} else if(method=="multidimension") {
 		out <- lapply(X=w, function(win){
-			lapply(X=alpha, FUN=mpaRaoP, x=rasterm, w=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale)
+			lapply(X=alpha, FUN=mpaRaoP, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale, np=np, progBar)
 			})
 	}
 }

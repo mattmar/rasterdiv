@@ -14,10 +14,9 @@
 #' a function which calculates a user-defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) 
 #' or a matrix of distances. If \code{method="multidimension"} then only "euclidean", "manhattan", 
 #' "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean".
-#' @param window The side of the square moving window, it must be an odd numeric value greater than 1 
-#' to ensure that the target pixel is in the centre of the moving window. Default value is 3. 
 #' If \code{proxy::dist} is a matrix then the function will assume that this is the distance matrix, 
 #' and therefore no distance will be derived.
+#' @param window The side of the square moving window, it must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.
 #' @param method Currently, there are two ways to calculate the parametric version of Rao's index. 
 #' If \code{method="classic"}, then the normal parametric Rao's index will be calculated on a single matrix. 
 #' If \code{method="multidimension"} (experimental!) a list of matrices must be provided as input. 
@@ -65,9 +64,9 @@
 #'
 #' @export
 
-RaoAUC <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic", rasterAUC=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
+RaoAUC <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic", rasterAUC=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", debugging=FALSE)
 {
-	out <- paRao(x, area=NULL, field=NULL, dist_m, window, method, rasterOut=FALSE, alpha=alphas, lambda, na.tolerance, rescale, diag, simplify, np, cluster.type, debugging)
+	out <- paRao(x, area=NULL, field=NULL, dist_m, window, alpha=alphas, method, rasterOut=FALSE, lambda, na.tolerance, rescale, diag, simplify, np, cluster.type, progBar=TRUE, debugging)
 
 	message("\nIntegrating numerically Rao values over alphas...\n")
 
@@ -76,27 +75,27 @@ RaoAUC <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic"
 			sapply(w, function(a) {
 				sapply(1:length(a), function(y) {
 					a[y]
+					})
 				})
-			})
 			,1, function(i) {
 				if( all(is.na(i)) ) {
 					NA
-				} else {
-					stats::integrate(stats::approxfun(y=i,x=alphas), lower=alphas[1], upper=alphas[max(alphas)], subdivisions = 500)$value
-				}
-			})
+					} else {
+						stats::integrate(stats::approxfun(y=i,x=alphas), lower=alphas[1], upper=alphas[max(alphas)], subdivisions = 500)$value
+					}
+					})
 		return(outm)
-	})
+		})
 
-	if( rasterAUC==TRUE & class(x)[[1]]=="SpatRaster" ) {
+	if( rasterAUC & class(x)[[1]]=="SpatRaster" ) {
 		outR <- lapply(outafx, function(insm) {
-			y <- terra::rast(matrix(insm,ncol=ncol(x),nrow=nrow(x)), crs=terra::crs(x),  ext=terra::ext(x))
-		})
+			y <- terra::rast(matrix(insm,ncol=ncol(x), nrow=nrow(x)), crs=terra::crs(x),  ext=terra::ext(x))
+			})
 		return(outR)
-	} else {
-		outM <- lapply(outafx, function(insm) {
-			y <- matrix(insm,ncol=ncol(x),nrow=nrow(x))
-		})
-		return(outM)
+		} else {
+			outM <- lapply(outafx, function(insm) {
+				y <- matrix(insm,ncol=ncol(x),nrow=nrow(x))
+				})
+			return(outM)
+		}
 	}
-}

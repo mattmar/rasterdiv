@@ -5,9 +5,9 @@
 \title{Sequential Parametric Rao's index of quadratic entropy (Q)}
 \usage{
 paRaoS(
-  rasterm,
+  x,
   alpha,
-  w,
+  window,
   dist_m,
   na.tolerance,
   diag,
@@ -17,11 +17,11 @@ paRaoS(
 )
 }
 \arguments{
-\item{rasterm}{Matrix or data frame; the input data over which the index calculation is performed.}
+\item{x}{Matrix or data frame; the input data over which the index calculation is performed.}
 
 \item{alpha}{Numeric; specifies the alpha value for the order of diversity in Hill's Index.}
 
-\item{w}{Numeric; half of the side length of the square moving window used in the calculation.}
+\item{window}{Numeric; half of the side length of the square moving window used in the calculation.}
 
 \item{dist_m}{Character; specifies the type of distance metric used in calculations.}
 
@@ -40,7 +40,7 @@ displayed for debugging purposes.}
 }
 \value{
 A list of matrices corresponding to the computed Rao's index values. Each matrix in the list 
-represents the calculations performed over the moving window, with dimensions equal to \code{dim(rasterm)}.
+represents the calculations performed over the moving window, with dimensions equal to \code{dim(x)}.
 }
 \description{
 Computes the sequential version of the parametric Rao's index of quadratic entropy (Q), 

@@ -7,7 +7,7 @@
 mpaRaoP(
   x,
   alpha,
-  w,
+  window,
   dist_m,
   na.tolerance,
   rescale,
@@ -24,7 +24,7 @@ mpaRaoP(
 
 \item{alpha}{alpha value for order of diversity in Hill's Index.}
 
-\item{w}{half of the side of the square moving window.}
+\item{window}{half of the side of the square moving window.}
 
 \item{dist_m}{Type of distance used.}
 

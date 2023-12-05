@@ -2,39 +2,32 @@
 % Please edit documentation in R/ShannonS.R
 \name{ShannonS}
 \alias{ShannonS}
-\title{Sequential Shannon's diversity index}
+\title{Calculate Shannon-Wiener Index on a Matrix}
 \usage{
-ShannonS(rasterm, w, na.tolerance, debugging)
+ShannonS(x, window = 1, na.tolerance = 1, debugging = FALSE)
 }
 \arguments{
-\item{rasterm}{Input data; typically a matrix of raster data values.}
+\item{x}{A numeric matrix representing the data on which the index is to be calculated.}
 
-\item{w}{Numeric; half of the side of the square moving window. It determines the area over which each 
-Shannon index value is calculated.}
+\item{window}{The width of the moving window to consider for each cell. The actual window size 
+will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.}
 
-\item{na.tolerance}{Numeric; a tolerance threshold (between 0.0 and 1.0) for NA values in the moving 
-window. If the proportion of NA values in a window exceeds this threshold, the result for that 
-window is set as NA. Otherwise, the calculation ignores the NA values. The default is 0.0, 
-indicating no tolerance for NA values.}
+\item{na.tolerance}{The tolerance level for missing data within the moving window. 
+A window will be processed only if the proportion of non-missing data is above this threshold. 
+Value should be between 0 and 1. Default is 1.}
 
-\item{debugging}{Boolean; if TRUE, the function outputs additional information useful for debugging 
-purposes. This parameter is FALSE by default, meaning that the extra information is not displayed 
-during normal operation.}
+\item{debugging}{Boolean flag to enable or disable debugging messages. Default is FALSE.}
 }
 \value{
-A matrix or a list of matrices, each containing the Shannon diversity index values
-calculated over the corresponding area of the input raster data.
+A matrix of the same dimensions as `x`, where each cell contains the 
+        Shannon-Wiener Index calculated for the window around the cell.
 }
 \description{
-This function computes Shannon's diversity index using a sequential method. It is designed for situations 
-where parallel computation is not feasible or desired. The function applies a moving window approach to 
-the provided raster data.
+This function calculates the Shannon-Wiener Index for each cell in a matrix,
+considering a specified moving window around each cell.
 }
-\seealso{
-\code{\link{Shannon}} for the standard (non-sequential) version of the Shannon diversity index calculation.
-}
-\author{
-Matteo Marcantonio \email{marcantoniomatteo@gmail.com}, 
-Martina Iannacito \email{martina.iannacito@inria.fr}, 
-Duccio Rocchini \email{duccio.rocchini@unibo.it}
+\examples{
+data <- matrix(runif(100), nrow = 10)
+shannon_index <- ShannonS(data, window = 1)
+
 }

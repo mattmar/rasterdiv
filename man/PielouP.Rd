@@ -4,13 +4,13 @@
 \alias{PielouP}
 \title{Parallelised Pielou's diversity index}
 \usage{
-PielouP(rasterm, w, na.tolerance, debugging)
+PielouP(x, window = 1, na.tolerance = 1, debugging = FALSE, np)
 }
 \arguments{
-\item{rasterm}{Input raster data, representing the environmental variable(s) 
+\item{x}{Input raster data, representing the environmental variable(s) 
 over which the diversity index should be calculated.}
 
-\item{w}{The size of the half-side of the square moving window used in the 
+\item{window}{The size of the half-side of the square moving window used in the 
 calculation. This determines the scale at which diversity is assessed.}
 
 \item{na.tolerance}{A numeric value (between 0.0 and 1.0) indicating the 
@@ -19,8 +19,10 @@ raster data. If the proportion of NA values in a window exceeds this
 threshold, the resulting value for that window is set as NA. The default 
 is 0.0, indicating no tolerance for NA values.}
 
-\item{debugging}{Boolean flag indicating whether additional console 
+\item{debugging}{Boolean flag indicating whether additional console
 output should be generated for debugging purposes. Defaults to FALSE.}
+
+\item{np}{The number of processes (cores) which will be spawned. Default value is 2.}
 }
 \value{
 A matrix or list of matrices, depending on the input, containing 
@@ -38,7 +40,7 @@ is computed using a moving window approach over the input data.
 # Demonstration of function with hypothetical data
 # Ensure you replace this with actual raster data
 demo_raster <- #... (your raster data here)
-result <- PielouP(rasterm = demo_raster, w = 3, na.tolerance = 0.1, debugging = FALSE)
+result <- PielouP(x = demo_raster, win = 3, na.tolerance = 0.1, debugging = FALSE)
 # proceed with analyzing 'result'
 }
 }

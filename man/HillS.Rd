@@ -4,16 +4,16 @@
 \alias{HillS}
 \title{Sequential Hill's diversity index}
 \usage{
-HillS(rasterm, w, alpha, na.tolerance, debugging)
+HillS(x, window = 1, alpha = 1, na.tolerance = 1, debugging = FALSE)
 }
 \arguments{
-\item{rasterm}{Input data.}
+\item{x}{Input data.}
 
-\item{w}{Half of the side of the square moving window.}
+\item{window}{Half of the side of the square moving window.}
 
 \item{alpha}{Alpha value for the order of diversity in Hill's Index.}
 
-\item{na.tolerance}{A numeric value between 0.0 and 1.0, which indicates the proportion of NA values that will be tolerated to calculate Hill's index in each moving window over \code{rasterm}. If the relative proportion of NA's in a moving window is greater than na.tolerance, then the value of the window will be set as NA; otherwise, the index will be calculated considering the non-NA values. Default value is 1.0 (i.e., full tolerance for NA's).}
+\item{na.tolerance}{A numeric value between 0.0 and 1.0, which indicates the proportion of NA values that will be tolerated to calculate Hill's index in each moving window over \code{x}. If the relative proportion of NA's in a moving window is greater than na.tolerance, then the value of the window will be set as NA; otherwise, the index will be calculated considering the non-NA values. Default value is 1.0 (i.e., full tolerance for NA's).}
 
 \item{debugging}{A boolean variable set to FALSE by default. If TRUE, additional messages will be printed for debugging purposes.}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Pielou.R
 \name{Pielou}
 \alias{Pielou}
-\title{Pielou's evenness index (E')}
+\title{Pielou's Evenness Index}
 \usage{
 Pielou(
   x,
@@ -15,46 +15,23 @@ Pielou(
 )
 }
 \arguments{
-\item{x}{Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster or a list of these objects. In the latter case, only the first element of the list will be considered.}
+\item{x}{A raster object (matrix, SpatRaster, SpatialGridDataFrame, or a list containing one of these).}
 
-\item{window}{The side of the square moving window, it must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.}
+\item{window}{The size of the moving window to be used for the calculation. Must be an odd integer.}
 
-\item{rasterOut}{Boolean, if TRUE the output will be in SpatRaster format with \emph{x} as template.}
+\item{rasterOut}{Logical, if TRUE the output will be a raster object; if FALSE a matrix.}
 
-\item{np}{The number of processes to use for parallel processing. Defaults to 1.}
+\item{np}{The number of processes to use in parallel mode. If np > 1, parallel computation is enabled.}
 
-\item{na.tolerance}{A numeric value (0.0-1.0) indicating the proportion of NA values tolerated for calculating Pielou's index in each moving window over \emph{x}. Defaults to 1.0 (i.e., full tolerance).}
+\item{na.tolerance}{The tolerance level for NA values within the moving window, expressed as a proportion (0 to 1).}
 
-\item{cluster.type}{Specifies the type of cluster to create. Available options are "MPI" (utilizing "makeMPIcluster"), "FORK", and "SOCK" (using "makeCluster"). Default is "SOCK".}
+\item{cluster.type}{The type of cluster to use for parallel computation (e.g., "SOCK", "FORK").}
 
-\item{debugging}{A boolean; if TRUE, additional debugging messages will be printed. Defaults to FALSE.}
+\item{debugging}{Logical, if TRUE debugging information will be printed.}
 }
 \value{
-A numerical matrix with the same dimensions as \code{x}.
+Returns a raster object or matrix containing the Pielou's Evenness Index values.
 }
 \description{
-Computes Pielou's evenness index on different classes of numeric matrices using a moving window algorithm.
-}
-\details{
-Pielou evenness's index (E') is calculated as E' = \deqn{{\sum_{i=1}^{R} p_i \times log(p_i)}\over{log(R)}}, where \emph{R} represents the total number of categories (i.e., unique numerical values) and \emph{p} is the relative abundance of each category. The index represents the ratio between the observed diversity and the maximum possible diversity.
-}
-\note{
-Linux users need to install libopenmpi for MPI parallel computing. 
-For Linux Ubuntu, try the following commands: 
-apt-get update; apt-get upgrade; apt-get install mpi; apt-get install libopenmpi-dev; apt-get install r-cran-rmpi
-Windows users may need to perform additional setup for "MPI". More information is available at:
-\url{https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-mac-and-windows/}
-}
-\examples{
-# Minimal example; compute Pielou's index  
-a <- matrix(c(10,10,10,20,20,20,20,30,30), ncol=3, nrow=3)
-renyi <- Pielou(x=a, window=3)
-
-}
-\references{
-Pielou, E.C. (1966). The measurement of diversity in different types of biological collections. 
-Journal of Theoretical Biology, 13: 131-144.
-}
-\seealso{
-\code{\link{Shannon}}
+Calculates Pielou's Evenness Index for a given raster object over a specified window size. The function can operate in either sequential or parallel mode.
 }

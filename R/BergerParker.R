@@ -29,75 +29,55 @@
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom foreach %dopar%
 
-BergerParker <- function(x, window=3, rasterOut=TRUE, np=1, na.tolerance=1.0, cluster.type="SOCK", debugging=FALSE){
+BergerParker <- function(x, window = 3, rasterOut = TRUE, np = 1, na.tolerance=1, cluster.type = "SOCK", debugging = FALSE) {
 
-# Initial checks
-  if( !((is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"SpatRaster") | is(x,"list"))) ) {
-    stop("\nNot a valid x object. Exiting...")
-  }
-  else if( is(x,"matrix") ) {
-    rasterm <- x
-  }
-  else if( is(x,"SpatialGridDataFrame") ) {
-    rasterm <- terra::rast(x)
-  }
-  else if( is(x,"SpatRaster")) {
-    rasterm <- matrix(terra::values(x), ncol = ncol(x), nrow = nrow(x), byrow=TRUE)
-  } 
-  else if( is(x,"list") ) {
-    message("x is a list, only first element will be taken.")
-    if( !((is(x[[1]],"matrix") | is(x[[1]],"SpatialGridDataFrame") | is(x[[1]],"SpatRaster"))) ) {
-      stop("The first element of list x is not a valid object. Exiting...")
-    }
-    rasterm <- x[[1]]
-    if( is(rasterm,"SpatRaster") ) {
-      rasterm <- matrix(terra::values(rasterm), ncol = ncol(rasterm), nrow = nrow(rasterm), byrow=TRUE)
-    }
-  }
+  alpha=1 
+  validateInputs(x, window, alpha, na.tolerance)
+  rasterm <- prepareRaster(x)
+  w <- calculateWindow(window)
+  out <- if (np == 1) calculateBergerParkerSequential(rasterm[[1]], w, na.tolerance, debugging)
+  else calculateBergerParkerParallel(rasterm[[1]], w, na.tolerance, debugging, cluster.type, np)
+  formatOutput(out, rasterOut, x, alpha, window)
+}
 
-  #Print user messages
-  message("\nObject x check OK: \nBerger-Parker output matrix will be returned.")
-    # Derive operational moving window
-  if( window%%2==1 ){
-    w <- (window-1)/2
-  } else {
-    stop("The size of the moving window must be an odd number. Exiting...")
-  } 
-  if (np == 1){
-    outS <- BergerParkerS(rasterm, w, na.tolerance, debugging)
-    message(("\nCalculation complete.\n"))
-    if(rasterOut==TRUE & class(x)[1]=="SpatRaster") {
-      outR <- terra::rast(outS, crs=terra::crs(x),  ext=terra::ext(x))
-      return(outR)
-    }else{
-      return(outS)
-    }
-  }
-  else if (np>1){
-  # If more than 1 process
-    message("\n##################### Starting parallel calculation #######################")
-    if(debugging){cat("#check: Berger-Parker parallel function.")}
-    if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
-      cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
-    } 
-    else if( cluster.type=="MPI" ) {
-      cls <- makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
-    } 
-    else {
-      message("Wrong definition for cluster.type. Exiting...")
-    }
-    registerDoParallel(cls)
-    # Close clusters on exit
-    on.exit(stopCluster(cls))
-    # Garbage collection
-    gc()
-    outP <- do.call(cbind,BergerParkerP(rasterm, w, na.tolerance, debugging))
-    message("\nCalculation complete.\n")
-    if(rasterOut==TRUE & class(x)[1]=="SpatRaster") {
-      outR <- terra::rast(outP, crs=terra::crs(x),  ext=terra::ext(x))
-      return(outR)
-    }else{
-      return(outP)
-    }
-  }
+#' Calculate Sequentially
+#'
+#' @description Internal function to calculate indices sequentially.
+#'
+#' @param rasterm Prepared raster object for computation.
+#' @param w The operative moving window size.
+#' @param alpha The alpha parameter (used in some indices).
+#' @param na.tolerance Proportion of acceptable NA values in the window.
+#' @param debugging Logical flag for debugging mode.
+#'
+#' @return Returns a list or matrix of calculated index values.
+#' @noRd
+
+calculateBergerParkerSequential <- function(rasterm, w, na.tolerance, debugging) {
+  if(debugging) {cat("#check: Before sequential function.")}
+  lapply(w, function(win) {
+    BergerParkerS(rasterm, win, na.tolerance, debugging)
+    })
+}
+
+#' Calculate in Parallel
+#'
+#' @description Internal function to calculate indices in parallel.
+#'
+#' @param rasterm Prepared raster object for computation.
+#' @param w The operative moving window size.
+#' @param alpha The alpha parameter (used in some indices).
+#' @param na.tolerance Proportion of acceptable NA values in the window.
+#' @param debugging Logical flag for debugging mode.
+#' @param cluster.type Cluster type for parallel computation.
+#' @param np Number of processes for parallel computation.
+#'
+#' @return Returns a list or matrix of calculated index values.
+#' @noRd
+calculateBergerParkerParallel <- function(rasterm, w, na.tolerance, debugging, cluster.type, np) {
+  if(debugging) {cat("#check: Before parallel function.")}
+    cls <- openCluster(cluster.type, np, debugging); on.exit(stopCluster(cls)); gc()
+  lapply(w, function(win) {
+    BergerParkerP(rasterm, win, na.tolerance, debugging, np)
+    })
 }

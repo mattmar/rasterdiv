@@ -45,7 +45,7 @@ remotes::install_github("mattmar/rasterdiv")
 - Hill's generalised entropy;
 - Rényi's generalised entropy;
 - Berger-Parker index;
-- ~~Cumulative Residual Entropy (CRE)~~
+- Cumulative Residual Entropy (CRE)
 
 :partying_face: *__rasterdiv__* now integrates also functions to prepare and plot time series with "helical graphs", check out this vignette for more infos: `r if(knitr::is_html_output()) {
   "[Visualising rasterdiv indexes with Helical Plots](https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html)"

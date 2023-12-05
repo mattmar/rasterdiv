@@ -1,59 +1,70 @@
-#' Sequential Shannon's diversity index
+#' Calculate Shannon-Wiener Index on a Matrix
 #'
-#' This function computes Shannon's diversity index using a sequential method. It is designed for situations 
-#' where parallel computation is not feasible or desired. The function applies a moving window approach to 
-#' the provided raster data.
+#' @description
+#' This function calculates the Shannon-Wiener Index for each cell in a matrix,
+#' considering a specified moving window around each cell.
 #'
-#' @param rasterm Input data; typically a matrix of raster data values.
-#' @param w Numeric; half of the side of the square moving window. It determines the area over which each 
-#' Shannon index value is calculated.
-#' @param na.tolerance Numeric; a tolerance threshold (between 0.0 and 1.0) for NA values in the moving 
-#' window. If the proportion of NA values in a window exceeds this threshold, the result for that 
-#' window is set as NA. Otherwise, the calculation ignores the NA values. The default is 0.0, 
-#' indicating no tolerance for NA values.
-#' @param debugging Boolean; if TRUE, the function outputs additional information useful for debugging 
-#' purposes. This parameter is FALSE by default, meaning that the extra information is not displayed 
-#' during normal operation.
-#' @return A matrix or a list of matrices, each containing the Shannon diversity index values
-#' calculated over the corresponding area of the input raster data.
-#' @seealso \code{\link{Shannon}} for the standard (non-sequential) version of the Shannon diversity index calculation.
-#' @author Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}, 
-#' Martina Iannacito \email{martina.iannacito@@inria.fr}, 
-#' Duccio Rocchini \email{duccio.rocchini@@unibo.it}
-
-ShannonS <- function(rasterm, w, na.tolerance, debugging){
+#' @param x A numeric matrix representing the data on which the index is to be calculated.
+#' @param window The width of the moving window to consider for each cell. The actual window size 
+#'        will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.
+#' @param na.tolerance The tolerance level for missing data within the moving window. 
+#'        A window will be processed only if the proportion of non-missing data is above this threshold. 
+#'        Value should be between 0 and 1. Default is 1.
+#' @param debugging Boolean flag to enable or disable debugging messages. Default is FALSE.
+#'
+#' @return A matrix of the same dimensions as `x`, where each cell contains the 
+#'         Shannon-Wiener Index calculated for the window around the cell.
+#'
+#' @examples
+#' data <- matrix(runif(100), nrow = 10)
+#' shannon_index <- ShannonS(data, window = 1)
+#'
+#' @export
+ShannonS <- function(x, window = 1, na.tolerance=1, debugging=FALSE){
+  # `win` is the operative moving window
+  win = window 
+  NAwin <- 2*window+1
+  message("\n\nProcessing moving Window: ", NAwin)
+  pb <- progress::progress_bar$new(
+    format = "[:bar] :percent in :elapsed",
+    total = (dim(x)[2]+NAwin), 
+    clear = FALSE, 
+    width = 60, 
+    force = FALSE)
+  
   # Reshape values
-  out <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-  values <- as.numeric(as.factor(rasterm))
-  rasterm_1 <- matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+  out <- matrix(rep(NA,dim(x)[1]*dim(x)[2]),nrow=dim(x)[1],ncol=dim(x)[2])
+  values <- as.numeric(as.factor(x))
+  x_1 <- matrix(data=values,nrow=dim(x)[1],ncol=dim(x)[2])
   #
   ## Add additional  columns and rows for moving window
   #
-  hor <- matrix(NA,ncol=dim(rasterm)[2],nrow=w)
-  ver <- matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-  trasterm <- cbind(ver,rbind(hor,rasterm_1,hor),ver)
-  window = 2*w+1
+  hor <- matrix(NA,ncol=dim(x)[2],nrow=win)
+  ver <- matrix(NA,ncol=win,nrow=dim(x)[1]+win*2)
+  tx <- cbind(ver,rbind(hor,x_1,hor),ver)
   #
   ## Loop over all the pixels
   #
-  for (cl in (1+w):(ncol(rasterm)+w)) {
-    for(rw in (1+w):(nrow(rasterm)+w)) {
-      if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-        out[rw-w,cl-w]<-NA
+  for (cl in (1+win):(ncol(x)+win)) {
+    # Update progress bar
+    pb$tick()
+
+    for(rw in (1+win):(nrow(x)+win)) {
+      if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
+        out[rw-win,cl-win]<-NA
       } else {
-        tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]))
+        tw<-summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]))
         if( "NA's"%in%names(tw) ) {
           tw<-tw[-length(tw)]
         }
         if(debugging) {
-          message("Shannon-Wiener\nWorking on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=",window)
+          message("Shannon-Winiener\nWorking on coords ",rw ,",",cl,". classes length: ",length(tw),". win size=",win)
         }
         tw_values<-as.vector(tw)
         p<-tw_values/sum(tw_values)
-        out[rw-w,cl-w]<-(-(sum(p*log(p))))
+        out[rw-win,cl-win]<-(-(sum(p*log(p))))
       }
     }
-    svMisc::progress(value=cl/(ncol(trasterm)-1)*100, max.value=100, progress.bar = F,init=T)
   } 
   
   return(out)

@@ -4,13 +4,13 @@
 \alias{PielouS}
 \title{Sequential Pielou's diversity index}
 \usage{
-PielouS(rasterm, w, na.tolerance, debugging)
+PielouS(x, window = 1, na.tolerance = 1, debugging = FALSE)
 }
 \arguments{
-\item{rasterm}{Input raster data, representing the environmental variable(s) 
+\item{x}{Input raster data, representing the environmental variable(s) 
 over which the diversity index should be calculated.}
 
-\item{w}{The size of the half-side of the square moving window used in the 
+\item{window}{The size of the half-side of the square moving window used in the 
 calculation. This determines the scale at which diversity is assessed.}
 
 \item{na.tolerance}{A numeric value (between 0.0 and 1.0) indicating the 
@@ -38,7 +38,7 @@ standard, non-sequential manner.
 # Demonstration of function with hypothetical data
 # Ensure you replace this with actual raster data
 demo_raster <- #... (your raster data here)
-result <- PielouS(rasterm = demo_raster, w = 3, na.tolerance = 0.1, debugging = FALSE)
+result <- PielouS(x = demo_raster, win = 3, na.tolerance = 0.1, debugging = FALSE)
 # proceed with analyzing 'result'
 }
 }

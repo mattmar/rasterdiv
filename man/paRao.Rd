@@ -20,6 +20,7 @@ paRao(
   simplify = 0,
   np = 1,
   cluster.type = "SOCK",
+  progBar = TRUE,
   debugging = FALSE
 )
 }
@@ -53,6 +54,8 @@ paRao(
 \item{np}{The number of processes (cores) which will be spawned. Default value is 2.}
 
 \item{cluster.type}{The type of cluster which will be created. The options are `"MPI"` (which calls "makeMPIcluster"), `"FORK"`, and `"SOCK"` (which call "makeCluster"). Default type is `"SOCK"`.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 
 \item{debugging}{A boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.}
 }

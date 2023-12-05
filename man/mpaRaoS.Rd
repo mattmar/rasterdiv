@@ -7,7 +7,7 @@
 mpaRaoS(
   x,
   alpha,
-  w,
+  window,
   dist_m,
   na.tolerance,
   rescale,
@@ -15,7 +15,8 @@ mpaRaoS(
   diag,
   debugging,
   isfloat,
-  mfactor
+  mfactor,
+  np
 )
 }
 \arguments{
@@ -23,7 +24,7 @@ mpaRaoS(
 
 \item{alpha}{Numeric; alpha value for order of diversity in Hill's Index.}
 
-\item{w}{Numeric; half of the side of the square moving window used for calculation.}
+\item{window}{Numeric; half of the side of the square moving window used for calculation.}
 
 \item{dist_m}{Character; type of distance used in the analysis.}
 
@@ -43,6 +44,8 @@ is FALSE.}
 \item{isfloat}{Logical; specifies if the input data are floats.}
 
 \item{mfactor}{Numeric; multiplication factor applied if input data are float numbers.}
+
+\item{np}{Number of processes for parallel computation.}
 }
 \value{
 A list of matrices, each representing a layer of the input RasterStack, containing calculated 

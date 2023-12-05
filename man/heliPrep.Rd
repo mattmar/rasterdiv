@@ -4,7 +4,7 @@
 \alias{heliPrep}
 \title{Prepare Data for Helical Plotting}
 \usage{
-heliPrep(dates, values, window_size = 7, span_x = 0.7, span_y = 0.7)
+heliPrep(dates, values, filterWidth = 7)
 }
 \arguments{
 \item{dates}{A vector of dates associated with the values; can be numeric or
@@ -12,16 +12,8 @@ Date objects. If numeric, they are treated as days since a given start date.}
 
 \item{values}{A numeric vector of the time series values corresponding to the dates.}
 
-\item{window_size}{The size of the moving window to calculate the moving average.
-Defaults to 7.}
-
-\item{span_x}{Unused.
-Represents the proportion of data points influencing each smoothed value.
-A number between 0 and 1; higher values make the smoother follow the data more closely.
-Defaults to 0.7.}
-
-\item{span_y}{Unused.
-Similar to `span_x` but for the rate of change. Defaults to 0.7.}
+\item{filterWidth}{The size of the moving window to calculate the moving average.
+Defaults to 7}
 }
 \value{
 A data frame suitable for helical plotting, containing the original

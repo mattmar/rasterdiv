@@ -28,7 +28,7 @@
 process_raster_result <- function(out, x, alpha, window) {
   outR <- lapply(out, function(insm) {
     y <- lapply(insm, function(single_result) {
-      terra::rast(single_result, terra::crs(x[[1]]), terra::res(x[[1]]))
+      terra::rast(single_result, type="", terra::crs(x[[1]]), terra::res(x[[1]]))
     })
     names(y) <- paste("alpha.", alpha, sep = "")
     return(y)

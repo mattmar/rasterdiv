@@ -2,7 +2,7 @@
 % Please edit documentation in R/heliPlot.R
 \name{heliPlot}
 \alias{heliPlot}
-\title{Helical Plot for Time Series Data}
+\title{Create a Helical Plot for Time Series Data}
 \usage{
 heliPlot(
   data,
@@ -11,59 +11,55 @@ heliPlot(
   xlabel = "Rate of Change",
   ylabel = "Values",
   arrow = TRUE,
-  textFont = 3,
-  labelInterval = FALSE,
+  dateFont = 3,
+  dateInterval = FALSE,
   sizeRange = c(1, 3),
   facetScales = "free",
-  n = 100,
+  dateFormat = "\%d \%b \%y",
+  n = nrow(data),
   ...
 )
 }
 \arguments{
-\item{data}{A data frame containing the time series data with required columns: 'ch_avg', 'ch_rate', 'date', 'yend', and 'xend'.}
+\item{data}{A data frame containing the time series data with required columns: "values_avg", "change_rate", and "date".}
 
-\item{group}{An optional string specifying the column name to use for grouping data in the plot.}
+\item{group}{(Optional) A string specifying the column name in `data` to use for grouping data in the plot. If NULL, no grouping is applied.}
 
-\item{facet}{Logical, if TRUE and a grouping variable is provided, will facet the plot based on the group.}
+\item{facet}{Logical indicating whether to facet the plot based on the `group` variable. If TRUE and `group` is NULL, an error is raised.}
 
-\item{xlabel}{Label for the x-axis.}
+\item{xlabel}{Label for the x-axis, defaults to "Rate of Change".}
 
-\item{ylabel}{Label for the y-axis.}
+\item{ylabel}{Label for the y-axis, defaults to "Values".}
 
-\item{arrow}{Logical, if TRUE, adds arrows to the plot lines to indicate direction.}
+\item{arrow}{Logical indicating whether to add an arrow to the end of each line, defaults to TRUE.}
 
-\item{textFont}{Numeric, the size of the text font for labels.}
+\item{dateFont}{Numeric specifying the size of the date font, defaults to 3.}
 
-\item{labelInterval}{Numeric, the interval at which labels are displayed. If FALSE, no labels are displayed.}
+\item{dateInterval}{Numeric specifying the interval at which date labels should be displayed. If FALSE, no date labels are shown.}
 
-\item{sizeRange}{Numeric vector of size 2, indicating the range of line widths.}
+\item{sizeRange}{Numeric vector of length 2 specifying the range of line widths.}
 
-\item{facetScales}{Character, if 'free', the scales of faceted plots are allowed to vary.}
+\item{facetScales}{Character string indicating whether scales should be "fixed", "free_x", "free_y", or "free".}
 
-\item{n}{Integer, the number of points to interpolate along the curve path.}
+\item{dateFormat}{Format for the date labels, defaults to d-b-y.}
 
-\item{...}{Character, ggplot2 aesthetics (`aes()`).}
+\item{n}{Numeric specifying the number of points to interpolate along the spline, defaults to the number of rows in `data`.}
+
+\item{...}{Additional arguments passed on to `ggplot2` layer functions.}
 }
 \value{
-A `ggplot` object representing the helical plot with options for faceting and dynamic segment sizing.
+A `ggplot` object representing the helical plot.
 }
 \description{
-Creates a helical plot to visualize the relationship between rate of change and
-cumulative averages in time series data. Can handle multiple time series by
-faceting the plot based on a grouping variable.
+Creates a helical plot to visualize time series data, emphasizing both
+the magnitude and rate of change over time.
 }
 \examples{
+# Assuming `dataPrep` is a data frame prepared with the required structure:
+
 \dontrun{
-  data <- data.frame(
-    date = seq(as.Date("2020-01-01"), by = "month", length.out = 12),
-    ch_avg = runif(12, 5, 15),
-    ch_rate = rnorm(12, 0, 1),
-    yend = runif(12, 4, 16),
-    xend = rnorm(12, -1, 1)
-  )
-  heliPlot(data, group = "date", facet = TRUE, xlabel = "Rate of Change",
-           ylabel = "Values", arrow = TRUE, textFont = 3, labelInterval = 2,
-           sizeRange = c(1, 3), facetScales = "free")
+heliPlot(dataPrep, group = "myGroup", arrow = TRUE, 
+dateFont = 3, dateInterval = 30, sizeRange = c(1, 3))
 }
 
 }

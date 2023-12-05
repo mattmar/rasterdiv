@@ -8,6 +8,7 @@ Hill(
   x,
   window = 3,
   alpha = 1,
+  base = exp(1),
   rasterOut = TRUE,
   np = 1,
   na.tolerance = 1,
@@ -21,6 +22,8 @@ Hill(
 \item{window}{The side of the square moving window. It must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.}
 
 \item{alpha}{Order of the Hill number to compute the index. If \code{alpha} is a vector with length greater than 1, then the index will be calculated over \code{x} for each value in the sequence.}
+
+\item{base}{The logarithm base for the calculation, default is natural logarithm.}
 
 \item{rasterOut}{Boolean; if TRUE, the output will be in SpatRaster format with \code{x} as the template.}
 

@@ -4,18 +4,20 @@
 \alias{HillP}
 \title{Parallelised Hill's diversity index}
 \usage{
-HillP(rasterm, w, alpha, na.tolerance, debugging)
+HillP(rasterm, window, alpha, na.tolerance, debugging, np)
 }
 \arguments{
 \item{rasterm}{Input data.}
 
-\item{w}{Half of the side of the square moving window.}
+\item{window}{Half of the side of the square moving window.}
 
 \item{alpha}{Alpha value for the order of diversity in Hill's Index.}
 
 \item{na.tolerance}{A numeric value between 0.0 and 1.0, which indicates the proportion of NA values that will be tolerated to calculate the index in each moving window over \code{rasterm}. If the relative proportion of NA's in a moving window is bigger than na.tolerance, then the value of the window will be set as NA; otherwise, the index will be calculated considering the non-NA values. Default value is 0.0 (i.e., no tolerance for NA's).}
 
 \item{debugging}{A boolean variable set to FALSE by default. If TRUE, additional messages will be printed for debugging purposes.}
+
+\item{np}{Number of processes for parallel computation.}
 }
 \value{
 Matrix or a list of matrices with the Hill index computed through a moving window of the given size.

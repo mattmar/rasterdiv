@@ -4,9 +4,9 @@
 #' for handling large datasets that might not be efficiently processed in a 
 #' standard, non-sequential manner.
 #'
-#' @param rasterm Input raster data, representing the environmental variable(s) 
+#' @param x Input raster data, representing the environmental variable(s) 
 #' over which the diversity index should be calculated.
-#' @param w The size of the half-side of the square moving window used in the 
+#' @param window The size of the half-side of the square moving window used in the 
 #' calculation. This determines the scale at which diversity is assessed.
 #' @param na.tolerance A numeric value (between 0.0 and 1.0) indicating the 
 #' proportion of NA values that are acceptable in each moving window over the 
@@ -33,54 +33,66 @@
 #' # Demonstration of function with hypothetical data
 #' # Ensure you replace this with actual raster data
 #' demo_raster <- #... (your raster data here)
-#' result <- PielouS(rasterm = demo_raster, w = 3, na.tolerance = 0.1, debugging = FALSE)
+#' result <- PielouS(x = demo_raster, win = 3, na.tolerance = 0.1, debugging = FALSE)
 #' # proceed with analyzing 'result'
 #' }
 
-PielouS <- function(rasterm, w, na.tolerance, debugging){
-  #message("\nStarting Pielou's index calculation:\n")
+PielouS <- function(x, window = 1, na.tolerance=1, debugging=FALSE){
+   # `win` is the operative moving window
+   win = window 
+   NAwin <- 2*window+1
+   message("\n\nProcessing moving Window: ", NAwin)
+  # Set a progress bar
+  win = 2*window+1
+  pb <- progress::progress_bar$new(
+    format = "[:bar] :percent in :elapsed",
+    total = (dim(x)[2]+NAwin), 
+    clear = FALSE, 
+    width = 60, 
+    force = FALSE)
   # Reshape values
-  out<-matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-  values<-as.numeric(as.factor(rasterm))
-  rasterm_1<-matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+  out<-matrix(rep(NA,dim(x)[1]*dim(x)[2]),nrow=dim(x)[1],ncol=dim(x)[2])
+  values<-as.numeric(as.factor(x))
+  x_1<-matrix(data=values,nrow=dim(x)[1],ncol=dim(x)[2])
   #
   ## Add additional columns and rows for moving window
   #
-  hor<-matrix(NA,ncol=dim(rasterm)[2],nrow=w)
-  ver<-matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-  trasterm<-cbind(ver,rbind(hor,rasterm_1,hor),ver)
-  window = 2*w+1
+  hor<-matrix(NA,ncol=dim(x)[2],nrow=win)
+  ver<-matrix(NA,ncol=win,nrow=dim(x)[1]+win*2)
+  tx<-cbind(ver,rbind(hor,x_1,hor),ver)
   #
   ## Loop over all the pixels
   #
-  for (cl in (1+w):(dim(rasterm)[2]+w)) {
-    for(rw in (1+w):(dim(rasterm)[1]+w)) {
-      if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
-        out[rw-w,cl-w]<-NA
-      } else {
-        tw<-summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]))
-        if( "NA's"%in%names(tw) ) {
-          tw<-tw[-length(tw)]
+  for (cl in (1+win):(dim(x)[2]+win)) {
+    # Update progress bar
+    pb$tick()
+    
+    for(rw in (1+win):(dim(x)[1]+win)) {
+      if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA))  < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
+        out[rw-win,cl-win]<-NA
+        } else {
+          tw<-summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]))
+          if( "NA's"%in%names(tw) ) {
+            tw<-tw[-length(tw)]
+          }
+
+          if(debugging) {
+            message("\nPielou\nWorking on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=",2*win+1)
+          }
+
+          tw_values <- as.vector(tw)
+          maxS <- log(length(tw))
+          p <- tw_values/sum(tw_values)
+          p_log <- log(p)
+          out[rw-win,cl-win] <- (-(sum(p*p_log)))/maxS
+
+          if( debugging ) {
+            message("\ncat: ",paste(tw,collapse=" ")," log S: ",maxS," Pielou: ",out[rw-win,cl-win])
+          }
+
         }
-
-        if(debugging) {
-          message("\nPielou\nWorking on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=",2*w+1)
-        }
-
-        tw_values <- as.vector(tw)
-        maxS <- log(length(tw))
-        p <- tw_values/sum(tw_values)
-        p_log <- log(p)
-        out[rw-w,cl-w] <- (-(sum(p*p_log)))/maxS
-
-        if( debugging ) {
-          message("\ncat: ",paste(tw,collapse=" ")," log S: ",maxS," Pielou: ",out[rw-w,cl-w])
-        }
-
       }
-    }
-    svMisc::progress(value=cl/(ncol(trasterm)-1)*100, max.value=100, progress.bar = F,init=T)
-  } 
-  
-  return(out)
-}
+    } 
+
+    return(out)
+  }

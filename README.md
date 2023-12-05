@@ -41,7 +41,7 @@ numerical matrices. Supported indexes are:
   - Hill’s generalised entropy;
   - Rényi’s generalised entropy;
   - Berger-Parker index;
-  - ~~Cumulative Residual Entropy (CRE)~~
+  - Cumulative Residual Entropy (CRE)
 
 :partying\_face: ***rasterdiv*** now integrates also functions to
 prepare and plot time series with “helical graphs”, check out this

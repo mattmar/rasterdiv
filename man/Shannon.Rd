@@ -2,7 +2,7 @@
 % Please edit documentation in R/Shannon.R
 \name{Shannon}
 \alias{Shannon}
-\title{Shannon's diversity index (H')}
+\title{Shannon's Evenness Index}
 \usage{
 Shannon(
   x,
@@ -15,63 +15,23 @@ Shannon(
 )
 }
 \arguments{
-\item{x}{Input data; can be a matrix, a Spatial Grid Data Frame, a SpatRaster, 
-or a list of these objects. Only the first element of the list is considered if 
-a list is provided.}
+\item{x}{A raster object (matrix, SpatRaster, SpatialGridDataFrame, or a list containing one of these).}
 
-\item{window}{Numeric; the size of the square moving window. It must be an odd 
-number greater than 1 to ensure the target pixel is centrally located. Default is 3.}
+\item{window}{The size of the moving window to be used for the calculation. Must be an odd integer.}
 
-\item{rasterOut}{Boolean; if TRUE, the output is a SpatRaster with \code{x} as 
-the template.}
+\item{rasterOut}{Logical, if TRUE the output will be a raster object; if FALSE a matrix.}
 
-\item{np}{Number of processes (cores) to be used; default is 1.}
+\item{np}{The number of processes to use in parallel mode. If np > 1, parallel computation is enabled.}
 
-\item{na.tolerance}{Numeric between 0.0 and 1.0, indicating the acceptable proportion 
-of NA values in each moving window over \code{x} for Shannon's index calculation. 
-If the relative proportion of NAs exceeds na.tolerance, the result is set as NA. 
-Otherwise, the index is computed using non-NA values. Default is 1.0.}
+\item{na.tolerance}{The tolerance level for NA values within the moving window, expressed as a proportion (0 to 1).}
 
-\item{cluster.type}{Specifies the type of cluster to create. Options are "MPI" 
-(utilizing "makeMPIcluster"), "FORK", and "SOCK" (using "makeCluster"). Default 
-is "SOCK".}
+\item{cluster.type}{The type of cluster to use for parallel computation (e.g., "SOCK", "FORK").}
 
-\item{debugging}{Boolean; if TRUE, additional diagnostic messages are printed, 
-intended for debugging. Default is FALSE.}
+\item{debugging}{Logical, if TRUE debugging information will be printed.}
 }
 \value{
-A numerical matrix with the same dimensions as \code{x}, containing 
-the calculated Shannon's diversity index.
+Returns a raster object or matrix containing the Shannon's Evenness Index values.
 }
 \description{
-Computes Shannon's diversity index (H') on different classes of numeric matrices 
-using a moving window algorithm.
-}
-\details{
-Shannon's index (H') is calculated as \eqn{H' = -\sum (p_i * log(p_i))}, 
-where \eqn{p_i} represents the relative abundance of each category within the 
-numerical matrix, and the sum is computed across all categories.
-}
-\note{
-For MPI parallel computing, Linux users need to install libopenmpi. On Ubuntu, 
-you can use the following commands: \code{apt-get update; apt-get upgrade; apt-get install mpi; 
-apt-get install libopenmpi-dev; apt-get install r-cran-rmpi}. Windows users might 
-need additional steps for "MPI" usage, more info at: 
-\url{https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-mac-and-windows/}
-}
-\examples{
-\dontrun{
-# Minimal example: compute Shannon's index
-a <- matrix(c(10, 10, 10, 20, 20, 20, 20, 30, 30), ncol = 3, nrow = 3)
-shannon <- Shannon(x = a, window = 3)
-}
-}
-\references{
-Shannon, C.E. (1948). A mathematical theory of communication. Bell 
-System Technical Journal, 27: 379-423, 623-656.
-}
-\author{
-Matteo Marcantonio \email{marcantoniomatteo@gmail.com}, 
-Martina Iannacito \email{martina.iannacito@inria.fr}, 
-Duccio Rocchini \email{duccio.rocchini@unibo.it}
+Calculates Shannon's Evenness Index for a given raster object over a specified window size. The function can operate in either sequential or parallel mode.
 }

@@ -1,3 +1,14 @@
+# rasterdiv 0.3.4
+## Major changes
+* Adds back CRE function (leaving old function syntax)
+
+## Minor changes
+* Organises "accessory functions" in a separate file
+* Documents almost all "accessory functions"
+* Tries to improve progress bar
+* Simplify heliPrep()
+* Matches package with book chapter
+
 # rasterdiv 0.3.3
 ## Major changes
 * Adds heliPrep and heliPlot for helical graphs

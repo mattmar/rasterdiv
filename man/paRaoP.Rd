@@ -5,23 +5,24 @@
 \title{Parallelized Parametric Rao's index of quadratic entropy (Q)}
 \usage{
 paRaoP(
-  rasterm,
+  x,
   alpha,
-  w,
+  window,
   dist_m,
   na.tolerance,
   diag,
   debugging,
   isfloat,
-  mfactor
+  mfactor,
+  np
 )
 }
 \arguments{
-\item{rasterm}{Matrix or data frame; the input data over which the index calculation is performed.}
+\item{x}{Matrix or data frame; the input data over which the index calculation is performed.}
 
 \item{alpha}{Numeric; specifies the alpha value for the order of diversity in Hill's Index.}
 
-\item{w}{Numeric; half of the side length of the square moving window used in the calculation.}
+\item{window}{Numeric; half of the side length of the square moving window used in the calculation.}
 
 \item{dist_m}{Character; specifies the type of distance metric used in calculations.}
 
@@ -37,10 +38,12 @@ displayed for debugging purposes.}
 \item{isfloat}{Logical; indicates whether the input data values are floating-point numbers.}
 
 \item{mfactor}{Integer; multiplication factor in case of input data as float numbers.}
+
+\item{np}{Number of processes for parallel computation.}
 }
 \value{
 A list of matrices corresponding to the computed Rao's index values. Each matrix in the list 
-represents the calculations performed over the moving window, with dimensions equal to \code{dim(rasterm)}.
+represents the calculations performed over the moving window, with dimensions equal to \code{dim(x)}.
 }
 \description{
 This function computes the parametric Rao's index of quadratic entropy (Q), a measure of biodiversity 

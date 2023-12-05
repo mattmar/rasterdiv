@@ -4,38 +4,45 @@
 \alias{RenyiS}
 \title{Sequential Renyi's diversity index}
 \usage{
-RenyiS(rasterm, w, alpha, base, na.tolerance, debugging)
+RenyiS(
+  x,
+  window = 1,
+  alpha = 1,
+  base = exp(1),
+  na.tolerance = 1,
+  debugging = FALSE
+)
 }
 \arguments{
-\item{rasterm}{Input data, expected to be in a specific format suitable for the calculations.}
+\item{x}{A numeric matrix representing the data on which the index is to be calculated.}
 
-\item{w}{Half of the side of the square moving window used in the computation.}
+\item{window}{The width of the moving window to consider for each cell. The actual window size 
+will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.}
 
-\item{alpha}{The alpha value for the order of diversity in Renyi's Index calculations.}
+\item{alpha}{(Not used in this function, included for compatibility) The alpha parameter for 
+diversity indices, default is 1.}
 
-\item{base}{The base of the logarithm used in the diversity index calculations.}
+\item{base}{The base of the logarithm used in the Shannon formula, default is `exp(1)` (natural logarithm).}
 
-\item{na.tolerance}{A numeric value between 0.0 and 1.0 indicating the proportion of NA values 
-that are acceptable in each moving window over \code{rasterm} during the calculation of Rao's index.
-If the proportion of NAs in a window exceeds this value, the result for that window is set as NA.
-Otherwise, the index is calculated using the non-NA values. The default is 0.0, indicating no tolerance for NAs.}
+\item{na.tolerance}{The tolerance level for missing data within the moving window. 
+A window will be processed only if the proportion of non-missing data is above this threshold. 
+Value should be between 0 and 1. Default is 1.}
 
-\item{debugging}{Boolean; controls the generation of additional, diagnostic messages. 
-If TRUE, extra messages are printed primarily for debugging purposes. Default is FALSE.}
+\item{debugging}{Boolean flag to enable or disable debugging messages. Default is FALSE.}
 }
 \value{
-A matrix or a list of matrices, each containing the Renyi index values computed using a moving 
-window of the specified size.
+A matrix of the same dimensions as `x`, where each cell contains the 
+        Renyi's diversity index calculated for the window around the cell.
 }
 \description{
-This function calculates Renyi's diversity index sequentially.
+This function calculates the Renyi's diversity index index for each cell in a matrix,
+considering a specified moving window around each cell.
 }
-\seealso{
-\code{\link{Renyi}} for the related function in the context of diversity index calculations.
+\details{
+Berger-Parker's diversity index calculated sequentially over a raster matrix.
 }
-\author{
-Matteo Marcantonio \email{marcantoniomatteo@gmail.com}, 
-Martina Iannacito \email{martina.iannacito@inria.fr}, 
-Duccio Rocchini \email{duccio.rocchini@unibo.it}
+\examples{
+data <- matrix(runif(100), nrow = 10)
+renyi_index <- RenyiS(data, window = 1)
+
 }
-\keyword{internal}

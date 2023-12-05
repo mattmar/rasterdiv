@@ -1,8 +1,8 @@
 Package: rasterdiv
 Type: Package
 Title: Diversity Indices for Numerical Matrices
-Version: 0.3.3
-Date: 2023-11-09
+Version: 0.3.4
+Date: 2023-12-05
 Authors@R: c(
     person("Matteo", "Marcantonio", role = c("aut", "cre"), email = "marcantoniomatteo@gmail.com"),
     person("Martina", "Iannacito", role = c("aut", "ctb"), email = "martina.iannacito@inria.fr"),
@@ -20,19 +20,17 @@ Description: Provides methods to calculate diversity indices on numerical matric
     based on information theory, as described in Rocchini, Marcantonio and Ricotta (2017) <doi:10.1016/j.ecolind.2016.07.039>,
     and Rocchini et al. (2021) <doi:10.1101/2021.01.23.427872>.
 Depends: R (>= 4.0.0)
-Imports: 
+Imports:
+    doParallel,
     foreach,
     ggforce,
     ggplot2,
     methods,
     proxy,
     progress,
-    svMisc,
     terra,
     viridis
 Suggests: 
-    parallel,
-    doParallel,
     knitr,
     rmarkdown,
     rasterVis,

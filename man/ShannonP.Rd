@@ -2,36 +2,34 @@
 % Please edit documentation in R/ShannonP.R
 \name{ShannonP}
 \alias{ShannonP}
-\title{Parallelised Shannon's diversity index}
+\title{Calculate Shannon-Wiener Index on a Matrix}
 \usage{
-ShannonP(rasterm, w, na.tolerance, debugging)
+ShannonP(x, window = 1, na.tolerance = 1, debugging = FALSE, np = 1)
 }
 \arguments{
-\item{rasterm}{Input data; a matrix of raster data values.}
+\item{x}{A numeric matrix representing the data on which the index is to abe calculated.}
 
-\item{w}{Numeric; half of the side of the square moving window used in the calculation.}
+\item{window}{The width of the moving window to consider for each cell. 
+The actual window size will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.}
 
-\item{na.tolerance}{Numeric; a tolerance level (between 0.0 and 1.0) for NA values in the moving
-window. If the proportion of NA values in a window exceeds this level, the result for that
-window is set as NA; otherwise, the calculation excludes the NA values. The default is 0.0,
-which allows no NA values.}
+\item{na.tolerance}{The tolerance level for missing data within the moving window. 
+A window will be processed only if the proportion of non-missing data is above this threshold. 
+Value should be between 0 and 1. Default is 1.}
 
-\item{debugging}{Boolean; if TRUE, additional debugging information is printed during the 
-function's execution. This is helpful for debugging and is FALSE by default.}
+\item{debugging}{Boolean flag to enable or disable debugging messages. Default is FALSE.}
+
+\item{np}{Number of processes for parallel computation.}
 }
 \value{
-A matrix or a list of matrices, each containing the Shannon diversity index values
-calculated using a moving window approach.
+A matrix of the same dimensions as `x`, where each cell contains the 
+        Shannon-Wiener Index calculated for the window around the cell.
 }
 \description{
-This function computes Shannon's diversity index in a parallelized manner, allowing for
-enhanced performance on suitable hardware. It is especially useful for large datasets.
+This function computes Shannon-Wiener Index for each cell of a matrix, 
+using a parallelized approach and considering a specified moving window.
 }
-\seealso{
-\code{\link{Shannon}} for the non-parallelized version of the Shannon diversity index.
-}
-\author{
-Matteo Marcantonio \email{marcantoniomatteo@gmail.com}, 
-Martina Iannacito \email{martina.iannacito@inria.fr}, 
-Duccio Rocchini \email{duccio.rocchini@unibo.it}
+\examples{
+data <- matrix(runif(100), nrow = 10)
+shannon_index <- ShannonP(data, window = 1, np = 1 )
+
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Renyi.R
 \name{Renyi}
 \alias{Renyi}
-\title{Renyi's entropy (H)}
+\title{Renyi Diversity Index Calculation}
 \usage{
 Renyi(
   x,
@@ -17,56 +17,35 @@ Renyi(
 )
 }
 \arguments{
-\item{x}{Input data, which may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects. 
-In the latter case, only the first element of the list will be considered.}
+\item{x}{A raster object which can be a matrix, SpatialGridDataFrame, SpatRaster, list, or RasterStack.}
 
-\item{window}{The side of the square moving window; it must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. 
-Default value is 3.}
+\item{window}{The size of the moving window; must be an odd integer.}
 
-\item{alpha}{Order of diversity to compute the index. If \code{alpha} is a vector with length greater than 1, then the index will be calculated over \code{x} for each value in the sequence.}
+\item{alpha}{A numeric vector of alpha values for the Renyi index.}
 
-\item{base}{A numerical value defining the base of the logarithm in Renyi's entropy formula. Default is \code{exp(1)}.}
+\item{base}{The logarithm base for the calculation, default is natural logarithm.}
 
-\item{rasterOut}{Boolean; if TRUE, the output will be in SpatRaster format with \code{x} as a template.}
+\item{rasterOut}{Logical; if TRUE, returns a SpatRaster object, otherwise returns a list.}
 
-\item{np}{The number of processes (cores) to be spawned. Default is 1.}
+\item{np}{Number of processes for parallel computation.}
 
-\item{na.tolerance}{A numeric value between 0.0 and 1.0 indicating the proportion of NA values tolerated when calculating Renyi's index in each moving window over \code{x}. 
-If the relative proportion of NAs is larger than \code{na.tolerance}, the value for that window is set as NA; otherwise, Renyi's index is calculated considering the non-NA values. Default is 1.0 (no tolerance for NAs).}
+\item{na.tolerance}{Tolerance level for NA values, must be within [0-1].}
 
-\item{cluster.type}{The type of cluster to create. Options are "MPI" (calls "makeMPIcluster"), "FORK", and "SOCK" (calls "makeCluster"). Default is "SOCK".}
+\item{cluster.type}{Type of cluster for parallel computation, either "SOCK" or "MPI".}
 
-\item{debugging}{Boolean; if TRUE, additional messages will be printed for debugging purposes. Default is FALSE.}
+\item{debugging}{Logical; if TRUE, provides additional console output for debugging.}
 }
 \value{
-A list of matrices with a length equal to the length of \code{alpha}. If the length of \code{alpha} is 1, then a matrix of dimensions \code{dim(x)} is returned.
+A SpatRaster object or a list of calculated Renyi indices.
 }
 \description{
-Computes Renyi's entropy (\deqn{H}) on different classes of numeric matrices using a moving window algorithm.
-}
-\details{
-Renyi's entropy (\deqn{H}) is calculated on a numerical matrix as \deqn{H = \frac{1}{(1-q)} \ln(\sum_{i=1}^{R} {p^q}_i)}, where \emph{q} is the considered order of diversity (\code{alpha}), \emph{R} is the total number of categories (i.e., unique numerical values in the considered numerical matrix), and \emph{p} is the relative abundance of each category. 
-If q=1, \code{Shannon.R} is called to calculate \deqn{H'} instead of the indefinite \deqn{{}^1D}. If \deqn{p > 2*10^9}, then \code{BerkgerParker.R} is called to calculate \deqn{log(1/{}^\infty H)}. Renyi's entropy of low order gives more weight to rarer categories, while higher orders weight more dominant categories.
-}
-\note{
-For Linux users: to enable MPI parallel computing, install libopenmpi by running the following commands in the terminal: 
-\code{apt-get update; apt-get upgrade; apt-get install mpi; apt-get install libopenmpi-dev; apt-get install r-cran-rmpi}.
-
-Windows users might require additional steps to use "MPI". Refer to the detailed guide at: 
-\url{https://bioinfomagician.wordpress.com/2013/11/18/installing-rmpi-mpi-for-r-on-mac-and-windows/}
+Computes Renyi diversity index for a given raster object. This function allows
+specifying window size, alpha values, and various other parameters for 
+the calculation of the Renyi index.
 }
 \examples{
-# Minimal example: compute Renyi's index with alpha 1:5 
-a <- matrix(c(10,10,10,20,20,20,20,30,30), ncol=3, nrow=3)
-renyi <- Renyi(x = a, window = 3, alpha = 1:5)
+\dontrun{
+result <- Renyi(ndvi.8bit, window = 3, alpha = c(0, 1, 2))
+}
 
-}
-\references{
-Rényi, A. (1970). Probability Theory. North Holland Publishing Company, Amsterdam.
-}
-\seealso{
-\code{\link{Shannon}}, \code{\link{BergerParker}}
-}
-\author{
-Matteo Marcantonio \email{marcantoniomatteo@gmail.com}, Martina Iannacito \email{martina.iannacito@inria.fr}, Duccio Rocchini \email{duccio.rocchini@unibo.it}
 }

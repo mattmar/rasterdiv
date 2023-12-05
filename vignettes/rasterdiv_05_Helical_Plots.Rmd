@@ -63,12 +63,12 @@ colnames(RaoT.C) <- c("Rao's with alpha = 1", "Rao's Alpha = 5", "Rao's Alpha = 
 ```
 
 ## Data Preparation for Helical Plotting
-The `heliPrep` function is designed to process time series data for visualization using the `heliPlot` function. It applies a moving average filter to smooth the data, enhancing the helical plot's visual appeal by producing more pronounced curves. The `window_size` parameter allows for the customisation of the moving window's breadth, which considers both preceding and subsequent values in its calculations.
+The `heliPrep` function is designed to process time series data for visualization using the `heliPlot` function. It applies a moving average filter to smooth the data, enhancing the helical plot's visual appeal by producing more pronounced curves. The `filterWidth` parameter allows for the customisation of the moving window's breadth, which considers both preceding and subsequent values in its calculations.
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 # Prepare data for helical plotting
 dataPrepRao <- do.call(rbind, lapply(colnames(RaoT.C), function(alpha) {
-  df <- heliPrep(dates[1:365], RaoT.C[,alpha], window_size=90)
+  df <- heliPrep(dates[1:365], RaoT.C[,alpha], filterWidth=90)
   df$alpha <- alpha
   df
 }))
@@ -86,7 +86,7 @@ Moreover, the NDVI time series can be effectively visualised using helical plots
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 # Prepare NDVI data
-dataPrepNDVI <- heliPrep(dates, avgNDVI, window_size=14)
+dataPrepNDVI <- heliPrep(dates, avgNDVI, filterWidth=14)
 
 # Create helical plot for NDVI till the spring months
 heliPlot(dataPrepNDVI[1:250,], arrow = TRUE, labelInterval = 30, sizeRange = c(0.01, 2),n=10000, ylab="Average NDVI 8-bit values")
@@ -128,7 +128,7 @@ We will use the **heliPrep** function to prepare the data for plotting. This inv
 # Prepare data for each administrative area.
 covidPrep <- lapply(unique(covidCases.df$administrative_area_level_1), function(x) {
   temp <- covidCases.df[covidCases.df$administrative_area_level_1%in%x,]
-  outPrep <- heliPrep(dates=temp$date, values=temp$dailyDeaths, window_size=3)
+  outPrep <- heliPrep(dates=temp$date, values=temp$dailyDeaths, filterWidth=3)
   outPrep$country=x
   return(outPrep)
   })
@@ -147,7 +147,7 @@ heliPlot(covidPrep, arrow = FALSE, facet=FALSE, gr="country",
 ```
 
 ## Customising heliPlot
-heliPlot can be customized with ggplot2 functions to match specific styles or references. For example, to mimic the visualizations from `r if(knitr::is_html_output()) {
+heliPlot can be customised with ggplot2 functions to match specific styles or references. For example, to mimic the visualizations from `r if(knitr::is_html_output()) {
   "[The Conversation's article on COVID-19](https://theconversation.com/three-graphs-that-show-a-global-slowdown-in-covid-19-deaths-135756)"
 } else {
   "\\href{https://theconversation.com/three-graphs-that-show-a-global-slowdown-in-covid-19-deaths-135756}{The Conversation's article on COVID-19}"
@@ -180,4 +180,4 @@ heliPlot(
   ggtitle("Mortality in five countries attributed to COVID-19 (January 23 to April 5, 2020).")
 ```
 
-This customization includes manual colour scales, legend adjustments, and panel border styling to closely replicate the desired appearance from the reference article.
+The customisation of **HeliPlot** provided above includes manual colour scales, legend adjustments, and panel border styling as a attempt to replicate the (simplified) appearance from The Conversation’s article on COVID-19.

@@ -2,47 +2,36 @@
 % Please edit documentation in R/BergerParkerP.R
 \name{BergerParkerP}
 \alias{BergerParkerP}
-\title{Parallelised Berger-Parker's diversity index}
+\title{Calculate Berger-Parker Index on a Matrix}
 \usage{
-BergerParkerP(rasterm, w, na.tolerance, debugging)
+BergerParkerP(x, window = 1, na.tolerance = 1, debugging = FALSE, np = 1)
 }
 \arguments{
-\item{rasterm}{Input raster data as a matrix or suitable object convertible to a matrix, containing the values on which to compute the index.}
+\item{x}{A numeric matrix representing the data on which the index is to be calculated.}
 
-\item{w}{Integer, representing half of the side length of the square moving window used in calculations.}
+\item{window}{The width of the moving window to consider for each cell. 
+The actual window size will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.}
 
-\item{na.tolerance}{Numeric value between 0.0 and 1.0 indicating the proportion of NA values tolerated in each moving window over the input rasterm. If the proportion of NA's exceeds na.tolerance, the result for that window is set as NA. The default is 0.0, indicating no tolerance for NA values.}
+\item{na.tolerance}{The tolerance level for missing data within the moving window. 
+A window will be processed only if the proportion of non-missing data is above this threshold. 
+Value should be between 0 and 1. Default is 1.}
 
-\item{debugging}{Logical, when TRUE, additional console messages are printed for debugging purposes. Defaults to FALSE.}
+\item{debugging}{Boolean flag to enable or disable debugging messages. Default is FALSE.}
+
+\item{np}{The number of processes (cores) which will be spawned. Default value is 2.}
 }
 \value{
-A matrix or a list of matrices with the Berger-Parker index computed through a moving window of the specified size.
+A matrix of the same dimensions as `x`, where each cell contains the 
+        Berger-Parker Index calculated for the window around the cell.
 }
 \description{
-This function computes the Berger-Parker diversity index in a parallelised manner, 
-improving performance on suitable hardware for large datasets.
-}
-\details{
-Parallelised Berger-Parker's diversity index
+This function computes Berger-Parker Index for each cell of a matrix, 
+using a parallelized approach and considering a specified moving window.
 }
 \examples{
 \dontrun{
-# Generate a sample matrix
-data_matrix <- matrix(sample(c(NA, 1:10), 100, replace = TRUE), 10, 10)
-
-# Compute the Berger-Parker index with parallel processing
-result <- BergerParkerP(rasterm = data_matrix, w = 1, na.tolerance = 0.1, debugging = TRUE)
+data <- matrix(runif(100), nrow = 10)
+bp_index <- BergerParkerP(data, window = 1, np=2)
 }
 
 }
-\seealso{
-\code{\link{BergerParker}} for the non-parallel version of the Berger-Parker index calculation.
-}
-\author{
-Marcantonio Matteo \email{marcantoniomatteo@gmail.com}
-
-Martina Iannacito \email{martina.iannacito@inria.fr}
-
-Duccio Rocchini \email{duccio.rocchini@unibo.it}
-}
-\keyword{internal}

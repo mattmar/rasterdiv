@@ -4,37 +4,33 @@
 \alias{BergerParkerS}
 \title{Sequential Berger-Parker's diversity index}
 \usage{
-BergerParkerS(rasterm, w, na.tolerance, debugging)
+BergerParkerS(x, window = 1, na.tolerance = 1, debugging = FALSE)
 }
 \arguments{
-\item{rasterm}{Input data in the form of a raster matrix.}
+\item{x}{A numeric matrix representing the data on which the index is to be calculated.}
 
-\item{w}{The half of the side of the square moving window. It defines the size of the area (neighbourhood) over which the diversity index is calculated.}
+\item{window}{The width of the moving window to consider for each cell. The actual window size 
+will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.}
 
-\item{na.tolerance}{A numeric value between 0.0 and 1.0, indicating the proportion of NA values that will be tolerated in each moving window over \emph{rasterm} during the calculation of the diversity index. If the proportion of NA's in a moving window exceeds na.tolerance, the value for that window will be set as NA; otherwise, the diversity index is calculated considering the non-NA values. The default value is 0.0, indicating no tolerance for NA's.}
+\item{na.tolerance}{The tolerance level for missing data within the moving window. 
+A window will be processed only if the proportion of non-missing data is above this threshold. 
+Value should be between 0 and 1. Default is 1.}
 
-\item{debugging}{A boolean that controls the display of additional messages for debugging purposes. Set to FALSE by default. If TRUE, messages detailing the function's progress and computations will be printed.}
+\item{debugging}{Boolean flag to enable or disable debugging messages. Default is FALSE.}
 }
 \value{
-A matrix or a list of matrices containing the Berger-Parker diversity index values, computed for each pixel using a moving window of the specified size.
+A matrix of the same dimensions as `x`, where each cell contains the 
+        Berger-Parker's diversity index calculated for the window around the cell.
 }
 \description{
+This function calculates the Berger-Parker's diversity index for each cell in a matrix,
+considering a specified moving window around each cell.
+}
+\details{
 Berger-Parker's diversity index calculated sequentially over a raster matrix.
 }
 \examples{
-\dontrun{
-# Create a sample raster matrix
-a <- matrix(c(10, 10, 10, 20, 20, 20, 20, 30, 30), ncol = 3, nrow = 3)
+data <- matrix(runif(100), nrow = 10)
+bp_index <- BergerParkerS(data, window = 1)
 
-# Calculate the Berger-Parker index using a moving window of size 1 (w = 1)
-result <- BergerParkerS(rasterm = a, w = 1, na.tolerance = 0.1, debugging = FALSE)
-print(result)
-}
-
-}
-\seealso{
-\code{\link{BergerParker}} for the non-sequential version of the Berger-Parker diversity index calculation.
-}
-\author{
-Marcantonio Matteo \email{marcantoniomatteo@gmail.com}, Martina Iannacito \email{martina.iannacito@inria.fr}, Duccio Rocchini \email{duccio.rocchini@unibo.it}
 }

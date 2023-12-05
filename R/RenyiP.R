@@ -1,63 +1,76 @@
-#' Parallelised Renyi's diversity index
+#' Parallel Computation of Renyi's Diversity Index
 #'
-#' This function provides a parallelised computation of Renyi's diversity index.
+#' @description
+#' This function computes Renyi's diversity index for each cell of a matrix, 
+#' using a parallelized approach and considering a specified moving window.
 #'
-#' @param rasterm Input data, expected to be in a specific format suitable for the calculations.
-#' @param w Half of the side of the square moving window used in the computation.
-#' @param alpha The alpha value for the order of diversity in Renyi's Index calculations.
-#' @param base The base of the logarithm used in the diversity index calculations.
-#' @param na.tolerance A numeric value between 0.0 and 1.0 indicating the proportion of NA values 
-#' that are acceptable in each moving window over \code{rasterm} during the calculation of Rao's index.
-#' If the proportion of NAs in a window exceeds this value, the result for that window is set as NA.
-#' Otherwise, the index is calculated using the non-NA values. The default is 0.0, indicating no tolerance for NAs.
-#' @param debugging Boolean; controls the generation of additional, diagnostic messages. 
-#' If TRUE, extra messages are printed primarily for debugging purposes. Default is FALSE.
-#' @return A matrix or a list of matrices, each containing the Renyi index values computed using a moving 
-#' window of the specified size.
-#' @author Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}, 
-#' Martina Iannacito \email{martina.iannacito@@inria.fr}, 
-#' Duccio Rocchini \email{duccio.rocchini@@unibo.it}
-#' @seealso \code{\link{Renyi}} for the non-parallelised version of the Renyi diversity index calculation.
-#' @keywords internal
+#' @param x A numeric matrix representing the data on which the index is to be calculated.
+#' @param window The width of the moving window to consider for each cell. 
+#'        The actual window size will be `(2 * window + 1) x (2 * window + 1)`. Default is 1.
+#' @param alpha The alpha parameter for Renyi's index, influencing sensitivity 
+#'        to species abundance. Default is 1.
+#' @param base The base of the logarithm used in Renyi's formula. Default is `exp(1)` 
+#'        (natural logarithm).
+#' @param na.tolerance The tolerance level for missing data within the moving window. 
+#'        A window will be processed only if the proportion of non-missing data is above this threshold. 
+#'        Value should be between 0 and 1. Default is 1.
+#' @param debugging Boolean flag to enable or disable debugging messages. Default is FALSE.
+#' @param np Number of processes for parallel computation.#'
+#' @return A matrix of the same dimensions as `x`, where each cell contains the 
+#'         Renyi's diversity index calculated for the window around the cell.
+#'
+#' @examples
+#' data <- matrix(runif(100), nrow = 10)
+#' renyi_index <- RenyiP(data, window = 1, np = 1)
+#'
+#' @export
 
-RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
-  # Some initial housekeeping
-  window = 2*w+1
-  message("\n\nProcessing alpha ",alpha, " Window ", window)
+RenyiP <- function(x, window = 1, alpha=1, base=exp(1), na.tolerance=1, debugging=FALSE, np=1){
+  # `win` is the operative moving window
+  win = window 
+  NAwin <- 2*window+1
+  message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
   # Set a progress bar
-  pb <- utils::txtProgressBar(title = "Iterative training", min = w, max = dim(rasterm)[2]+w, style = 3)
+  pb <- progress::progress_bar$new(
+    format = "[:bar] :percent in :elapsed\n",
+    # Total number of ticks is the number of column +NA columns divided the number of processor.
+    total = (dim(x)[2]/np)+5, 
+    clear = FALSE, 
+    width = 60, 
+    force = FALSE)
   #
   ## Reshape values
   #
-  values <- as.numeric(as.factor(rasterm))
-  rasterm_1 <- matrix(data=values,nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+  values <- as.numeric(as.factor(x))
+  x_1 <- matrix(data=values,nrow=dim(x)[1],ncol=dim(x)[2])
   #
   ## Add additional columns and rows to match moving window
   #
-  hor <- matrix(NA,ncol=dim(rasterm)[2],nrow=w)
-  ver <- matrix(NA,ncol=w,nrow=dim(rasterm)[1]+w*2)
-  trasterm <- cbind(ver,rbind(hor,rasterm_1,hor),ver)
-  rm(hor,ver,rasterm_1,values); gc()
+  hor <- matrix(NA,ncol=dim(x)[2],nrow=win)
+  ver <- matrix(NA,ncol=win,nrow=dim(x)[1]+win*2)
+  tx <- cbind(ver,rbind(hor,x_1,hor),ver)
+  rm(hor,ver,x_1,values); gc()
   #
   ## Start the parallelized loop over iter
   #
-  RenyiOP <- foreach::foreach(cl=(1+w):(dim(rasterm)[2]+w),.verbose = F) %dopar% {
-    utils::setTxtProgressBar(pb, cl)
+  RenyiOP <- foreach::foreach(cl=(1+win):(dim(x)[2]+win),.verbose = F) %dopar% {
+    # Update progress bar
+    pb$tick()
     if(debugging) {
       cat(paste(cl))
     }
-    RenyiOut <- sapply((1+w):(dim(rasterm)[1]+w), function(rw) {
-      if( length(!which(!trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]%in%NA)) < window^2-((window^2)*na.tolerance) ) {
+    RenyiOut <- sapply((1+win):(dim(x)[1]+win), function(rw) {
+      if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
         vv <- NA
         return(vv)
       } 
       else {
-        tw <- summary(as.factor(trasterm[c(rw-w):c(rw+w),c(cl-w):c(cl+w)]),maxsum=10000)
+        tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)
         if( "NA's"%in%names(tw) ) {
           tw<-tw[-length(tw)]
         }
         if( debugging ) {
-          message("Renyi - parallelized\nWorking on coords ",rw,",",cl,". classes length: ",length(tw),". window size=", window)
+          message("Renyi - parallelized\nWorking on coords ",rw,",",cl,". classes length: ",length(tw),". window size=", NAwin)
         }
         tw_labels <- names(tw)
         tw_values <- as.vector(tw)
@@ -67,7 +80,7 @@ RenyiP <- function(rasterm, w, alpha, base, na.tolerance, debugging){
       }
     })
     return(RenyiOut)
-  } # End Renyi - parallelised
-  message(("\n\n Parallel calculation of Renyi's index complete.\n"))
-  return(RenyiOP)
+  }
+  message("\n\n Parallel calculation of Renyi's index complete.\n")
+  return(matrix(unlist(RenyiOP), ncol = ncol(x), nrow = nrow(x), byrow=FALSE))
 }

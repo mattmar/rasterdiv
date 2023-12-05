@@ -2,75 +2,60 @@
 % Please edit documentation in R/CRE.R
 \name{CRE}
 \alias{CRE}
-\title{Cumulative Residual Entropy (CRE)}
+\title{Cumulative Residual Entropy (CRE) Function}
 \usage{
 CRE(
   x,
   window = 3,
-  mode = "classic",
+  method = "classic",
   rasterOut = TRUE,
   rescale = FALSE,
   na.tolerance = 1,
   simplify = 2,
   np = 1,
   cluster.type = "SOCK",
+  progBar = TRUE,
   debugging = FALSE
 )
 }
 \arguments{
-\item{x}{Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects. 
-In the latter case, if mode = "classic", only the first element of the list will be considered.}
+\item{x}{A matrix, SpatRaster, or a list of SpatRaster objects.}
 
-\item{window}{The side of the square moving window; it must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.}
+\item{window}{The size of the moving window, must be an odd integer.}
 
-\item{mode}{There are two modes to calculate CRE: "classic" and "multidimension" (experimental). "classic" computes the monodimension CRE on a single matrix. "multidimension" requires a list of matrices and calculates the multidimensional cumulative residual probability. Default is "classic".}
+\item{method}{The method for CRE computation, either "classic" or "multidimensional".}
 
-\item{rasterOut}{Boolean; if TRUE, the output will be in SpatRaster format with \code{x} as the template.}
+\item{rasterOut}{Logical, if TRUE, returns a SpatRaster, else returns a matrix.}
 
-\item{rescale}{Boolean; if TRUE, \code{x} will be scaled and centred to standardise different matrices if mode is "multidimension". Default is FALSE.}
+\item{rescale}{Logical, if TRUE, rescales the data before processing.}
 
-\item{na.tolerance}{Numeric value between 0.0 and 1.0 indicating the proportion of NA values tolerated in each moving window over \code{x} for CRE calculation. If the proportion of NAs exceeds \code{na.tolerance}, the value for that window is set as NA. Default is 1.0 (full tolerance for NAs).}
+\item{na.tolerance}{A numeric value between 0 and 1, indicating the tolerance level for NA values.}
 
-\item{simplify}{Number of decimal places retained in the CRE calculation. Applies only if \code{x} is floats.}
+\item{simplify}{Integer, the number of decimal places for data rounding in case of float numbers.}
 
-\item{np}{Number of processes (cores) to be used. Default is 1.}
+\item{np}{The number of parallel processes to use.}
 
-\item{cluster.type}{Specifies the type of cluster to create. Options are "MPI" (for "makeMPIcluster"), "FORK", and "SOCK" (for "makeCluster"). Default is "SOCK".}
+\item{cluster.type}{The type of parallel cluster to use, options are "SOCK", "FORK", or "MPI".}
 
-\item{debugging}{Boolean; if TRUE, additional debug messages will be printed. Default is FALSE.}
+\item{progBar}{logical. If TRUE a progress bar is shown.}
+
+\item{debugging}{Logical, if TRUE, provides additional debugging information during execution.}
 }
 \value{
-A matrix with the same dimensions as \code{x}.
+Depending on the 'rasterOut' parameter, this function returns either a SpatRaster or a matrix.
 }
 \description{
-Computes Cumulative Residual Entropy (CRE) on different classes of numeric matrices using a moving window algorithm.
-}
-\details{
-The unidimensional Cumulative Residual Entropy (CRE) is calculated on a numerical vector as follows:
-\deqn{CRE = -\sum_{i=1}^{N}{P(X \geq x_i) \log{P(X \geq x_i)dx}}}
-where \eqn{dx = (x_i - x_{i-1})} and \code{P} is a vector of probabilities that the vector of observations is larger or equal to each value of the vector.
-In "multidimension" CRE, \code{P} becomes an array with as many dimensions as the observations, estimating probabilities based on the frequency of observations satisfying the larger/equal condition for value combinations along the dimensions. \code{dx} becomes the product of differences along each dimension.
-CRE values increase with the range of observations; the more evenly spread the observations are across values, the higher the CRE.
+Computes the Cumulative Residual Entropy (CRE) for spatial raster data. This function 
+can be used with either a single raster layer or a list of raster layers. It supports 
+both classic and multidimensional methods for CRE computation.
 }
 \examples{
 \dontrun{
-# Minimum example; compute CRE
-a <- matrix(c(10, 10, 10, 20, 20, 20, 20, 30, 30), ncol = 3, nrow = 3)
-out <- CRE(x = a, window = 3, na.tolerance = 0, mode = "classic")
+# For a matrix input:
+result <- CRE(matrix_data, window=3, method="classic")
 
-# Minimum example; compute CRE in parallel
-out <- CRE(x = a, window = 3, na.tolerance = 0, mode = "classic", np = 2) # Using 2 cores
-
-# Compute multidimension Rao's index rescaling the input matrices
-b <- matrix(c(0.5, 0.5, 0.1, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3), ncol = 3, nrow = 3)
-out <- CRE(x = list(a, b), window = 3, na.tolerance = 0, mode = "multidimension", 
-rescale = TRUE, debugging = TRUE)
+# For a SpatRaster input:
+result <- CRE(raster_data, window=3, method="classic", rasterOut=TRUE)
 }
 
-}
-\references{
-Rao M, Chen Y, Vemuri BC, Wang F (2004) Cumulative Residual Entropy: A New Measure of Information. IEEE Transactions on Information Theory 50:1220–1228.
-}
-\author{
-Saverio Vicario \email{saverio.vicario@cnr.it}
 }

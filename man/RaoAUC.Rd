@@ -15,7 +15,7 @@ RaoAUC(
   na.tolerance = 1,
   rescale = FALSE,
   diag = TRUE,
-  simplify = 2,
+  simplify = 0,
   np = 1,
   cluster.type = "SOCK",
   debugging = FALSE
@@ -33,12 +33,11 @@ a character string which defines the name of the distance to derive such as "euc
 The distance names allowed are the same as for \code{proxy::dist}. Alternatively, \code{dist_m} can be 
 a function which calculates a user-defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) 
 or a matrix of distances. If \code{method="multidimension"} then only "euclidean", "manhattan", 
-"canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean".}
-
-\item{window}{The side of the square moving window, it must be an odd numeric value greater than 1 
-to ensure that the target pixel is in the centre of the moving window. Default value is 3. 
+"canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean".
 If \code{proxy::dist} is a matrix then the function will assume that this is the distance matrix, 
 and therefore no distance will be derived.}
+
+\item{window}{The side of the square moving window, it must be an odd numeric value greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3.}
 
 \item{method}{Currently, there are two ways to calculate the parametric version of Rao's index. 
 If \code{method="classic"}, then the normal parametric Rao's index will be calculated on a single matrix. 

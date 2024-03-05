@@ -54,7 +54,8 @@ Rao’s quadratic entropy is also possible through the
 [*paRao()*](https://mattmar.github.io/rasterdiv/articles/rasterdiv_area_based_Rao.html)
 function. Read more on ***rasterdiv***:
 
-  - [***rasterdiv**—An Information Theory tailored R package for
+  - [*rasterdiv—The rasterdiv package for measuring diversity from space*](https://www.biorxiv.org/content/10.1101/2024.02.07.579266v1);
+  - [*rasterdiv—An Information Theory tailored R package for
     measuring ecosystem heterogeneity from space: To the origin and
     back*](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13583);
   - [*Measuring diversity from space: a global view of the free and open

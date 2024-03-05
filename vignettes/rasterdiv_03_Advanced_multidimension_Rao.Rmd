@@ -56,22 +56,29 @@ values(r1) <- xyz$sim2
 
 We now calculate the multidimensional Rao's Index using varying window sizes and alpha values.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, eval=FALSE}
 mRao <- paRao(x=list(r, r1), window=c(3, 5), alpha=c(1, Inf), na.tolerance=1, method="multidimension", simplify=3)
 ```
-
 The output is a nested list of SpatRaster which we can transform in a stack of SpatRaster and plotted together with the input layers, as follows:
 
 ## Visualisation of the result
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, eval=FALSE}
 # Create a list of all the rasters to plot
 rasters_to_plot <- c(r, r1, mRao[[1]]$alpha.1, mRao[[2]]$alpha.Inf)
 names(rasters_to_plot) <- c("Raster1", "Raster2", "Rao_Index_Window_3", "Rao_Index_Window_5")
+```
+```{r results='hide', message=FALSE, warning=FALSE, include = FALSE}
+rasters_to_plot <- readRDS("rasters_to_plot.RDS")
+```
 
+```{r results='hide', message=FALSE, warning=FALSE}
 # Use lapply to create a list of levelplots
 plots_list <- lapply(rasters_to_plot, function(rst) {
-  levelplot(rst, margin=FALSE, col.regions=magma(100), main=list(label=names(rst), cex=1.5))
+  levelplot(rst, margin=FALSE, 
+  col.regions=magma(100), 
+  main=list(label=names(rst), 
+  cex=1.5))
 })
 
 # Arrange the plots in a grid

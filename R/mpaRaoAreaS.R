@@ -46,9 +46,9 @@ if( any(is.na(crop1dt)) & all(apply(crop1dt, 2, function(a) length(unique(a))<=2
 
 # Check if there are NAs in the matrices
 if ( methods::is(rasterm[[1]],"SpatRaster") ){
-    if(any(sapply(lapply(unlist(rasterm),length),is.na)==TRUE))
+    if( any(sapply(lapply(unlist(rasterm),length),is.na)==TRUE) )
     warning("\n One or more SpatRasters contain NAs which will be treated as 0s")
-    } else if ( methods::is(rasterm[[1]],"matrirasterm") ){
+    } else if ( methods::is(rasterm[[1]],"matrix") ){
         if(any(sapply(rasterm, is.na)==TRUE) ) {
             warning("\n One or more matrices contain NAs which will be treated as 0s")
         }
@@ -86,7 +86,7 @@ tw <- apply(crop1dt, 2,function(x) {
     return(y)
     })
 
-vcomb <- utils::combn(length(tw),2)
+vcomb <- utils::combn(length(tw[[1]]),2)
 vout <- c()
 for( p in 1:ncol(vcomb) ) {
     lpair <- list(cbind(vcomb[1,p],vcomb[2,p]))

@@ -101,7 +101,7 @@ These plots depict the seasonal cycle of NDVI values for a broadleaved forest pa
 On a final note, we can visualise the trend of deaths caused by COVID-19 in the first months of the recent pandemic, by using helical plots. This method was initially used to represent the dynamics of COVID-19 case numbers and can provide insights into the progression of the pandemic over time.
 To begin, we must acquire the relevant COVID-19 data. Our analysis will centre on a select group of countries, with a particular emphasis on the daily confirmed cases and fatalities.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', eval=FALSE}
 # Download data for selected countries up to a specified date.
 covidCases <- COVID19::covid19(
   country = c("Italy", "US", "Belgium", "Germany","France"), 
@@ -121,6 +121,9 @@ covidCases.df <- do.call(rbind.data.frame, lapply(
 
 # Remove NA's
 covidCases.df <- na.omit(covidCases.df)
+```
+```{r results='hide', message=FALSE, warning=FALSE, include = FALSE}
+covidCases.df <- readRDS("covidCases.RDS")
 ```
 We will use the **heliPrep** function to prepare the data for plotting. This involves smoothing the daily death counts to visualise the rate of change over time.
 

@@ -55,9 +55,9 @@ if (!(methods::is(x, "matrix") || methods::is(x, "SpatRaster") || methods::is(x,
 } 
 
 # Processing based on input type and method
-if ((methods::is(x, "matrix") || methods::is(x, "SpatRaster")) && method == "classic") {
+if ( (methods::is(x, "matrix") || methods::is(x, "SpatRaster")) && method == "classic" ) {
 	rasterm <- list(x)
-	} else if ((methods::is(x, "list") || methods::is(x, "SpatRaster")) && method == "multidimension") {
+	} else if ( (methods::is(x, "list") || methods::is(x, "SpatRaster")) && method == "multidimension" ) {
 		rasterm <- x
 		} else if (methods::is(x, "list") && method != "multidimension") {
 			stop("Invalid input: For a list input, method must be set to 'multidimension'.")
@@ -112,8 +112,8 @@ if( is.null(area) ){
 	if( any(sapply(rasterm, methods::is,"SpatRaster")) ) {
 		isfloat <- FALSE
 		israst <- TRUE
-# If data are float numbers, transform them to integers.
-if( !any(sapply(rasterm, terra::is.int)) ){
+if( !any(sapply(rasterm, terra::is.int)) ){# If data are float numbers, transform them to integers.
+
 	warning("Input data are float numbers. Converting data to integer matrices.")
 	isfloat <- TRUE
 	mfactor <- 100^simplify
@@ -126,8 +126,8 @@ if( !any(sapply(rasterm, terra::is.int)) ){
 		storage.mode(y) <- "integer"
 		return(y)
 		})
-# If data are integers, just be sure that the storage mode is integer
-}else{
+}else{# If data are integers, just be sure that the storage mode is integer
+
 	nr <- sapply(rasterm,nrow); nc <- sapply(rasterm,ncol)
 	rasterm <- lapply(rasterm, function(z) 
 	{
@@ -143,8 +143,8 @@ if( !any(sapply(rasterm, terra::is.int)) ){
 			return(y)
 			})
 }
-# If data are in a matrix or a list
-}else if( any(sapply(rasterm, methods::is,"matrix")) ) {
+}else if( any(sapply(rasterm, methods::is,"matrix")) ) {# If data are in a matrix or a list
+
 	isfloat <- FALSE
 	israst <- FALSE
 # If data are float numbers, transform them in integer
@@ -160,8 +160,8 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 		y <- round(z * mfactor)
 		return(y)
 		})
-# If data are integers, just be sure that the storage mode is integer
-}else{
+}else{# If data are integers, just be sure that the storage mode is integer
+
 	rasterm <- lapply(rasterm, function(z) {
 		if(rescale & method=="multidimension") {
 			message("Centring and scaling data...")
@@ -172,10 +172,10 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 		utils::type.convert(terra::as.matrix(z, wide=TRUE), as.is=TRUE)
 		})
 }
-}
-} else ("The class of x is not recognized. Exiting...") 
-# Derive operational moving window
-if( all(window%%2==1) ){
+} else ("The class of x is not recognized. Exiting...")
+}  
+if( all(window%%2==1) ){# Derive operational moving window
+
 	w <- (window-1)/2
 	} else {
 		stop("The size of the moving window must be an odd number. Exiting...")
@@ -195,7 +195,7 @@ if( np==1 ) {
 					lapply(X=alpha, FUN=paRaoS, x=rasterm[[1]], window=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
 					})
 			}
-			
+
 			} else if( method=="multidimension" ) {
 				if( !is.null(area) ) {
 					if( debugging ){ cat("#check: Inside multi area clause.") }
@@ -209,18 +209,18 @@ if( np==1 ) {
 							})
 					}
 				} 
-} else if( np>1 ) {
-cls <- openCluster(cluster.type, np, progBar, debugging); on.exit(stopCluster(cls)); gc()
-if( method=="classic" ) {
-	out <- lapply(X=w, function(win){
-		lapply(X=alpha, FUN=paRaoP, x=rasterm[[1]], window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np=np)
-		})
-	} else if(method=="multidimension") {
-		out <- lapply(X=w, function(win){
-			lapply(X=alpha, FUN=mpaRaoP, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale, np=np, progBar)
-			})
-	}
-}
+				} else if( np>1 ) {
+					cls <- openCluster(cluster.type, np, progBar, debugging); on.exit(stopCluster(cls)); gc()
+					if( method=="classic" ) {
+						out <- lapply(X=w, function(win){
+							lapply(X=alpha, FUN=paRaoP, x=rasterm[[1]], window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np=np)
+							})
+						} else if(method=="multidimension") {
+							out <- lapply(X=w, function(win){
+								lapply(X=alpha, FUN=mpaRaoP, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale, np=np, progBar)
+								})
+						}
+					}
 # Check if it's an area or moving window based RaoQ
 if( !is.null(area) ) {
 	y <- do.call(rbind.data.frame, lapply(out, function(x) rbind(x)))

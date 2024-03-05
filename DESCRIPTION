@@ -2,7 +2,7 @@ Package: rasterdiv
 Type: Package
 Title: Diversity Indices for Numerical Matrices
 Version: 0.3.4
-Date: 2023-12-05
+Date: 2024-03-01
 Authors@R: c(
     person("Matteo", "Marcantonio", role = c("aut", "cre"), email = "marcantoniomatteo@gmail.com"),
     person("Martina", "Iannacito", role = c("aut", "ctb"), email = "martina.iannacito@inria.fr"),
@@ -45,5 +45,5 @@ LazyData: false
 URL: https://mattmar.github.io/rasterdiv/
 BugReports: https://github.com/mattmar/rasterdiv/issues
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Language: en-GB

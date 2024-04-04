@@ -14,6 +14,11 @@
 #' @param rescale Logical; if TRUE, scales and centres the values in each element of 'x'.
 #' @param lambda Numeric; lambda value used for Minkowski distance calculation.
 #' @param diag Logical; if TRUE, includes the diagonal of the distance matrix in computations.
+#' @param time_vector time; 
+#' @param stepness numeric; steepness of the logistic function.
+#' @param midpoint numeric; midpoint of the logistic function
+#' @param cycle_length string; The length of the cycle. Can be a numeric value or a string specifying the units ('year', 'month', 'day', 'hour', 'minute', 'second'). When numeric, the cycle length is in the same units as time_scale. When a string, it specifies the time unit of the cycle.
+#' @param time_scale string; Specifies the time scale for the conversion. Must be one of 'year', 'month', 'day', 'hour', 'minute', 'second'. When cycle_length is a string, time_scale changes the unit in which the result is expressed. When cycle_length is numeric, time_scale is used to compute the elapsed time in seconds.
 #' @param debugging Logical; if TRUE, additional diagnostic messages are output, useful for debugging. Default 
 #' is FALSE.
 #' @param isfloat Logical; specifies if the input data are floats.
@@ -26,7 +31,7 @@
 #' @author Duccio Rocchini \email{duccio.rocchini@@unibo.it}, 
 #' Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}
 
-mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, diag, debugging, isfloat, mfactor, np) {
+mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np) {
     # `win` is the operative moving window
     win = window 
     NAwin <- 2*window+1
@@ -54,8 +59,8 @@ mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, dia
             }
     # Define output matrix
     raoqe <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
-# Check for NAs in SpatRasters or matrices
-if (methods::is(x[[1]], "SpatRaster")) {
+    # Check for NAs in SpatRasters or matrices
+    if (methods::is(x[[1]], "SpatRaster")) {
     if (any(sapply(x, function(rast) any(is.na(terra::values(rast)))))) {
         warning("One or more SpatRasters contain NAs, which will be treated as 0s.")
     }
@@ -66,12 +71,13 @@ if (methods::is(x[[1]], "SpatRaster")) {
     }
 
 # Validate and set the distance function
-validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis")
+validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis","twdtw")
 if (dist_m %in% validDistanceMetrics) {
     switch(dist_m,
         euclidean = distancef <- get(".meuclidean"),
         manhattan = distancef <- get(".mmanhattan"),
         canberra = distancef <- get(".mcanberra"),
+        twdtw = distancef <- get(".mtwdtw"),
         minkowski = {
             if (lambda == 0) stop("Minkowski distance with lambda = 0 is undefined. Choose another value.")
             distancef <- get(".mminkowski")

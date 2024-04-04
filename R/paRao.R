@@ -37,7 +37,9 @@
 #'
 #' @export
 
-paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE) {
+paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE, time_vector=NA, stepness=NA, midpoint=NA, cycle_length=NA, time_scale=NA) {
+
+isfloat=FALSE
 
 # Warning for using experimental features
 if (method == "multidimension") {
@@ -91,6 +93,20 @@ if (any(!is.numeric(alpha))) {
 if (any(alpha < 0)) {
 	stop("Alpha values must be non-negative numbers.")
 }
+if (any(alpha < 0)) {
+	stop("Alpha values must be non-negative numbers.")
+}
+
+# twdtw check
+if (method=="multidimension" && dist_m=="twdtw") {
+	if(is.null(time_vector)) {
+		stop("time has to be defined if dist_m=twdtw")
+	}
+	if( length(time_vector) != nlyr(rasterm) ) {
+		stop("time has to be the same length as x")
+	}
+}
+
 
 # Area Check
 if ( !is.null(area) ) {
@@ -173,7 +189,7 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 		})
 }
 } else ("The class of x is not recognized. Exiting...")
-}  
+}
 if( all(window%%2==1) ){# Derive operational moving window
 
 	w <- (window-1)/2
@@ -205,7 +221,7 @@ if( np==1 ) {
 						})
 					} else {
 						out <- lapply(X=w, function(win){
-							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
+							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, time_vector=time, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale)
 							})
 					}
 				} 

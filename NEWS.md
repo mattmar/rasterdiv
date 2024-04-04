@@ -1,3 +1,7 @@
+# rasterdiv 0.3.5
+## Major changes
+* Adds twdtw as a distance methods for paRao()
+
 # rasterdiv 0.3.4
 ## Major changes
 * Adds back CRE function (leaving old function syntax)

@@ -71,7 +71,7 @@ mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, dia
     }
 
 # Validate and set the distance function
-validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis","twdtw")
+validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis", "twdtw")
 if (dist_m %in% validDistanceMetrics) {
     switch(dist_m,
         euclidean = distancef <- get(".meuclidean"),
@@ -90,7 +90,7 @@ if (dist_m %in% validDistanceMetrics) {
     } else if (is.matrix(dist_m)) {
         distancef <- dist_m
         } else {
-            stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', or provide a matrix.")
+            stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', 'twdtw', or provide a matrix.")
         }
         # Debugging check
         if (debugging) {
@@ -132,7 +132,12 @@ if (dist_m %in% validDistanceMetrics) {
                             lpair <- lapply(lv, function(chi) {
                                 c(chi[vcomb[1,p]],chi[vcomb[2,p]])
                                 })
+                            # message(stepness)
+                            if( dist_m=="twdtw" ) {
+                                vout[p] <- distancef(lpair, midpoint=midpoint, stepness=stepness, cycle_length="year", time_scale="day")/mfactor
+                                } else {
                             vout[p] <- distancef(lpair)/mfactor
+                        }
                         }
                     }
                 # Evaluate the parsed alpha method

@@ -15,6 +15,11 @@
 #' @param rescale Scale and centre values in each of the element of x.
 #' @param lambda Lambda value for Minkowski distance.
 #' @param diag Boolean. Diagonal of the distance matrix.
+#' @param time_vector time; 
+#' @param stepness numeric; steepness of the logistic function.
+#' @param midpoint numeric; midpoint of the logistic function
+#' @param cycle_length string; The length of the cycle. Can be a numeric value or a string specifying the units ('year', 'month', 'day', 'hour', 'minute', 'second'). When numeric, the cycle length is in the same units as time_scale. When a string, it specifies the time unit of the cycle.
+#' @param time_scale string; Specifies the time scale for the conversion. Must be one of 'year', 'month', 'day', 'hour', 'minute', 'second'. When cycle_length is a string, time_scale changes the unit in which the result is expressed. When cycle_length is numeric, time_scale is used to compute the elapsed time in seconds.
 #' @param debugging a boolean variable set to FALSE by default. If TRUE, additional
 #'   messages will be printed. For de-bugging only.
 #' @param isfloat Are the input data floats?
@@ -31,7 +36,7 @@
 #'
 #' @keywords internal
 
-mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor,np) {
+mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda,diag, time_vector, stepness, midpoint, cycle_length, time_scale,debugging,isfloat,mfactor,np) {
    # `win` is the operative moving window
    win = window 
    NAwin <- 2*window+1
@@ -135,7 +140,11 @@ if (dist_m %in% validDistanceMetrics) {
                             lpair <- lapply(lv, function(chi) {
                                 c(chi[vcomb[1,p]],chi[vcomb[2,p]])
                                 })
-                            return(distancef(lpair)/mfactor)
+                            return(
+                                if( dist_m=="twdtw" ) {
+                                    distancef(lpair, midpoint=midpoint, stepness=stepness, cycle_length="year", time_scale="day")/mfactor
+                                    } else {
+                                        distancef(lpair)/mfactor})
                             })
                     # Evaluate the parsed alpha method
                     vv <- eval(parse(text=alphameth))

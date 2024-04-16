@@ -33,23 +33,23 @@ storage.mode(crop1dt) <- "integer"
 if( any(is.na(crop1dt)) & all(apply(crop1dt, 2, function(a) length(unique(a))<=2)) ) {
     mpaRaoOareaS <- NA
     } else {
-        # Evaluate Rao's method given alpha
-        classes <- levels(as.factor(crop1dt))
-        window <- nrow(crop1dt) #Temporary patch?
-        if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
-            alphameth <- "max(vout*2,na.rm=TRUE)"
-        } 
-        if( alpha>0 ) {
-            alphameth <- "sum(rep(vout^alpha,2)*(1/(window)^4),na.rm=TRUE)^(1/alpha)"
-        }
-        if( alpha>100 ) warning("With this alpha value you may get integer overflow: consider decreasing it.")
+    # Evaluate Rao's method given alpha
+    classes <- levels(as.factor(crop1dt))
+    window <- nrow(crop1dt) # number of pixels instead of the side of the moving window
+    if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
+        alphameth <- "max(vout*2,na.rm=TRUE)"
+    } 
+    if( alpha>0 ) {
+        alphameth <- "(sum(vout^alpha) / (window^2))^(1/alpha)" # modified to avoid redundant parts (rep and ^4 used in the past)
+    }
+    if( alpha>100 ) warning("With this alpha value you may get integer overflow: consider decreasing it.")
 
 # Check if there are NAs in the matrices
 if ( methods::is(rasterm[[1]],"SpatRaster") ){
     if( any(sapply(lapply(unlist(rasterm),length),is.na)==TRUE) )
     warning("\n One or more SpatRasters contain NAs which will be treated as 0s")
     } else if ( methods::is(rasterm[[1]],"matrix") ){
-        if(any(sapply(rasterm, is.na)==TRUE) ) {
+        if( any(sapply(rasterm, is.na)==TRUE) ) {
             warning("\n One or more matrices contain NAs which will be treated as 0s")
         }
     }
@@ -78,22 +78,24 @@ if( dist_m=="euclidean") {
                             stop("Distance function not defined for multidimensional Rao's Q; please choose among euclidean, manhattan, canberra, minkowski, mahalanobis...")
                         }
 # Derive Rao
-tw <- apply(crop1dt, 2,function(x) {
-    y <- summary(as.factor(x),maxsum=10000)
-    if( "NA's"%in%names(y) ) {
+tw <- apply(crop1dt, 2, function(x) {
+    y <- summary(as.factor(x), maxsum=10000)
+    if ("NA's" %in% names(y)) {
         y <- y[-length(y)]
     }
     return(y)
     })
 
-vcomb <- utils::combn(length(tw[[1]]),2)
-vout <- c()
-for( p in 1:ncol(vcomb) ) {
-    lpair <- list(cbind(vcomb[1,p],vcomb[2,p]))
-    vout[p] <- distancef(lpair)/mfactor
+vcomb <- utils::combn(nrow(crop1dt), 2)
+vout <- numeric(ncol(vcomb))
+for (p in 1:ncol(vcomb)) {
+    lpair <- list(crop1dt[vcomb[1, p], ], crop1dt[vcomb[2, p], ])
+    vout[p] <- distancef(lpair) / mfactor
 }
+
 # Evaluate the parsed alpha method
 mpaRaoOareaS <- eval(parse(text=alphameth))
+
 gc()
 }
 return(mpaRaoOareaS)

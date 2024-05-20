@@ -21,7 +21,8 @@ mpaRaoS(
   debugging,
   isfloat,
   mfactor,
-  np
+  np,
+  progBar
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ is FALSE.}
 \item{mfactor}{Numeric; multiplication factor applied if input data are float numbers.}
 
 \item{np}{Number of processes for parallel computation.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 }
 \value{
 A list of matrices, each representing a layer of the input RasterStack, containing calculated 

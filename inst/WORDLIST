@@ -25,6 +25,7 @@ SpatVector
 SpatialGridDataFrame
 abe
 accRao
+artifact
 avg
 ax
 canberra
@@ -63,5 +64,6 @@ st
 terra
 testthat
 th
+twdtw
 xend
 yend

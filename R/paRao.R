@@ -5,7 +5,7 @@
 #' @param x Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects.
 #' @param area Input vector area layer for area-based calculation.
 #' @param field Column name of the vector area layer to use to calculate the index.
-#' @param dist_m Define the type of distance to be calculated between numerical categories. `dist_m` can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, `dist_m` can be a function which calculates a user-defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If `method="multidimension"` then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If `dist_m` is a matrix, then the function will assume that the matrix contains the distances. Moreover "twdtw" (time weighted dynamic time warping) can be used as a way to calculte distances for time series in the `paRao` multidimensional mode. 
+#' @param dist_m Define the type of distance to be calculated between numerical categories. `dist_m` can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, `dist_m` can be a function which calculates a user-defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If `method="multidimension"` then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If `dist_m` is a matrix, then the function will assume that the matrix contains the distances. Moreover \emph{"twdtw"} (time weighted dynamic time warping) can be used as a way to calculate distances for time series in the `paRao` multidimensional mode. 
 #' @param window The side of the square moving window, it must be a vector of odd numeric values greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3. `window` can be a vector with length greater than 1, in this case, Rao's index will be calculated over `x` for each value in the vector.
 #' @param alpha Weight for the distance matrix. If `alpha = 0`, distances will be averaged with a geometric average, if `alpha=1` with an arithmetic mean, if `alpha = 2` with a quadratic mean, `alpha = 3` with a cubic mean, and so on. if `alpha` tends to infinite (i.e., higher than the maximum integer allowed in R) or `alpha=Inf`, then the maximum distance will be taken. `alpha` can be a vector with length greater than 1, in this case, Rao's index will be calculated over `x` for each value in the vector.
 #' @param method Currently, there are two ways to calculate the parametric version of Rao's index. If `method="classic"`, then the normal parametric Rao's index will be calculated on a single matrix. If `method="multidimension"` (experimental!), a list of matrices must be provided as input. In the latter case, the overall distance matrix will be calculated in a multi- or hyper-dimensional system by using the distance measure defined through the function argument `dist_m`. Each pairwise distance is then multiplied by the inverse of the squared number of pixels in the considered moving window, and the Rao's Q is finally derived by applying a summation. Default value is `"classic"`.
@@ -102,17 +102,6 @@ if (any(alpha < 0)) {
 	stop("Alpha values must be non-negative numbers.")
 }
 
-# twdtw check
-if (method=="multidimension" && dist_m=="twdtw") {
-	if(is.null(time_vector)) {
-		stop("time has to be defined if dist_m=twdtw")
-	}
-	if( length(time_vector) != terra::nlyr(rasterm) ) {
-		stop("time has to be the same length as x")
-	}
-}
-
-
 # Area Check
 if ( !is.null(area) ) {
 	if (!methods::is(area, "SpatVector")) {
@@ -196,6 +185,16 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 } else ("The class of x is not recognized. Exiting...")
 }
 
+# twdtw check
+if ( method=="multidimension" && dist_m=="twdtw" ) {
+	if( is.null(time_vector) ) {
+		stop("time has to be defined if dist_m=twdtw")
+	}
+	if( length(time_vector) != length(rasterm) ) {
+		stop("time has to be the same length as x")
+	}
+}
+
 if( all(window%%2==1) ){# Derive operational moving window
 
 	w <- (window-1)/2
@@ -214,7 +213,7 @@ if( np==1 ) {
 				})
 			} else {
 				out <- lapply(X=w, function(win){
-					lapply(X=alpha, FUN=paRaoS, x=rasterm[[1]], window=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor)
+					lapply(X=alpha, FUN=paRaoS, x=rasterm[[1]], window=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, progBar)
 					})
 			}
 
@@ -227,7 +226,7 @@ if( np==1 ) {
 						})
 					} else {
 						out <- lapply(X=w, function(win){
-							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, time_vector=time_vector, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale)
+							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, time_vector=time_vector, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale, progBar=progBar)
 							})
 					}
 				} 
@@ -235,11 +234,11 @@ if( np==1 ) {
 					cls <- openCluster(cluster.type, np, progBar, debugging); on.exit(stopCluster(cls)); gc()
 					if( method=="classic" ) {
 						out <- lapply(X=w, function(win){
-							lapply(X=alpha, FUN=paRaoP, x=rasterm[[1]], window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np=np)
+							lapply(X=alpha, FUN=paRaoP, x=rasterm[[1]], window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np=np, progBar=progBar)
 							})
 						} else if(method=="multidimension") {
 							out <- lapply(X=w, function(win){
-								lapply(X=alpha, FUN=mpaRaoP, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale, np=np, time_vector=time_vector, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale, progBar)
+								lapply(X=alpha, FUN=mpaRaoP, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale, np=np, time_vector=time_vector, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale, progBar=progBar)
 								})
 						}
 					}

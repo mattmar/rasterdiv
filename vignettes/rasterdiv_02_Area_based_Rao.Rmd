@@ -13,6 +13,7 @@ vignette: >
 knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "95%", fig.align = "center", fig.dpi = 150, collapse = FALSE, comment = "#") 
 #knitr::opts_chunk$set(dev = 'pdf')
 ```
+
 ```{r results='hide', message=FALSE, warning=FALSE}
 require(rasterdiv)
 require(terra)
@@ -30,6 +31,7 @@ A SpatRaster called copNDVI is loaded together with the package **rasterdiv**. *
 ```{r results='hide', message=FALSE, warning=FALSE}
 copNDVI <- load_copNDVI()
 copNDVIlr <- terra::aggregate(copNDVI, fact=10)
+values(copNDVIlr) <- as.integer(values(copNDVIlr))
 world <- load_world()
 ```
 
@@ -45,17 +47,25 @@ text(RaoC, label=paste("Rao'Q =", round(RaoC$alpha.1,1)), col="black", family="A
 ```
 
 ## Compute multidimension area-based Rao's Index
-```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE, eval=FALSE}
 # Adding a second "noise" SpatRaster layer
+# copNDVIlr <- terra::aggregate(copNDVI, fact=20)
+values(copNDVIlr) <- as.integer(values(copNDVIlr))
 noise = rast(copNDVIlr)
-noise[] = as.integer(runif(n=ncell(noise),min=0, max=10))
-RaoMC <- paRao(x=c(copNDVIlr,noise), area=world, field='CONTINENT', alpha=10, method="multidimension", simplify=0)
+noise[] = as.integer(runif(n=ncell(noise),min=1, max=10))
+RaoMC <- paRao(x=c(copNDVIlr,noise), area=world, field='CONTINENT', alpha=2, method="multidimension", simplify=0)
 ```
 
-```{r fig02, warning=FALSE, message=FALSE}
-#Plot area-based RAo's index
-plot(RaoMC, col=hcl(RaoMC$alpha.10*10000), main="Multidimension Rao's index per continent alpha 10")
-text(RaoMC, label=paste("Rao'Q =", round(RaoMC$alpha.10,3)), col="black", family="Arial", halo=TRUE)
+```{r fig02, warning=FALSE, message=FALSE, eval=FALSE}
+#Plot area-based Rao's index
+plot(RaoMC, col=hcl(RaoMC$alpha.2*10000), main="Multidimension Rao's index per continent alpha 10")
+text(RaoMC, label=paste("Rao'Q =", round(RaoMC$alpha.2,3)), col="black", family="Arial", halo=TRUE)
+```
+
+```{r include-figure, echo=FALSE}
+# Get the path to the image in the package
+img_path <- system.file("extdata", "Rao_areabased_multidimensional.png", package = "rasterdiv")
+knitr::include_graphics(img_path)
 ```
 
 ## Additional example subsetting on a continent and then using a grid vector to derive Rao's in each cell
@@ -70,10 +80,18 @@ africa.r[] <- 1:ncell(africa.r)
 
 #Vectorise the SpatRaster
 africa.v = as.polygons(africa.r)
+```
 
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE, eval=FALSE}
 #Derive Rao's (alpha=2) for each grid cell
 RaoGRID <- paRao(x=copNDVIlr, area=africa.v, field='lyr.1', alpha=2, simplify=0, na.tolerance=0.2)
+```
 
+```{r results='hide', message=FALSE, warning=FALSE, include = FALSE}
+RaoGRID <- readRDS("RaoGRID.RDS")
+```
+
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
 #Transform the spatial polygon data frame in a raster layer that can be used in levelplot
 rr <- rast(RaoGRID,ncol=20, nrow=20)
 values(rr) <- RaoGRID$alpha.2

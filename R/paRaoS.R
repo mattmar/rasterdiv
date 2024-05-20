@@ -17,13 +17,14 @@
 #' displayed for debugging purposes.
 #' @param isfloat Logical; indicates whether the input data values are floating-point numbers.
 #' @param mfactor Integer; indicates the decimal position to round.
+#' @param progBar logical. If TRUE a progress bar is shown.
 #' @return A list of matrices corresponding to the computed Rao's index values. Each matrix in the list 
 #' represents the calculations performed over the moving window, with dimensions equal to \code{dim(x)}.
 #' @author Duccio Rocchini \email{duccio.rocchini@@unibo.it},
 #' Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}
 #' @seealso \code{\link{paRao}} for the related non-sequential function.
 
-paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfloat, mfactor) 
+paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfloat, mfactor, progBar) 
 {
 	# Some initial housekeeping
 	  # `win` is the operative moving window
@@ -31,13 +32,15 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
   NAwin <- 2*window+1
   message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
   # Set a progress bar
-  pb <- progress::progress_bar$new(
+  if(progBar) {
+  	pb <- progress::progress_bar$new(
     format = "[:bar] :percent in :elapsed\n",
     # Total number of ticks is the number of column +NA columns divided the number of processor.
     total = dim(x)[2], 
     clear = FALSE, 
     width = 60, 
     force = FALSE)
+  }
 
 	message("\n\nProcessing alpha: ",alpha, " Moving Window: ", 2*win+1)
 	mfactor <- ifelse(isfloat,mfactor,1) 
@@ -67,7 +70,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 		# Loop over each pixel
 		for (cl in (1+win):(dim(x)[2]+win)) {
 			# Update progress bar
-			pb$tick()
+			 if(progBar) pb$tick()
         	# Row loop
 			for(rw in (1+win):(dim(x)[1]+win)) {
 				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) )) {
@@ -113,7 +116,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 		# Loop over each pixel
 		for(cl in (1+win):(ncol(x)+win)) {
 			# Update progress bar
-			pb$tick()
+			 if(progBar) pb$tick()
 			# Row loop
 			for(rw in (1+win):(nrow(x)+win)) {
 				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) ) ) {

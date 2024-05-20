@@ -2,7 +2,7 @@ Package: rasterdiv
 Type: Package
 Title: Diversity Indices for Numerical Matrices
 Version: 0.3.5
-Date: 2024-04-04
+Date: 2024-05-20
 Authors@R: c(
     person("Matteo", "Marcantonio", role = c("aut", "cre"), email = "marcantoniomatteo@gmail.com"),
     person("Martina", "Iannacito", role = c("aut", "ctb"), email = "martina.iannacito@inria.fr"),

@@ -13,7 +13,8 @@ paRaoS(
   diag,
   debugging,
   isfloat,
-  mfactor
+  mfactor,
+  progBar
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ displayed for debugging purposes.}
 \item{isfloat}{Logical; indicates whether the input data values are floating-point numbers.}
 
 \item{mfactor}{Integer; indicates the decimal position to round.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 }
 \value{
 A list of matrices corresponding to the computed Rao's index values. Each matrix in the list 

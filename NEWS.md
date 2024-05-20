@@ -1,6 +1,10 @@
 # rasterdiv 0.3.5
 ## Major changes
-* Adds twdtw as a distance methods for paRao()
+* Adds `twdtw` as a distance methods for `paRao()`
+
+## Major changes
+* Changes how `N` is intended in `mpaRaoAreaS`
+* Other improvements in `paRaoS` and `paRaoP`
 
 # rasterdiv 0.3.4
 ## Major changes

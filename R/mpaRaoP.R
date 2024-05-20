@@ -25,6 +25,7 @@
 #' @param isfloat Are the input data floats?
 #' @param mfactor Multiplication factor in case of input data as float numbers.
 #' @param np the number of processes (cores) which will be spawned.
+#' @param progBar logical. If TRUE a progress bar is shown.
 #'
 #' @return A list of matrices of dimension \code{dim(x)} with length equal to the
 #'   length of \code{alpha}.
@@ -36,20 +37,22 @@
 #'
 #' @keywords internal
 
-mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np) {
+mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np, progBar) {
    # `win` is the operative moving window
    win = window 
    NAwin <- 2*window+1
    message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
     
     # Set a progress bar
-    pb <- progress::progress_bar$new(
+    if( progBar ) {
+        pb <- progress::progress_bar$new(
         format = "[:bar] :percent in :elapsed\n",
-    # Total number of ticks is the number of column +NA columns divided the number of processor.
-    total = (dim(x[[1]])[2]/np)+5, 
-    clear = FALSE, 
-    width = 60, 
-    force = FALSE)
+        # Total number of ticks is the number of column +NA columns divided the number of processor.
+        total = (dim(x[[1]])[2]/np)+5, 
+        clear = FALSE, 
+        width = 60, 
+        force = FALSE)
+    }
 
     mfactor <- ifelse(isfloat,mfactor,1) 
     diagonal <- ifelse(diag==TRUE,0,NA)
@@ -117,13 +120,13 @@ if (dist_m %in% validDistanceMetrics) {
     # Parallelised parametric multidimensional Rao
     out <- foreach::foreach(cl=(1+win):(dim(rasterm)[2]+win),.verbose = F, .export=c("alpha")) %dopar% {
         # Update progress bar
-        pb$tick()
+        if(progBar) pb$tick()
         # Row loop
         mpaRaoOP <- sapply((1+win):(dim(rasterm)[1]+win), function(rw) {
             if(debugging) {
                 message("#check: Inside sapply.")
             }
-            if( length(!which(!trastersm[[1]][c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < (NAwin^2-((NAwin^2)*na.tolerance)) ) {
+            if( length(!which(!trastersm[[1]][c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
                 vv <- NA
                 return(vv)
                 } else {
@@ -133,7 +136,7 @@ if (dist_m %in% validDistanceMetrics) {
                 # Vectorise the matrices in the list and calculate between matrices pairwase distances
                 lv <- lapply(tw, function(x) as.vector(t(x)))
                 vcomb <- utils::combn(length(lv[[1]]),2)
-                # Exclude NAwins with only 1 category in all lists
+                # Exclude windows with only 1 category in all lists
                 if( sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1) ) {
                     vv <- 0
                     } else {

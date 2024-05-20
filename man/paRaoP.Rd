@@ -14,7 +14,8 @@ paRaoP(
   debugging,
   isfloat,
   mfactor,
-  np
+  np,
+  progBar
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ displayed for debugging purposes.}
 \item{mfactor}{Integer; multiplication factor in case of input data as float numbers.}
 
 \item{np}{Number of processes for parallel computation.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 }
 \value{
 A list of matrices corresponding to the computed Rao's index values. Each matrix in the list 

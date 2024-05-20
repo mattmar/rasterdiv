@@ -21,7 +21,8 @@ mpaRaoP(
   debugging,
   isfloat,
   mfactor,
-  np
+  np,
+  progBar
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ messages will be printed. For de-bugging only.}
 \item{mfactor}{Multiplication factor in case of input data as float numbers.}
 
 \item{np}{the number of processes (cores) which will be spawned.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 }
 \value{
 A list of matrices of dimension \code{dim(x)} with length equal to the

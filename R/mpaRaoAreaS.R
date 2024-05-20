@@ -39,8 +39,9 @@ if( any(is.na(crop1dt)) & all(apply(crop1dt, 2, function(a) length(unique(a))<=2
     if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
         alphameth <- "max(vout*2,na.rm=TRUE)"
     } 
+
     if( alpha>0 ) {
-        alphameth <- "(sum(vout^alpha) / (window^2))^(1/alpha)" # modified to avoid redundant parts (rep and ^4 used in the past)
+        alphameth <- "(sum(vout^alpha, na.rm=TRUE) / (window^2))^(1/alpha)" # modified to avoid redundant parts (rep and ^4 used in the past)
     }
     if( alpha>100 ) warning("With this alpha value you may get integer overflow: consider decreasing it.")
 
@@ -86,7 +87,7 @@ tw <- apply(crop1dt, 2, function(x) {
     return(y)
     })
 
-vcomb <- utils::combn(nrow(crop1dt), 2)
+vcomb <- utils::combn(length(which(stats::complete.cases(crop1dt))), 2)
 vout <- numeric(ncol(vcomb))
 for (p in 1:ncol(vcomb)) {
     lpair <- list(crop1dt[vcomb[1, p], ], crop1dt[vcomb[2, p], ])

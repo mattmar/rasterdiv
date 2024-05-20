@@ -24,6 +24,7 @@
 #' @param isfloat Logical; specifies if the input data are floats.
 #' @param mfactor Numeric; multiplication factor applied if input data are float numbers.
 #' @param np Number of processes for parallel computation.
+#' @param progBar logical. If TRUE a progress bar is shown.
 #' @return A list of matrices, each representing a layer of the input RasterStack, containing calculated 
 #' Rao's index values. The dimensions correspond to those of the input, and the list length is equal to the 
 #' length of 'alpha'.
@@ -31,20 +32,21 @@
 #' @author Duccio Rocchini \email{duccio.rocchini@@unibo.it}, 
 #' Matteo Marcantonio \email{marcantoniomatteo@@gmail.com}
 
-mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np) {
+mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np, progBar) {
     # `win` is the operative moving window
     win <- window 
     NAwin <- 2 * window + 1
     message("\n\nProcessing alpha: ", alpha, " Moving Window: ", win)
   
     # Set a progress bar
-    pb <- progress::progress_bar$new(
+    if(progBar) {
+        pb <- progress::progress_bar$new(
         format = "[:bar] :percent in :elapsed\n",
         total = dim(x[[1]])[2], 
         clear = FALSE, 
         width = 60, 
         force = FALSE
-    )
+    )}
     
     mfactor <- ifelse(isfloat, mfactor, 1) 
     diagonal <- ifelse(diag == TRUE, 0, NA)
@@ -121,7 +123,7 @@ mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, dia
     
     for (cl in (1 + win):(dim(x[[1]])[2] + win)) {
         # Update progress bar
-        pb$tick()
+        if(progBar) pb$tick()
         for (rw in (1 + win):(dim(x[[1]])[1] + win)) {
             if (length(!which(!trastersm[[1]][(rw - win):(rw + win), (cl - win):(cl + win)] %in% NA)) < floor(NAwin^2 - ((NAwin^2) * na.tolerance))) {
 
@@ -137,8 +139,8 @@ mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, dia
                 vcomb <- utils::combn(length(lv[[1]]), 2)
                 vout <- numeric(ncol(vcomb))
                 
-                # Exclude windows with only one category
-                if (any(sapply(lv, function(x) length(unique(x))) < 3)) {
+                # Exclude windows with only 1 category in all lists
+                if (sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1)) {
                     raoqe[rw - win, cl - win] <- 0
                 } else {
                     for (p in 1:ncol(vcomb)) {

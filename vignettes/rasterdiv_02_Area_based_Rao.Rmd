@@ -62,10 +62,9 @@ plot(RaoMC, col=hcl(RaoMC$alpha.2*10000), main="Multidimension Rao's index per c
 text(RaoMC, label=paste("Rao'Q =", round(RaoMC$alpha.2,3)), col="black", family="Arial", halo=TRUE)
 ```
 
-```{r include-figure, echo=FALSE}
-# Get the path to the image in the package
-img_path <- system.file("extdata", "Rao_areabased_multidimensional.png", package = "rasterdiv")
-knitr::include_graphics(img_path)
+```{r include-figure, echo=FALSE, fig.align='center', fig.cap='', out.width='80%'}
+image_path <- system.file("man/figures", "Rao_areabased_multidimensional.png", package = "rasterdiv")
+knitr::include_graphics(image_path)
 ```
 
 ## Additional example subsetting on a continent and then using a grid vector to derive Rao's in each cell

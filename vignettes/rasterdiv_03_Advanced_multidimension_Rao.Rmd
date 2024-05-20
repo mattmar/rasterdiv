@@ -211,8 +211,7 @@ Rao_plot <- levelplot(RaoEuc[[1]][[1]], margin = FALSE,
 do.call(gridExtra::grid.arrange, c(list(raster_ts_plot, Rao_plot, RaoP_plot), ncol = 3))
 ```
 
-```{r include-figure, echo=FALSE}
-# Get the path to the image in the package
-img_path <- system.file("extdata", "PhenoRao.png", package = "rasterdiv")
-knitr::include_graphics(img_path)
+```{r include-figure, echo=FALSE, fig.align='center', fig.cap='', out.width='80%'}
+image_path <- system.file("man/figures", "PhenoRao.png", package = "rasterdiv")
+knitr::include_graphics(image_path)
 ```

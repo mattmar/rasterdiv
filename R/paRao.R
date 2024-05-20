@@ -42,7 +42,7 @@
 #'
 #' @export
 
-paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE, time_vector=NA, stepness=-0.5, midpoint=35, cycle_length=NA, time_scale=NA) {
+paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE, time_vector=NA, stepness=-0.5, midpoint=35, cycle_length="year", time_scale="day") {
 
 isfloat=FALSE
 
@@ -195,6 +195,7 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 }
 } else ("The class of x is not recognized. Exiting...")
 }
+
 if( all(window%%2==1) ){# Derive operational moving window
 
 	w <- (window-1)/2

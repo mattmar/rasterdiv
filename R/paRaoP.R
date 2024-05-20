@@ -27,6 +27,7 @@ paRaoP <- function(x,alpha,window,dist_m,na.tolerance,diag,debugging,isfloat,mfa
 # `win` is the operative moving window
 win = window 
 NAwin <- 2*window+1
+
 message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
   # Set a progress bar
   pb <- progress::progress_bar$new(
@@ -69,7 +70,7 @@ message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
     pb$tick()
     # Row loop
     paRaoOP <- sapply((1+win):(dim(x)[1]+win), function(rw) {
-        if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
+        if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) ) ) {
             vv <- NA
             return(vv)
             }else{
@@ -127,7 +128,7 @@ return(do.call(cbind,out))
     pb$tick()
     # Row loop
     paRaoOP <- sapply((1+win):(dim(x)[1]+win), function(rw) {
-        if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
+        if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwim^2-((NAwim^2)*na.tolerance)) ) {
             vv <- NA
             return(vv)
             }else{

@@ -70,7 +70,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 			pb$tick()
         	# Row loop
 			for(rw in (1+win):(dim(x)[1]+win)) {
-				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
+				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) )) {
 					paRaoOS[rw-win,cl-win] <- NA
 				}else{
 					tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)
@@ -116,7 +116,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 			pb$tick()
 			# Row loop
 			for(rw in (1+win):(nrow(x)+win)) {
-				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) <= window^2-((window^2)*na.tolerance) ) {
+				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) ) ) {
 					paRaoOS[rw-win,cl-win]<-NA
 				}else{
 					tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)
@@ -161,7 +161,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 		}
 		for (cl in (1+win):(dim(x)[2]+win)) {
 			for(rw in (1+win):(dim(x)[1]+win)) {
-				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) <= (window^2-((window^2)*na.tolerance)) ) {
+				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) ) ) {
 					paRaoOS[rw-win,cl-win] <- NA
 				}else{
 					tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)

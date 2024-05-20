@@ -33,117 +33,133 @@
 
 mpaRaoS <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np) {
     # `win` is the operative moving window
-    win = window 
-    NAwin <- 2*window+1
-    message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
+    win <- window 
+    NAwin <- 2 * window + 1
+    message("\n\nProcessing alpha: ", alpha, " Moving Window: ", win)
+  
     # Set a progress bar
     pb <- progress::progress_bar$new(
         format = "[:bar] :percent in :elapsed\n",
-    # Total number of ticks is the number of column +NA columns divided the number of processor.
-    total = dim(x[[1]])[2], 
-    clear = FALSE, 
-    width = 60, 
-    force = FALSE)
+        total = dim(x[[1]])[2], 
+        clear = FALSE, 
+        width = 60, 
+        force = FALSE
+    )
     
-    mfactor <- ifelse(isfloat,mfactor,1) 
-    diagonal <- ifelse(diag==TRUE,0,NA)
+    mfactor <- ifelse(isfloat, mfactor, 1) 
+    diagonal <- ifelse(diag == TRUE, 0, NA)
     rasterm <- x[[1]]
-    # Evaluate Rao's method given alpha
-    if( alpha >= .Machine$integer.max | is.infinite(alpha) ) {
-        alphameth <- "max(vout*2,na.rm=TRUE)"
-        } else if( alpha>0 ) {
-            if( alpha >100 ) warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
-            alphameth <- "sum(rep(vout^alpha,2)*(1/(NAwin)^4),na.rm=TRUE)^(1/alpha)"
-            } else if( alpha==0 ) {
-                alphameth <- "prod(vout,na.rm=TRUE)^(1/(NAwin^4))"
-            }
-    # Define output matrix
-    raoqe <- matrix(rep(NA,dim(rasterm)[1]*dim(rasterm)[2]),nrow=dim(rasterm)[1],ncol=dim(rasterm)[2])
+    
+    # Define Rao's index method based on alpha
+    if (alpha >= .Machine$integer.max | is.infinite(alpha)) {
+        alphameth <- "max(vout * 2, na.rm = TRUE)"
+    } else if (alpha > 0) {
+        if (alpha > 100) warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
+        alphameth <- "sum(rep(vout^alpha, 2) * (1 / (NAwin)^4), na.rm = TRUE)^(1 / alpha)"
+    } else if (alpha == 0) {
+        alphameth <- "prod(vout, na.rm = TRUE)^(1 / (NAwin^4))"
+    }
+    
+    # Initialize output matrix
+    raoqe <- matrix(NA, nrow = dim(rasterm)[1], ncol = dim(rasterm)[2])
+    
     # Check for NAs in SpatRasters or matrices
     if (methods::is(x[[1]], "SpatRaster")) {
-    if (any(sapply(x, function(rast) any(is.na(terra::values(rast)))))) {
-        warning("One or more SpatRasters contain NAs, which will be treated as 0s.")
-    }
+        if (any(sapply(x, function(rast) any(is.na(terra::values(rast)))))) {
+            warning("One or more SpatRasters contain NAs, which will be treated as 0s.")
+        }
     } else if (methods::is(x[[1]], "matrix")) {
         if (any(sapply(x, is.na))) {
             warning("One or more matrices contain NAs, which will be treated as 0s.")
         }
     }
-
-# Validate and set the distance function
-validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis", "twdtw")
-if (dist_m %in% validDistanceMetrics) {
-    switch(dist_m,
-        euclidean = distancef <- get(".meuclidean"),
-        manhattan = distancef <- get(".mmanhattan"),
-        canberra = distancef <- get(".mcanberra"),
-        twdtw = distancef <- get(".mtwdtw"),
-        minkowski = {
-            if (lambda == 0) stop("Minkowski distance with lambda = 0 is undefined. Choose another value.")
-            distancef <- get(".mminkowski")
+    
+    # Validate and set the distance function
+    validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis", "twdtw")
+    if (dist_m %in% validDistanceMetrics) {
+        switch(dist_m,
+            euclidean = distancef <- get(".meuclidean"),
+            manhattan = distancef <- get(".mmanhattan"),
+            canberra = distancef <- get(".mcanberra"),
+            twdtw = distancef <- get(".mtwdtw"),
+            minkowski = {
+                if (lambda == 0) stop("Minkowski distance with lambda = 0 is undefined. Choose another value.")
+                distancef <- get(".mminkowski")
             },
             mahalanobis = {
                 distancef <- get(".mmahalanobis")
                 warning("Mahalanobis distance is not fully supported for multidimensional Rao's Q.")
             }
-            )
+        )
     } else if (is.matrix(dist_m)) {
         distancef <- dist_m
-        } else {
-            stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', 'twdtw', or provide a matrix.")
-        }
-        # Debugging check
-        if (debugging) {
-            message("#check: After setting up distance calculation in multidimensional Rao's Q function.")
-        }
+    } else {
+        stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', 'twdtw', or provide a matrix.")
+    }
+    
+    # Debugging check
+    if (debugging) {
+        message("#check: After setting up distance calculation in multidimensional Rao's Q function.")
+    }
+    
     # Add additional columns and rows to account for moving window size
-    hor <- matrix(NA,ncol=dim(x[[1]])[2],nrow=win)
-    ver <- matrix(NA,ncol=win,nrow=dim(x[[1]])[1]+win*2)
-    trastersm <- lapply(x, function(x) {
-        cbind(ver,rbind(hor,x,hor),ver)
-        })
-    if(debugging) {
-        message("#check: After adding columns in multimensional function.")
+    hor <- matrix(NA, ncol = dim(x[[1]])[2], nrow = win)
+    ver <- matrix(NA, ncol = win, nrow = dim(x[[1]])[1] + win * 2)
+    trastersm <- lapply(x, function(layer) {
+        cbind(ver, rbind(hor, layer, hor), ver)
+    })
+    
+    if (debugging) {
+        message("#check: After adding columns in multidimensional function.")
         print(distancef)
     }
-    ## Loop over all the pixels in the matrices
-    if( (ncol(x[[1]])*nrow(x[[1]]))>10000 ) {
-        message("\n Warning: ",ncol(x[[1]])*nrow(x[[1]])*length(x), " cells to be processed, it may take some time... \n")
+    
+    # Loop over all the pixels in the matrices
+    if ((ncol(x[[1]]) * nrow(x[[1]])) > 10000) {
+        message("\n Warning: ", ncol(x[[1]]) * nrow(x[[1]]) * length(x), " cells to be processed, it may take some time... \n")
     }
-    for (cl in (1+win):(dim(x[[1]])[2]+win)) {
+    
+    for (cl in (1 + win):(dim(x[[1]])[2] + win)) {
         # Update progress bar
         pb$tick()
-        for(rw in (1+win):(dim(x[[1]])[1]+win)) {
-            if( length(!which(!trastersm[[1]][c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
-                raoqe[rw-win,cl-win] <- NA
+        for (rw in (1 + win):(dim(x[[1]])[1] + win)) {
+            if (length(!which(!trastersm[[1]][(rw - win):(rw + win), (cl - win):(cl + win)] %in% NA)) < floor(NAwin^2 - ((NAwin^2) * na.tolerance))) {
+
+                raoqe[rw - win, cl - win] <- NA
+            } else {
+                tw <- lapply(trastersm, function(layer) { 
+                    layer[(rw - win):(rw + win), (cl - win):(cl + win)]
+                })
+                
+                # Vectorize the matrices in the list and calculate pairwise distances
+                lv <- lapply(tw, function(x) as.vector(t(x)))
+                # Checks the number of combinations in the first layer or the stack, this is a gross proxy for the combinations expected in all the other layers.
+                vcomb <- utils::combn(length(lv[[1]]), 2)
+                vout <- numeric(ncol(vcomb))
+                
+                # Exclude windows with only one category
+                if (any(sapply(lv, function(x) length(unique(x))) < 3)) {
+                    raoqe[rw - win, cl - win] <- 0
                 } else {
-                    tw <- lapply(trastersm, function(x) { 
-                        x[(rw-win):(rw+win),(cl-win):(cl+win)]
+                    for (p in 1:ncol(vcomb)) {
+                        lpair <- lapply(lv, function(chi) {
+                            c(chi[vcomb[1, p]], chi[vcomb[2, p]])
                         })
-                ## Vectorise the matrices in the list and calculate among matrix pairwase distances
-                lv <- lapply(tw, function(x) {as.vector(t(x))})
-                vcomb <- utils::combn(length(lv[[1]]),2)
-                vout <- c()
-                # Exclude windows with only 1 category
-                if( sum(sapply(lv, function(x) length(unique(x))))<3 ) {
-                    raoqe[rw-win,cl-win] <- 0
-                    } else {
-                        for( p in 1:ncol(vcomb) ) {
-                            lpair <- lapply(lv, function(chi) {
-                                c(chi[vcomb[1,p]],chi[vcomb[2,p]])
-                                })
-                            # message(stepness)
-                            if( dist_m=="twdtw" ) {
-                                vout[p] <- distancef(lpair, midpoint=midpoint, stepness=stepness, cycle_length="year", time_scale="day")/mfactor
-                                } else {
-                            vout[p] <- distancef(lpair)/mfactor
-                        }
+                        
+                        if (dist_m == "twdtw") {
+                            llist <- list(sapply(lpair, function(x) x[1]), sapply(lpair, function(x) x[2]))
+                            vout[p] <- distancef(llist, time_vector = time_vector, stepness = stepness, midpoint = midpoint, cycle_length = cycle_length, time_scale = time_scale) / mfactor
+                        } else {
+                            vout[p] <- distancef(lpair) / mfactor
                         }
                     }
+                }
+                
                 # Evaluate the parsed alpha method
-                raoqe[rw-win,cl-win] <- eval(parse(text=alphameth))
+                raoqe[rw - win, cl - win] <- eval(parse(text = alphameth))
             }
         }
     }
+    
     return(raoqe)
 }

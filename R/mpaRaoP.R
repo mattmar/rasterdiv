@@ -36,11 +36,12 @@
 #'
 #' @keywords internal
 
-mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda,diag, time_vector, stepness, midpoint, cycle_length, time_scale,debugging,isfloat,mfactor,np) {
+mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np) {
    # `win` is the operative moving window
    win = window 
    NAwin <- 2*window+1
    message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
+    
     # Set a progress bar
     pb <- progress::progress_bar$new(
         format = "[:bar] :percent in :elapsed\n",
@@ -130,7 +131,7 @@ if (dist_m %in% validDistanceMetrics) {
                         x[(rw-win):(rw+win),(cl-win):(cl+win)]
                         })
                 # Vectorise the matrices in the list and calculate between matrices pairwase distances
-                lv <- lapply(tw, function(x) {as.vector(t(x))})
+                lv <- lapply(tw, function(x) as.vector(t(x)))
                 vcomb <- utils::combn(length(lv[[1]]),2)
                 # Exclude NAwins with only 1 category in all lists
                 if( sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1) ) {
@@ -141,17 +142,19 @@ if (dist_m %in% validDistanceMetrics) {
                                 c(chi[vcomb[1,p]],chi[vcomb[2,p]])
                                 })
                             return(
-                                if( dist_m=="twdtw" ) {
-                                    distancef(lpair, midpoint=midpoint, stepness=stepness, cycle_length="year", time_scale="day")/mfactor
+                                if (dist_m == "twdtw") {
+                                    llist <- list(sapply(lpair, function(x) x[1]), sapply(lpair, function(x) x[2]))
+                                    distancef(llist, time_vector = time_vector, stepness = stepness, midpoint = midpoint, cycle_length = cycle_length, time_scale = time_scale) / mfactor
                                     } else {
-                                        distancef(lpair)/mfactor})
+                                        distancef(lpair) / mfactor
+                                        })
                             })
-                    # Evaluate the parsed alpha method
-                    vv <- eval(parse(text=alphameth))
-                }
-                return(vv)
-            }
-            })
+                            # Evaluate the parsed alpha method
+                            vv <- eval(parse(text=alphameth))
+                        }
+                        return(vv)
+                    }
+                    })
         return(mpaRaoOP)
     }
     return(do.call(cbind,out))

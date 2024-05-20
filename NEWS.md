@@ -2,9 +2,10 @@
 ## Major changes
 * Adds `twdtw` as a distance methods for `paRao()`
 
-## Major changes
+## Minor changes
 * Changes how `N` is intended in `mpaRaoAreaS`
 * Other improvements in `paRaoS` and `paRaoP`
+* Fixes bug in progBar for `paRao()`
 
 # rasterdiv 0.3.4
 ## Major changes

@@ -11,7 +11,7 @@ A \code{SpatRaster} containing the following elements:
 }
 }
 \source{
-\url{https://land.copernicus.eu/global/products/ndvi}
+\url{https://land.copernicus.eu/en/products/vegetation}
 }
 \usage{
 load_copNDVI()
@@ -27,6 +27,6 @@ across the globe. Each pixel represents a 5 km area, with NDVI values ranging fr
 copNDVI <- readRDS(system.file("extdata", "copNDVI.rds", package = "rasterdiv"))
 }
 \references{
-\url{https://land.copernicus.eu/global/products/ndvi}
+\url{https://land.copernicus.eu/en/products/vegetation}
 }
 \keyword{datasets}

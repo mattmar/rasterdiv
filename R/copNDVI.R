@@ -10,8 +10,8 @@
 #'   \item{NDVI}{Normalised Difference Vegetation Index value (0-255) for each 5 km pixel. This index provides an indication of the presence of live green vegetation in the area.}
 #' }
 #' @usage load_copNDVI()
-#' @source \url{https://land.copernicus.eu/global/products/ndvi}
-#' @references \url{https://land.copernicus.eu/global/products/ndvi}
+#' @source \url{https://land.copernicus.eu/en/products/vegetation}
+#' @references \url{https://land.copernicus.eu/en/products/vegetation}
 #' @name copNDVI
 #' @docType data
 #' @keywords datasets

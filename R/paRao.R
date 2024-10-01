@@ -1,3 +1,4 @@
+
 #' Parametric Rao's index of quadratic entropy (Q)
 #'
 #' It computes the parametric version of Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
@@ -272,4 +273,23 @@ if( !is.null(area) ) {
 			return(outM)
 		}
 	}
+}
+
+#' Rao's index
+#'
+#' An alias for `paRao` with `alpha` fixed at 2.
+#'
+#' @param x Input data may be a matrix, a Spatial Grid Data Frame, a SpatRaster, or a list of these objects.
+#' @param ... Other parameters passed to `paRao`.
+#' @return A return value description.
+#' @examples
+#' \dontrun{
+#' data(volcano)
+#' r <- terra::rast(volcano)
+#' res <- Rao(x = r, window = 3)
+#' terra::plot(res[[1]][[1]])
+#' }
+#' @export
+Rao <- function(x, ...) {
+  paRao(x = x, alpha = 2, ...)
 }

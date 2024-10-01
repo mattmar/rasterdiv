@@ -4,6 +4,8 @@ subtitle: "Both for spatial and spatio-temporal data"
 author: "Matteo Marcantonio"
 output: rmarkdown::html_vignette
 date: "`r Sys.Date()`"
+file:
+  - vignettes/rasterdiv_03_Advanced_multidimension_Rao.Rmd
 vignette: >
   %\VignetteIndexEntry{Multidimension Rao's Index.}
   %\VignetteEngine{knitr::rmarkdown}
@@ -76,7 +78,7 @@ rasters_to_plot <- readRDS("rasters_to_plot.RDS")
 ```{r results='hide', message=FALSE, warning=FALSE}
 # Use lapply to create a list of levelplots
 plots_list <- lapply(rasters_to_plot, function(rst) {
-  levelplot(rst, margin=FALSE, 
+  levelplot(as.matrix(rst, wide=TRUE), margin=FALSE, 
   col.regions=magma(100), 
   main=list(label=names(rst), 
   cex=1.5))
@@ -211,7 +213,6 @@ Rao_plot <- levelplot(RaoEuc[[1]][[1]], margin = FALSE,
 do.call(gridExtra::grid.arrange, c(list(raster_ts_plot, Rao_plot, RaoP_plot), ncol = 3))
 ```
 
-```{r include-figure, echo=FALSE, fig.align='center', fig.cap='', out.width='80%'}
-image_path <- system.file("man/figures", "PhenoRao.png", package = "rasterdiv")
-knitr::include_graphics(image_path)
+```{r include-figure, echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
+knitr::include_graphics("PhenoRao.png")
 ```

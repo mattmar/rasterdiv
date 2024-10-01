@@ -125,7 +125,7 @@ covidCases.df <- na.omit(covidCases.df)
 ```{r results='hide', message=FALSE, warning=FALSE, include = FALSE}
 covidCases.df <- readRDS("covidCases.RDS")
 ```
-We will use the **heliPrep** function to prepare the data for plotting. This involves smoothing the daily death counts to visualise the rate of change over time.
+We will use the **heliPrep()** function to prepare the data for plotting. This involves smoothing the daily death counts to visualise the rate of change over time.
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 # Prepare data for each administrative area.

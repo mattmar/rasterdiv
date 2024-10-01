@@ -3,6 +3,8 @@ title: "Area-based Rao's index."
 author: "Matteo Marcantonio"
 output: rmarkdown::html_vignette
 date: "`r Sys.Date()`"
+file:
+  - vignettes/rasterdiv_02_Area_based_Rao.Rmd
 vignette: >
  %\VignetteIndexEntry{Area-based Rao's index.}
  %\VignetteEngine{knitr::rmarkdown}
@@ -28,7 +30,7 @@ This vignette uses **rasterdiv** to derive classic and multidimension area-based
 ## Overview
 A SpatRaster called copNDVI is loaded together with the package **rasterdiv**. *copNDVI* is a 8-bit raster, meaning that pixel values range from 0 to 255. You could *stretch* it to match a more familiar (-1,1) values range using `terra::stretch(copNDVI,minv=-1,maxv=1)`. The original dataset was resampled to 1/10th of its spatial resolution and pixels with values 253, 254 and 255 (water) were set as NA's.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, eval=FALSE}
 copNDVI <- load_copNDVI()
 copNDVIlr <- terra::aggregate(copNDVI, fact=10)
 values(copNDVIlr) <- as.integer(values(copNDVIlr))
@@ -36,11 +38,11 @@ world <- load_world()
 ```
 
 ## Compute Area based Rao's Index
-```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE, eval=FALSE}
 RaoC <- paRao(x=copNDVIlr, area=world, field='CONTINENT', alpha=c(1,2))
 ```
 
-```{r fig01, warning=FALSE, message=FALSE}
+```{r fig01, warning=FALSE, message=FALSE, eval=FALSE, eval=FALSE}
 #Plot classic area-based Rao's index
 plot(RaoC, col=hcl(RaoC$alpha.1*10), main="Classic Rao's index per continent alpha 1")
 text(RaoC, label=paste("Rao'Q =", round(RaoC$alpha.1,1)), col="black", family="Arial", halo=TRUE)
@@ -62,14 +64,13 @@ plot(RaoMC, col=hcl(RaoMC$alpha.2*10000), main="Multidimension Rao's index per c
 text(RaoMC, label=paste("Rao'Q =", round(RaoMC$alpha.2,3)), col="black", family="Arial", halo=TRUE)
 ```
 
-```{r include-figure, echo=FALSE, fig.align='center', fig.cap='', out.width='80%'}
-image_path <- system.file("man/figures", "Rao_areabased_multidimensional.png", package = "rasterdiv")
-knitr::include_graphics(image_path)
+```{r include-figure02, echo=FALSE, fig.align='center', fig.cap='', out.width='80%', eval=FALSE}
+knitr::include_graphics("Rao_areabased_multidimensional.png")
 ```
 
 ## Additional example subsetting on a continent and then using a grid vector to derive Rao's in each cell
 
-```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE, eval=FALSE}
 #Subset
 africa <- subset(world, world$CONTINENT=="Africa")
 
@@ -86,17 +87,17 @@ africa.v = as.polygons(africa.r)
 RaoGRID <- paRao(x=copNDVIlr, area=africa.v, field='lyr.1', alpha=2, simplify=0, na.tolerance=0.2)
 ```
 
-```{r results='hide', message=FALSE, warning=FALSE, include = FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, include = FALSE, eval=FALSE}
 RaoGRID <- readRDS("RaoGRID.RDS")
 ```
 
-```{r echo = T, results = 'hide', warning=FALSE, message=FALSE}
+```{r echo = T, results = 'hide', warning=FALSE, message=FALSE, eval=FALSE}
 #Transform the spatial polygon data frame in a raster layer that can be used in levelplot
-rr <- rast(RaoGRID,ncol=20, nrow=20)
+rr <- rast(RaoGRID, ncol=20, nrow=20)
 values(rr) <- RaoGRID$alpha.2
 ```
 
-```{r fig03, echo = T, results = 'hide', warning=FALSE, message=FALSE}
+```{r fig03, echo = T, results = 'hide', warning=FALSE, message=FALSE, eval=FALSE}
 #Plot Rao's per grid cell
 ggplot() +
   geom_raster(data = as.data.frame(rr, xy=TRUE), aes(x = x, y = y, fill = lyr.1)) +
@@ -104,4 +105,8 @@ ggplot() +
    geom_polygon(data = fortify(as(africa.v, "Spatial")), aes(x = long, y = lat, group = group), fill = NA, color = "grey", linewidth=0.3) +
   geom_polygon(data = fortify(as(world, "Spatial")), aes(x = long, y = lat, group = group), fill = NA, color = "black", , linewidth=0.5) +
   theme(legend.position = "none", aspect.ratio = 0.5)
+```
+
+```{r include-figure03, echo=FALSE, fig.align='center', fig.cap='', out.width='100%', eval=FALSE}
+knitr::include_graphics("vignette02fig03.png")
 ```

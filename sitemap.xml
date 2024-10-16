@@ -1,153 +1,52 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/404.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_01_Basics.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_02_Area_based_Rao.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_03_Advanced_multidimension_Rao.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_04_Accumulation_Rao.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/BergerParker.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/BergerParkerP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/BergerParkerS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/CRE.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/Hill.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/HillP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/HillS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/Pielou.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/PielouP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/PielouS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/RaoAUC.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/Renyi.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/RenyiP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/RenyiS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/Shannon.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/ShannonP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/ShannonS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/copNDVI.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/dot-CRE_.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/dot-CumRes.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/dot-Deltas.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/dot-Prob.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/dot-Reorder.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/heliPlot.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/heliPrep.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/load_copNDVI.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/load_world.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoAreaS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/ndviForestTS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/openCluster.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/paRao.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/paRaoAreaS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/paRaoP.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/paRaoS.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/process_raster_result.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/validateInputs.html</loc>
-  </url>
-  <url>
-    <loc>https://mattmar.github.io/rasterdiv/reference/world.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://mattmar.github.io/rasterdiv/404.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/articles/index.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_01_Basics.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_02_Area_based_Rao.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_03_Advanced_multidimension_Rao.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_04_Accumulation_Rao.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/articles/rasterdiv_05_Helical_Plots.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/authors.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/index.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/news/index.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/BergerParker.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/BergerParkerP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/BergerParkerS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/CRE.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/Hill.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/HillP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/HillS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/Pielou.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/PielouP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/PielouS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/Rao.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/RaoAUC.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/Renyi.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/RenyiP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/RenyiS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/Shannon.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/ShannonP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/ShannonS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/copNDVI.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/dot-CRE_.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/dot-CumRes.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/dot-Deltas.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/dot-Prob.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/dot-Reorder.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/heliPlot.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/heliPrep.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/index.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/load_copNDVI.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoAreaS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/mpaRaoS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/ndviForestTS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/openCluster.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/paRao.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/paRaoAreaS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/paRaoP.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/paRaoS.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/process_raster_result.html</loc></url>
+<url><loc>https://mattmar.github.io/rasterdiv/reference/validateInputs.html</loc></url>
 </urlset>
+

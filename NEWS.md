@@ -1,3 +1,8 @@
+# rasterdiv 0.3.5p
+## Minor changes
+* Adds \alias to load_copNDVI()
+* Removes TODO document
+
 # rasterdiv 0.3.5
 ## Major changes
 * Adds `twdtw` as a distance methods for `paRao()`

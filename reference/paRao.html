@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rasterdiv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Parametric Rao's index of quadratic entropy (Q)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/v0.3.5/R/paRao.R" class="external-link"><code>R/paRao.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mattmar/rasterdiv/blob/master/R/paRao.R" class="external-link"><code>R/paRao.R</code></a></small>
       <div class="d-none name"><code>paRao.Rd</code></div>
     </div>
 
@@ -114,7 +114,7 @@
 
 
 <dt id="arg-na-tolerance">na.tolerance<a class="anchor" aria-label="anchor" href="#arg-na-tolerance"></a></dt>
-<dd><p>Numeric value (0.0-1.0) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over `x`. If the relative proportion of NA's in a moving window is bigger than `na.tolerance`, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default value is 1.0.</p></dd>
+<dd><p>Numeric value (0.0-1.0) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over `x`. If the relative proportion of NA's in a moving window is bigger than `na.tolerance`, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default value is 1.0. In the rare event that a moving window has NA cells number &lt; `na.tolerance` threshold but has only 1 non-NA value, then its resulting Rao value will always be 0.</p></dd>
 
 
 <dt id="arg-rescale">rescale<a class="anchor" aria-label="anchor" href="#arg-rescale"></a></dt>

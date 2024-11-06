@@ -12,3 +12,6 @@ A `SpatRaster` object representing the Copernicus NDVI data.
 \description{
 This function loads and returns the Copernicus Long Term (1999-2017) NDVI Overview stored within the package.
 }
+\examples{
+copNDVI <- load_copNDVI()
+}

@@ -48,7 +48,7 @@ paRao(
 
 \item{lambda}{The value of the lambda of Minkowski's distance. Considered only if `dist_m = "minkowski"` and `method="multidimension"`. Default value is 0.}
 
-\item{na.tolerance}{Numeric value (0.0-1.0) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over `x`. If the relative proportion of NA's in a moving window is bigger than `na.tolerance`, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default value is 1.0.}
+\item{na.tolerance}{Numeric value (0.0-1.0) which indicates the proportion of NA values that will be tolerated to calculate Rao's index in each moving window over `x`. If the relative proportion of NA's in a moving window is bigger than `na.tolerance`, then the value of the window will be set as NA, otherwise Rao's index will be calculated considering the non-NA values. Default value is 1.0. In the rare event that a moving window has NA cells number < `na.tolerance` threshold but has only 1 non-NA value, then its resulting Rao value will always be 0.}
 
 \item{rescale}{Boolean. Considered only if `method="multidimension"`. If TRUE, each element of `x` is rescaled and centred.}
 

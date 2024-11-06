@@ -4,6 +4,8 @@
 #'
 #' @return A `SpatRaster` object representing the Copernicus NDVI data.
 #' @export
+#' @examples
+#' copNDVI <- load_copNDVI()
 load_copNDVI <- function() {
   # Set the path to the RDS file
   rds_file <- system.file("extdata", "copNDVI.rds", package = "rasterdiv")

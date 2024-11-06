@@ -132,7 +132,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 					tw_labels <- names(tw)
 					tw_values <- as.vector(tw)
         			# if clause to exclude windows with less than 1 category
-					if( length(tw_values) == 1 ) {
+					if( length(tw_values) < 2 | ( length(which(!is.na(tw_values))) < 2 ) ) {
 						paRaoOS[rw-win,cl-win] <- 0
 					} else {
 						p <- tw_values/sum(tw_values,na.rm=TRUE)
@@ -176,11 +176,11 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 					}
 					tw_labels <- names(tw)
 					tw_values <- as.vector(tw)
-      					# if clause to exclude windows with only 1 category
+      		# if clause to exclude windows with only 1 category
 					if(length(tw_values) == 1) {
 						paRaoOS[rw-win,cl-win] <- 0
 					}else{
-						d2 <- unname( proxy::as.matrix(d1,diag=diagonal)[as.numeric(tw_labels),as.numeric(tw_labels)] )
+						d2 <- unname( proxy::as.matrix(d1, diag=diagonal)[as.numeric(tw_labels),as.numeric(tw_labels)] )
 						paRaoOS[rw-win,cl-win] <- ( prod(d2/mfactor,na.rm=TRUE)^(1/(window^2)) )
 					}
 				} 

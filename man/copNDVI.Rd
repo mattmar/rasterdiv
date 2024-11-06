@@ -5,7 +5,7 @@
 \alias{copNDVI}
 \title{Copernicus Long Term (1999-2017) NDVI Overview (5km)}
 \format{
-A \code{SpatRaster} containing the following elements:
+A `SpatRaster` containing the following elements:
 \describe{
   \item{NDVI}{Normalised Difference Vegetation Index value (0-255) for each 5 km pixel. This index provides an indication of the presence of live green vegetation in the area.}
 }
@@ -13,18 +13,15 @@ A \code{SpatRaster} containing the following elements:
 \source{
 \url{https://land.copernicus.eu/en/products/vegetation}
 }
-\usage{
-load_copNDVI()
-}
 \description{
-A \code{SpatRaster} (EPSG: 4326) of the global average NDVI value per pixel for the 21st of June over the period 1999-2017.
+A `SpatRaster` (EPSG: 4326) of the global average NDVI value per pixel for the 21st of June over the period 1999-2017.
 }
 \details{
 This dataset provides a long-term overview of the Normalised Difference Vegetation Index (NDVI) 
 across the globe. Each pixel represents a 5 km area, with NDVI values ranging from 0 to 255.
 }
 \examples{
-copNDVI <- readRDS(system.file("extdata", "copNDVI.rds", package = "rasterdiv"))
+copNDVI <- load_copNDVI()
 }
 \references{
 \url{https://land.copernicus.eu/en/products/vegetation}

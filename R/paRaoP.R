@@ -206,13 +206,13 @@ return(do.call(cbind,out))
                     tw_labels <- names(tw)
                     tw_values <- as.vector(tw)
             #if clause to exclude windows with only 1 category
-            if( length(tw_values) < 2 ) {
+            if( length(tw_values) < 2 | ( length(which(!is.na(tw_values))) < 2 ) ) {
                 vv <- 0
                 return(vv)
                 }else{
                     p <- tw_values/sum(tw_values)
                     p1 <- diag(0,length(tw_values))
-                    p1[lower.tri(p1)] <- c(utils::combn(p,m=2,FUN=prod,na.rm=TRUE))
+                    p1[lower.tri(p1)] <- c(utils::combn(p, m=2, FUN=prod, na.rm=TRUE))
                     d2 <- unname( proxy::as.matrix(d1,diag=diagonal)[as.numeric(tw_labels),as.numeric(tw_labels)] )
                     vv <- (prod(d2,na.rm=TRUE)^(1/(window^2))) / mfactor
                     return(vv)

@@ -27,22 +27,21 @@
 paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfloat, mfactor, progBar) 
 {
 	# Some initial housekeeping
-	  # `win` is the operative moving window
+	 # `win` is the operative moving window
   win = window 
   NAwin <- 2*window+1
-  message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
+  message("\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
   # Set a progress bar
   if(progBar) {
   	pb <- progress::progress_bar$new(
     format = "[:bar] :percent in :elapsed\n",
-    # Total number of ticks is the number of column +NA columns divided the number of processor.
+    # Total number of ticks is the number of column +NA columns.
     total = dim(x)[2], 
     clear = FALSE, 
     width = 60, 
     force = FALSE)
   }
 
-	message("\n\nProcessing alpha: ",alpha, " Moving Window: ", 2*win+1)
 	mfactor <- ifelse(isfloat,mfactor,1) 
 	window = 2*win+1
 	diagonal <- ifelse(diag==TRUE,0,NA)

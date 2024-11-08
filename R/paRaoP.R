@@ -29,13 +29,13 @@ paRaoP <- function(x,alpha,window,dist_m,na.tolerance,diag,debugging,isfloat,mfa
 win = window 
 NAwin <- 2*window+1
 
-message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
+message("\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
   # Set a progress bar
     if(progBar) {
         pb <- progress::progress_bar$new(
             format = "[:bar] :percent in :elapsed\n",
             # Total number of ticks is the number of column +NA columns divided the number of processor.
-            total = (dim(x)[2]/np)+(dim(x)[2]*0.05), 
+            total = floor((dim(x)[2]+win)/np)+ceiling((dim(x)[2]+win)*0.01), 
             clear = FALSE, 
             width = 60, 
             force = FALSE)
@@ -69,7 +69,7 @@ message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
          d1 <- stats::as.dist(stats::xtabs(dist_m[, 3] ~ dist_m[, 2] + dist_m[, 1]))
      }
      out <- foreach::foreach(cl=(1+win):(dim(x)[2]+win),.verbose = F) %dopar% {
-        if(debugging) {cat(paste(cl))}
+    if(debugging) {cat(paste(cl))}
     # Update progress bar
     if(progBar) pb$tick()
     # Row loop

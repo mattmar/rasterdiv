@@ -72,7 +72,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 			 if(progBar) pb$tick()
         	# Row loop
 			for(rw in (1+win):(dim(x)[1]+win)) {
-				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance) )) {
+				if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
 					paRaoOS[rw-win,cl-win] <- NA
 				}else{
 					tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)
@@ -80,11 +80,11 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 						tw <- tw[-length(tw)]
 					}
 					if( debugging ) {
-						message("Working on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=",window^2)
+						message("Working on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=", window^2)
 					}
 					tw_labels <- names(tw)
 					tw_values <- as.vector(tw)
-          			# Exclude windows with only 1 category
+          # Exclude windows with only 1 category
 					if( length(tw_values) == 1 ) {
 						paRaoOS[rw-win,cl-win] <- 0
 					}else{

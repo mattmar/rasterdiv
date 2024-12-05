@@ -31,7 +31,7 @@ paRaoAreaS <- function(rasterm, area, alpha, simplify) {
 	storage.mode(crop1dt) <- "integer"
 
 # Check for only 1 value in the matrix
-if( all(apply(crop1dt, 2, function(a) length(unique(a))<=2)) ) {
+if( all(apply(crop1dt, 2, function(a) length(unique(a))<=3)) ) {
 	paRaoOareaS <- NA
 	} else {
 		classes <- levels(as.factor(crop1dt))

@@ -131,8 +131,8 @@ geom_line(col="red",lwd=3) +
 geom_area(data=accrao.df,aes(x=alphas,y=rao.t0),fill="red",alpha=0.3,inherit.aes=FALSE) +
 geom_area(data=accrao.df,aes(x=alphas,y=rao.t1),fill="blue",alpha=0.3,inherit.aes=FALSE) +
 geom_line(data=accrao.df,aes(x=alphas,y=rao.t1),col="blue",lwd=3,inherit.aes=FALSE) +
-geom_text(data=cbind.data.frame(x=3.5,y=60),aes(x=x,y=y),label=expression(integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 456, alpha==0, 10)),col="red",cex=5,inherit.aes=FALSE) +
-geom_text(data=cbind.data.frame(x=7,y=25),aes(x=x,y=y),label=expression(integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 343, alpha==0, 10)),col="blue",cex=5,inherit.aes=FALSE) +
+geom_text(data=cbind.data.frame(x=3.5,y=60),aes(x=x,y=y),label= "integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 456, alpha==0, 10)",col="red",cex=5,inherit.aes=FALSE,parse=TRUE) +
+geom_text(data=cbind.data.frame(x=7,y=25),aes(x=x,y=y),label= "integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 343, alpha==0, 10)",col="blue",cex=5,inherit.aes=FALSE,parse=TRUE) +
 geom_text(data=cbind.data.frame(x=8,y=72),aes(x=x,y=y),label="Difference = 113",col="black",cex=4,angle=12,inherit.aes=FALSE) +
 ggtitle("AccRao index before, after and difference") +
 theme_bw()

@@ -21,7 +21,7 @@ Shannon <- function(x, window = 3, rasterOut = TRUE, np = 1, na.tolerance=1, clu
   w <- calculateWindow(window)
   out <- if (np == 1) calculateShannonSequential(rasterm[[1]], w, alpha, na.tolerance, debugging)
   else calculateShannonParallel(rasterm[[1]], w, alpha, na.tolerance, debugging, cluster.type=cluster.type, np=np)
-  formatOutput(out, rasterOut, x, alpha, window)
+  formatOutput(out, rasterOut, x, alpha, w)
 }
 
 #' Calculate Sequentially

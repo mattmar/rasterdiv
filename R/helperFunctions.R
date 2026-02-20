@@ -44,16 +44,28 @@ prepareRaster <- function(x) {
   else if (methods::is(x, "list")) list(x[[1]])
   else stop("Invalid raster input object.")
 }
-
-#' Calculate the Operative Moving Window Size
+#' Calculate the Operative Moving Window Half-Size (win)
 #'
-#' @description Calculates the operative moving window size for diversity index calculations.
+#' @description
+#' Converts a user-specified odd window size (e.g., 3, 5, 7) to the operative
+#' half-size used by the moving-window core (win = (window-1)/2).
 #'
-#' @param window Specified window size.
-#'
-#' @return The operative moving window size.
+#' @param window Integer. The (odd) window size in cells (e.g., 3, 5, 7).
+#' @return Integer. The half-size (win).
 #' @noRd
-calculateWindow <- function(window) (window - 1) / 2
+calculateWindow <- function(window) {
+  if (length(window) != 1L) {
+    stop("`window` must be a single integer (odd).")
+  }
+  if (!is.numeric(window) || is.na(window)) {
+    stop("`window` must be numeric.")
+  }
+  if (window %% 2 == 0) {
+    stop("`window` must be an odd integer (e.g., 3, 5, 7).")
+  }
+  as.integer((window - 1) / 2)
+}
+
 
 #' Format Output of Diversity Index Calculation
 #'
@@ -63,56 +75,69 @@ calculateWindow <- function(window) (window - 1) / 2
 #' @param rasterOut Logical indicating whether output should be in raster format.
 #' @param x Original raster object.
 #' @param alpha Alpha parameter used in the calculation.
-#' @param window Window size used in the calculation.
+#' @param window Window size used in the calculation (scalar) OR a vector/list of labels (advanced use).
 #'
-#' @return Formatted output.
+#' @return Formatted output (either a single object or a named list).
 #' @noRd
 formatOutput <- function(out, rasterOut, x, alpha, window) {
-  # Check if out is a list of lists (both window and alpha variations)
-  if (is.list(out[[1]])) {
-    # Case where out contains both window and alpha variations
+
+  is_spat <- isTRUE(rasterOut) && methods::is(x, "SpatRaster")
+
+  to_rast <- function(m) {
+    terra::rast(m, crs = terra::crs(x), ext = terra::ext(x))
+  }
+
+  safe_names <- function(n, prefix, labels = NULL) {
+    if (is.null(labels)) labels <- seq_len(n)
+    if (is.list(labels)) labels <- unlist(labels, use.names = FALSE)
+    if (length(labels) == 0L) labels <- seq_len(n)
+    rep_len(paste0(prefix, labels), n)
+  }
+
+  # ---- Case 1: out is list-of-lists (e.g. windows x alpha) ----
+  if (is.list(out) && length(out) > 0L && is.list(out[[1]])) {
+
     outFormatted <- lapply(out, function(windowList) {
-      outAlpha <- lapply(windowList, function(alphaList) {
-        if (rasterOut & any(methods::is(x, "SpatRaster"))) {
-          terra::rast(alphaList, crs = terra::crs(x), ext = terra::ext(x))
-          } else {
-            alphaList
-          }
-          })
-      names(outAlpha) <- paste("alpha.", alpha, sep = "")
-      return(outAlpha)
+      outAlpha <- lapply(windowList, function(alphaObj) {
+        if (is_spat) to_rast(alphaObj) else alphaObj
       })
-    names(outFormatted) <- paste("window.", window, sep = "")
+      names(outAlpha) <- safe_names(length(outAlpha), "alpha.", alpha)
+      outAlpha
+    })
+
+    names(outFormatted) <- safe_names(length(outFormatted), "window.", window)
+
+    return(if (length(outFormatted) > 1L) outFormatted else outFormatted[[1]])
+  }
+
+  # ---- Case 2: out is list (either varying by window OR by alpha) ----
+  outFormatted <- lapply(out, function(obj) {
+    if (is_spat) to_rast(obj) else obj
+  })
+
+  # Name multi-output lists safely
+  if (length(outFormatted) > 1L) {
+    if (length(outFormatted) == length(alpha)) {
+      names(outFormatted) <- safe_names(length(outFormatted), "alpha.", alpha)
+    } else if (length(outFormatted) == length(window)) {
+      names(outFormatted) <- safe_names(length(outFormatted), "window.", window)
     } else {
-    # Case where out contains either window or alpha variations
-    outFormatted <- lapply(out, function(alphaList) {
-      if (rasterOut & any(methods::is(x, "SpatRaster"))) {
-        terra::rast(alphaList, crs = terra::crs(x), ext = terra::ext(x))
-        } else {
-          alphaList
-        }
-        })
-    # Assign appropriate names based on the variation present
-    if (length(out) == length(alpha)) {
-      if (length(out)>1) {
-        names(outFormatted) <- paste("alpha.", alpha, sep = "")
-        } else {
-          if( methods::is(outFormatted[[1]],"matrix") ) {
-            attr(outFormatted[[1]],"index") <- gsub("\\((.*$)","", deparse(sys.calls()[[sys.nframe()-1]]))
-            } else if ( methods::is(outFormatted[[1]],"SpatRaster") ) {
-              names(outFormatted[[1]]) <- gsub("\\((.*$)","", deparse(sys.calls()[[sys.nframe()-1]]))
-            }
-          }
-          } else if (length(out) == length(window)) {
-            names(outFormatted) <- paste("window.", window, sep = "")
-            } else {
-              stop("The length of output does not match the length of alpha or window.")
-            }
-          }
-          ifelse(length(outFormatted)>1, return(outFormatted), return(outFormatted[[1]]))
+      # fallback: name by sequence, never error on naming
+      names(outFormatted) <- safe_names(length(outFormatted), "out.", seq_along(outFormatted))
+    }
+    return(outFormatted)
+  }
 
-        }
+  # Single output: attach index name
+  idx <- gsub("\\((.*$)", "", deparse(sys.calls()[[sys.nframe() - 1]]))
+  if (methods::is(outFormatted[[1]], "matrix")) {
+    attr(outFormatted[[1]], "index") <- idx
+  } else if (methods::is(outFormatted[[1]], "SpatRaster")) {
+    names(outFormatted[[1]]) <- rep_len(idx, terra::nlyr(outFormatted[[1]]))
+  }
 
+  outFormatted[[1]]
+}
 #' Check if a Number is a Whole Number
 #'
 #' @description Checks if a given number is a whole number within a specified tolerance.

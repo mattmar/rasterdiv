@@ -1,0 +1,72 @@
+# Parallelised Pielou's diversity index
+
+This function calculates Pielou's diversity index in a parallelized
+manner, allowing for improved performance on suitable hardware. The
+diversity index is computed using a moving window approach over the
+input data.
+
+## Usage
+
+``` r
+PielouP(x, window = 1, na.tolerance = 1, debugging = FALSE, np)
+```
+
+## Arguments
+
+- x:
+
+  Input raster data, representing the environmental variable(s) over
+  which the diversity index should be calculated.
+
+- window:
+
+  The size of the half-side of the square moving window used in the
+  calculation. This determines the scale at which diversity is assessed.
+
+- na.tolerance:
+
+  A numeric value (between 0.0 and 1.0) indicating the proportion of NA
+  values that are acceptable in each moving window over the raster data.
+  If the proportion of NA values in a window exceeds this threshold, the
+  resulting value for that window is set as NA. The default is 0.0,
+  indicating no tolerance for NA values.
+
+- debugging:
+
+  Boolean flag indicating whether additional console output should be
+  generated for debugging purposes. Defaults to FALSE.
+
+- np:
+
+  The number of processes (cores) which will be spawned. Default value
+  is 2.
+
+## Value
+
+A matrix or list of matrices, depending on the input, containing the
+calculated Pielou diversity index values. Each cell in the output matrix
+represents the diversity index calculated from the corresponding moving
+window of the input data.
+
+## See also
+
+[`Pielou`](https://mattmar.github.io/rasterdiv/reference/Pielou.md) for
+the non-parallelized version of the Pielou's diversity index
+calculation.
+
+## Author
+
+Marcantonio Matteo <marcantoniomatteo@gmail.com>, Martina Iannacito
+<martina.iannacito@inria.fr>, Duccio Rocchini <duccio.rocchini@unibo.it>
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Demonstration of function with hypothetical data
+# Ensure you replace this with actual raster data
+demo_raster <- #... (your raster data here)
+result <- PielouP(x = demo_raster, win = 3, na.tolerance = 0.1, debugging = FALSE)
+# proceed with analyzing 'result'
+} # }
+```

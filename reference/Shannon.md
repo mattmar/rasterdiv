@@ -1,0 +1,60 @@
+# Shannon's Evenness Index
+
+Calculates Shannon's Evenness Index for a given raster object over a
+specified window size. The function can operate in either sequential or
+parallel mode.
+
+## Usage
+
+``` r
+Shannon(
+  x,
+  window = 3,
+  rasterOut = TRUE,
+  np = 1,
+  na.tolerance = 1,
+  cluster.type = "SOCK",
+  debugging = FALSE
+)
+```
+
+## Arguments
+
+- x:
+
+  A raster object (matrix, SpatRaster, SpatialGridDataFrame, or a list
+  containing one of these).
+
+- window:
+
+  The size of the moving window to be used for the calculation. Must be
+  an odd integer.
+
+- rasterOut:
+
+  Logical, if TRUE the output will be a raster object; if FALSE a
+  matrix.
+
+- np:
+
+  The number of processes to use in parallel mode. If np \> 1, parallel
+  computation is enabled.
+
+- na.tolerance:
+
+  The tolerance level for NA values within the moving window, expressed
+  as a proportion (0 to 1).
+
+- cluster.type:
+
+  The type of cluster to use for parallel computation (e.g., "SOCK",
+  "FORK").
+
+- debugging:
+
+  Logical, if TRUE debugging information will be printed.
+
+## Value
+
+Returns a raster object or matrix containing the Shannon's Evenness
+Index values.

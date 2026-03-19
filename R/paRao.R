@@ -43,7 +43,7 @@
 #'
 #' @export
 
-paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE, time_vector=NA, stepness=-0.5, midpoint=35, cycle_length="year", time_scale="day") {
+paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE, time_vector=NULL, stepness=-0.5, midpoint=35, cycle_length="year", time_scale="day") {
 
 isfloat=FALSE
 
@@ -98,23 +98,6 @@ if (any(!is.numeric(alpha))) {
 }
 if (any(alpha < 0)) {
 	stop("Alpha values must be non-negative numbers.")
-}
-if (any(alpha < 0)) {
-	stop("Alpha values must be non-negative numbers.")
-}
-
-# Area Check
-if ( !is.null(area) ) {
-	if (!methods::is(area, "SpatVector")) {
-		stop("Error: 'area' must be a SpatVector.")
-	}
-	if (!field %in% names(area)) {
-		stop("Error: 'field' must be a valid variable name within 'area'.")
-	}
-	if (np > 1) {
-		stop("Error: Parallel computation for area-based Rao's index is not yet implemented.")
-	}
-	message("Processing area-based Rao's index.")
 }
 
 # Deal with matrix and SpatRaster in different ways
@@ -187,15 +170,21 @@ if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
 }
 
 # twdtw check
-if ( method=="multidimension" && dist_m=="twdtw" ) {
-	if( is.null(time_vector) ) {
-		stop("time has to be defined if dist_m=twdtw")
-	}
-	if( length(time_vector) != length(rasterm) ) {
-		stop("time has to be the same length as x")
-	}
+if (dist_m == "twdtw") {
+    if (method != "multidimension") {
+        stop("dist_m = 'twdtw' requires method = 'multidimension'")
+    }
+    if (!is.list(rasterm)) {
+        stop("For dist_m = 'twdtw', x must be a list of time-ordered layers")
+    }
+    if (is.null(time_vector)) {
+        stop("time_vector must be provided if dist_m = 'twdtw'")
+    }
+    if (length(time_vector) != length(rasterm)) {
+        stop("time_vector must have the same length as the number of layers in x")
+    }
 }
-
+				
 if( all(window%%2==1) ){# Derive operational moving window
 
 	w <- (window-1)/2

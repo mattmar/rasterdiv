@@ -43,227 +43,318 @@
 #'
 #' @export
 
-paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=1, method="classic", rasterOut=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=0, np=1, cluster.type="SOCK", progBar=TRUE, debugging=FALSE, time_vector=NULL, stepness=-0.5, midpoint=35, cycle_length="year", time_scale="day") {
+paRao <- function(x, area = NULL, field = NULL, dist_m = "euclidean",
+                  window = 9, alpha = 1, method = "classic",
+                  rasterOut = TRUE, lambda = 0, na.tolerance = 1.0,
+                  rescale = FALSE, diag = TRUE, simplify = 0,
+                  np = 1, cluster.type = "SOCK", progBar = TRUE,
+                  debugging = FALSE, time_vector = NULL,
+                  stepness = -0.5, midpoint = 35,
+                  cycle_length = "year", time_scale = "day") {
 
-isfloat=FALSE
+  isfloat <- FALSE
+  israst  <- FALSE
+  mfactor <- 1
 
-# Warning for using experimental features
-if (method == "multidimension") {
-	warning("Multidimension Rao's index is experimental and should be used with caution.")
-}
+  method <- match.arg(method, c("classic", "multidimension"))
 
-# Warning for data rounding
-if (!is.null(simplify)) {
-	warning(paste0("Simplify=", simplify, ". Rounding data to ", simplify, " decimal places."))
-}
+  if (method == "multidimension") {
+    warning("Multidimension Rao's index is experimental and should be used with caution.")
+  }
 
-# Validate input data type
-if (!(methods::is(x, "matrix") || methods::is(x, "SpatRaster") || methods::is(x, "list") )) {
-	stop("\nInvalid input: x must be a matrix, a SpatRaster or a list.")
-} 
+  if (!is.null(simplify) && simplify > 0) {
+    warning(paste0("Simplify=", simplify, ". Rounding data to ", simplify, " decimal places."))
+  }
 
-# Processing based on input type and method
-if ( (methods::is(x, "matrix") || methods::is(x, "SpatRaster")) && method == "classic" ) {
-	rasterm <- list(x)
-	} else if ( (methods::is(x, "list") || methods::is(x, "SpatRaster")) && method == "multidimension" ) {
-		rasterm <- x
-		} else if (methods::is(x, "list") && method != "multidimension") {
-			stop("Invalid input: For a list input, method must be set to 'multidimension'.")
-			} else {
-				stop("Invalid raster input object provided.")
-			}
+  if (!(methods::is(x, "matrix") || methods::is(x, "SpatRaster") || methods::is(x, "list"))) {
+    stop("Invalid input: x must be a matrix, a SpatRaster, or a list.")
+  }
 
-# Validate na.tolerance
-if (na.tolerance > 1.0 || na.tolerance < 0.0) {
-	stop("na.tolerance must be a value in the [0, 1] interval.")
-}
+  if (!is.numeric(na.tolerance) || length(na.tolerance) != 1L || is.na(na.tolerance) ||
+      na.tolerance < 0 || na.tolerance > 1) {
+    stop("na.tolerance must be a numeric value in the [0, 1] interval.")
+  }
 
-# Validate area input if provided
-if (!is.null(area)) {
-	if (!methods::is(area, "SpatVector") ) {
-		stop("area must be a SpatVector.")
-	}
-	if (!field %in% names(area)) {
-		stop("field must be a valid variable name in 'area'.")
-	}
-	if (np > 1) {
-		stop("Parallel area-based Rao's index is not yet implemented.")
-	}
-	message("Processing area-based Rao's index.")
-}
+  if (!is.numeric(alpha) || any(is.na(alpha))) {
+    stop("alpha must be a numeric vector with no NA values.")
+  }
+  if (any(alpha < 0)) {
+    stop("alpha values must be non-negative.")
+  }
 
-# Validate alpha
-if (any(!is.numeric(alpha))) {
-	stop("alpha must be a numeric vector.")
-}
-if (any(alpha < 0)) {
-	stop("Alpha values must be non-negative numbers.")
-}
+  if (!is.null(area)) {
+    if (!methods::is(area, "SpatVector")) {
+      stop("area must be a SpatVector.")
+    }
+    if (is.null(field) || !field %in% names(area)) {
+      stop("field must be a valid variable name in 'area'.")
+    }
+    if (np > 1) {
+      stop("Parallel area-based Rao's index is not yet implemented.")
+    }
+    message("Processing area-based Rao's index.")
+  }
 
-# Deal with matrix and SpatRaster in different ways
-# If data are raster layers
-if( is.null(area) ){
-	if( any(sapply(rasterm, methods::is,"SpatRaster")) ) {
-		isfloat <- FALSE
-		israst <- TRUE
-if( !any(sapply(rasterm, terra::is.int)) ){# If data are float numbers, transform them to integers.
+  # Normalize input structure
+  if (method == "classic") {
+    if (methods::is(x, "list")) {
+      stop("For list input, method must be 'multidimension'.")
+    }
+    rasterm <- list(x)
+  } else {
+    if (methods::is(x, "list")) {
+      rasterm <- x
+    } else if (methods::is(x, "SpatRaster")) {
+      rasterm <- lapply(seq_len(terra::nlyr(x)), function(i) x[[i]])
+    } else {
+      stop("For method = 'multidimension', x must be a list or a multi-layer SpatRaster.")
+    }
+  }
 
-	warning("Input data are float numbers. Converting data to integer matrices.")
-	isfloat <- TRUE
-	mfactor <- 100^simplify
-	rasterm <- lapply(rasterm, function(z) {
-		if(rescale) {
-			message("Centring and scaling data...")
-			z <- terra::as.matrix(terra::scale(z,center=TRUE,scale=TRUE), wide=TRUE)
-		}
-		y <- terra::as.matrix(z, wide=TRUE) * mfactor
-		storage.mode(y) <- "integer"
-		return(y)
-		})
-}else{# If data are integers, just be sure that the storage mode is integer
-
-	nr <- sapply(rasterm,nrow); nc <- sapply(rasterm,ncol)
-	rasterm <- lapply(rasterm, function(z) 
-	{
-		if(rescale) {
-			message("Centring and scaling data...")
-			z <- terra::as.matrix(terra::scale(z,center=TRUE,scale=TRUE), wide=TRUE)
-			mfactor <- 100^simplify
-			y <- z * mfactor
-			storage.mode(y) <- "integer"
-			} else{
-				y <- utils::type.convert(matrix(terra::values(z),ncol=nc,nrow=nr,byrow=TRUE), as.is= TRUE)
-			}
-			return(y)
-			})
-}
-}else if( any(sapply(rasterm, methods::is,"matrix")) ) {# If data are in a matrix or a list
-
-	isfloat <- FALSE
-	israst <- FALSE
-# If data are float numbers, transform them in integer
-if( !all(sapply(rasterm, function(x) all(apply(x, c(1, 2), is.integer)))) ){
-	warning("Input data are float numbers. Converting data to integer matrices...")
-	isfloat <- TRUE
-	mfactor <- 100^simplify
-	rasterm <- lapply(rasterm, function(z) {
-		if(rescale & method=="multidimension") {
-			message("Centring and scaling data...")
-			z <- (z-mean(z))/stats::sd(z)
-		}
-		y <- round(z * mfactor)
-		return(y)
-		})
-}else{# If data are integers, just be sure that the storage mode is integer
-
-	rasterm <- lapply(rasterm, function(z) {
-		if(rescale & method=="multidimension") {
-			message("Centring and scaling data...")
-			z <- (z-mean(z))/stats::sd(z)
-			mfactor <- 100^simplify
-			y <- round(z * mfactor)
-		}
-		utils::type.convert(terra::as.matrix(z, wide=TRUE), as.is=TRUE)
-		})
-}
-} else ("The class of x is not recognized. Exiting...")
-}
-
-# twdtw check
-if (dist_m == "twdtw") {
+  # TWDTW checks
+  if (dist_m == "twdtw") {
     if (method != "multidimension") {
-        stop("dist_m = 'twdtw' requires method = 'multidimension'")
+      stop("dist_m = 'twdtw' requires method = 'multidimension'.")
     }
     if (!is.list(rasterm)) {
-        stop("For dist_m = 'twdtw', x must be a list of time-ordered layers")
+      stop("For dist_m = 'twdtw', x must be a list of time-ordered layers.")
     }
     if (is.null(time_vector)) {
-        stop("time_vector must be provided if dist_m = 'twdtw'")
+      stop("time_vector must be provided if dist_m = 'twdtw'.")
     }
     if (length(time_vector) != length(rasterm)) {
-        stop("time_vector must have the same length as the number of layers in x")
+      stop("time_vector must have the same length as the number of layers in x.")
     }
+  }
+
+  # Window validation via helper
+  w <- calculateWindow(window)
+
+  # Convert input layers to matrices
+  if (is.null(area)) {
+    if (all(sapply(rasterm, methods::is, "SpatRaster"))) {
+      israst <- TRUE
+
+      if (!all(sapply(rasterm, terra::is.int))) {
+        warning("Input data are float numbers. Converting data to integer matrices.")
+        isfloat <- TRUE
+        mfactor <- 100^simplify
+      }
+
+      rasterm <- lapply(rasterm, function(z) {
+        if (rescale && method == "multidimension") {
+          message("Centring and scaling data...")
+          z <- terra::scale(z, center = TRUE, scale = TRUE)
+        }
+
+        y <- terra::as.matrix(z, wide = TRUE)
+
+        if (!all(y == round(y), na.rm = TRUE)) {
+          isfloat <<- TRUE
+          mfactor <<- 100^simplify
+          y <- round(y * mfactor)
+        }
+
+        storage.mode(y) <- "integer"
+        y
+      })
+
+    } else if (all(sapply(rasterm, methods::is, "matrix"))) {
+      israst <- FALSE
+
+      if (!all(sapply(rasterm, function(m) all(m == round(m), na.rm = TRUE)))) {
+        warning("Input data are float numbers. Converting data to integer matrices...")
+        isfloat <- TRUE
+        mfactor <- 100^simplify
+      }
+
+      rasterm <- lapply(rasterm, function(z) {
+        if (rescale && method == "multidimension") {
+          message("Centring and scaling data...")
+          z <- (z - mean(z, na.rm = TRUE)) / stats::sd(z, na.rm = TRUE)
+        }
+
+        if (!all(z == round(z), na.rm = TRUE)) {
+          y <- round(z * mfactor)
+        } else {
+          y <- z
+        }
+
+        storage.mode(y) <- "integer"
+        y
+      })
+
+    } else {
+      stop("All elements of x must be of the same supported class.")
+    }
+  }
+
+  if (np > 1 && progBar) {
+    message("Progress bar disabled for parallel execution.")
+  }
+
+  # Run functions
+  if (np == 1) {
+
+    if (method == "classic") {
+      if (!is.null(area)) {
+        if (debugging) cat("#check: Inside classic area clause.")
+        split_layers <- terra::split(area, field)
+        out <- lapply(split_layers, function(are) {
+          lapply(alpha, function(a) {
+            paRaoAreaS(
+              area = are,
+              rasterm = rasterm[[1]],
+              simplify = simplify,
+              alpha = a
+            )
+          })
+        })
+      } else {
+        out <- lapply(w, function(win) {
+          lapply(alpha, function(a) {
+            paRaoS(
+              x = rasterm[[1]],
+              alpha = a,
+              window = win,
+              dist_m = dist_m,
+              na.tolerance = na.tolerance,
+              diag = diag,
+              debugging = debugging,
+              isfloat = isfloat,
+              mfactor = mfactor,
+              progBar = progBar
+            )
+          })
+        })
+      }
+
+    } else if (method == "multidimension") {
+      if (!is.null(area)) {
+        if (debugging) cat("#check: Inside multi area clause.")
+        split_layers <- terra::split(area, field)
+        out <- lapply(split_layers, function(are) {
+          lapply(alpha, function(a) {
+            mpaRaoAreaS(
+              area = are,
+              rasterm = rasterm,
+              dist_m = dist_m,
+              simplify = simplify,
+              alpha = a
+            )
+          })
+        })
+      } else {
+        out <- lapply(w, function(win) {
+          lapply(alpha, function(a) {
+            mpaRaoS(
+              x = rasterm,
+              alpha = a,
+              window = win,
+              dist_m = dist_m,
+              na.tolerance = na.tolerance,
+              rescale = rescale,
+              lambda = lambda,
+              diag = diag,
+              time_vector = time_vector,
+              stepness = stepness,
+              midpoint = midpoint,
+              cycle_length = cycle_length,
+              time_scale = time_scale,
+              debugging = debugging,
+              isfloat = isfloat,
+              mfactor = mfactor,
+              np = np,
+              progBar = progBar
+            )
+          })
+        })
+      }
+    }
+
+  } else {
+
+    cls <- openCluster(cluster.type, np, progBar, debugging)
+    on.exit(stopCluster(cls), add = TRUE)
+    gc()
+
+    if (method == "classic") {
+      out <- lapply(w, function(win) {
+        lapply(alpha, function(a) {
+          paRaoP(
+            x = rasterm[[1]],
+            alpha = a,
+            window = win,
+            dist_m = dist_m,
+            na.tolerance = na.tolerance,
+            diag = diag,
+            debugging = debugging,
+            isfloat = isfloat,
+            mfactor = mfactor,
+            np = np,
+            progBar = progBar
+          )
+        })
+      })
+
+    } else if (method == "multidimension") {
+      out <- lapply(w, function(win) {
+        lapply(alpha, function(a) {
+          mpaRaoP(
+            x = rasterm,
+            alpha = a,
+            window = win,
+            dist_m = dist_m,
+            na.tolerance = na.tolerance,
+            rescale = rescale,
+            lambda = lambda,
+            diag = diag,
+            time_vector = time_vector,
+            stepness = stepness,
+            midpoint = midpoint,
+            cycle_length = cycle_length,
+            time_scale = time_scale,
+            debugging = debugging,
+            isfloat = isfloat,
+            mfactor = mfactor,
+            np = np,
+            progBar = progBar
+            )
+          })
+        })
+    }
+  }
+
+  # Format output
+  if (!is.null(area)) {
+    y <- do.call(rbind.data.frame, lapply(out, function(x) rbind(x)))
+    if (nrow(y) > 1) y <- as.data.frame(sapply(y, unlist))
+    names(y) <- paste("alpha.", alpha, sep = "")
+    terra::values(area) <- cbind.data.frame(area, y)
+    return(area)
+  }
+
+  if (rasterOut && israst) {
+    outR <- lapply(out, function(insm) {
+      if (method == "multidimension") {
+        y <- lapply(insm, terra::rast, crs = terra::crs(x[[1]]), ext = terra::ext(x[[1]]))
+      } else {
+        y <- lapply(insm, terra::rast, crs = terra::crs(x), ext = terra::ext(x))
+      }
+      names(y) <- paste("alpha.", alpha, sep = "")
+      y
+    })
+    names(outR) <- paste("window.", window, sep = "")
+    return(outR)
+  }
+
+  outM <- lapply(out, function(insm) {
+    names(insm) <- paste("alpha.", alpha, sep = "")
+    insm
+  })
+  names(outM) <- paste("window.", window, sep = "")
+  return(outM)
 }
-				
-if( all(window%%2==1) ){# Derive operational moving window
-
-	w <- (window-1)/2
-	} else {
-		stop("The size of the moving window must be an odd number. Exiting...")
-	}
-
-# Run functions and save outputs
-if( np==1 ) {
-	if( method=="classic" ) {
-		if( !is.null(area) ) {
-			if( debugging ){ cat("#check: Inside classic area clause.") }
-			split_layers <- terra::split(area, field)
-			out <- lapply(X=split_layers, function(are){
-				lapply(X=alpha, area=are, FUN=paRaoAreaS, rasterm=rasterm[[1]], simplify=simplify)
-				})
-			} else {
-				out <- lapply(X=w, function(win){
-					lapply(X=alpha, FUN=paRaoS, x=rasterm[[1]], window=win, dist_m=dist_m,na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, progBar)
-					})
-			}
-
-			} else if( method=="multidimension" ) {
-				if( !is.null(area) ) {
-					if( debugging ){ cat("#check: Inside multi area clause.") }
-					split_layers <- terra::split(area, field)
-					out <- lapply(X=split_layers, function(are){
-						lapply(X=alpha, area=are, FUN=mpaRaoAreaS, dist_m=dist_m, rasterm=rasterm, simplify=simplify)
-						})
-					} else {
-						out <- lapply(X=w, function(win){
-							lapply(X=alpha, FUN=mpaRaoS, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, rescale=rescale, lambda=lambda, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, time_vector=time_vector, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale, progBar=progBar)
-							})
-					}
-				} 
-				} else if( np>1 ) {
-					cls <- openCluster(cluster.type, np, progBar, debugging); on.exit(stopCluster(cls)); gc()
-					if( method=="classic" ) {
-						out <- lapply(X=w, function(win){
-							lapply(X=alpha, FUN=paRaoP, x=rasterm[[1]], window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, np=np, progBar=progBar)
-							})
-						} else if(method=="multidimension") {
-							out <- lapply(X=w, function(win){
-								lapply(X=alpha, FUN=mpaRaoP, x=rasterm, window=win, dist_m=dist_m, na.tolerance=na.tolerance, diag=diag, debugging=debugging, isfloat=isfloat, mfactor=mfactor, rescale=rescale, np=np, time_vector=time_vector, stepness=stepness, midpoint=midpoint, cycle_length=cycle_length, time_scale=time_scale, progBar=progBar)
-								})
-						}
-					}
-# Check if it's an area or moving window based RaoQ
-if( !is.null(area) ) {
-	y <- do.call(rbind.data.frame, lapply(out, function(x) rbind(x)))
-	if(nrow(y)>1) y <- as.data.frame(sapply(y,unlist))
-	names(y) <- paste("alpha.",alpha, sep="")
-	terra::values(area) <- cbind.data.frame(area,y)
-	return(area)
-# Check if the output is either a raster or a matrix
-}else{
-	if( rasterOut & israst ) {
-		outR <- lapply(out, function(insm) {
-			if(method=="multidimension"){
-				y <- lapply(insm, terra::rast, crs=terra::crs(x[[1]]), ext=terra::ext(x[[1]]))
-				} else{
-					y <- lapply(insm, terra::rast, crs=terra::crs(x), ext=terra::ext(x))
-				}
-				names(y) <- paste("alpha.",alpha, sep="")
-				return(y)
-				})
-		names(outR) <- paste("window.",window, sep="")
-		return(outR)
-		}else{
-			outM <- lapply(out, function(insm) {
-				names(insm) <- paste("alpha.",alpha, sep="")
-				return(insm)
-				})
-			names(outM) <- paste("window.",window, sep="")
-			return(outM)
-		}
-	}
-}
-
 #' Rao's index
 #'
 #' An alias for `paRao` with `alpha` fixed at 2.

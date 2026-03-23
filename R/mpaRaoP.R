@@ -37,128 +37,181 @@
 #'
 #' @keywords internal
 
-mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np, progBar) {
-   # `win` is the operative moving window
-   win = window 
-   NAwin <- 2*window+1
-   message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
-    
-    # Set a progress bar
-    if( progBar ) {
-        pb <- progress::progress_bar$new(
-        format = "[:bar] :percent in :elapsed\n",
-        # Total number of ticks is the number of column +NA columns divided the number of processor.
-        total = (dim(x[[1]])[2]/np)+5, 
-        clear = FALSE, 
-        width = 60, 
-        force = FALSE)
+mpaRaoP <- function(x, alpha, window, dist_m, na.tolerance, rescale, lambda,
+                    diag, time_vector, stepness, midpoint, cycle_length,
+                    time_scale, debugging, isfloat, mfactor, np, progBar) {
+
+  win <- window
+  NAwin <- 2 * window + 1
+  full_window_n <- NAwin * NAwin
+
+  message("\n\nProcessing alpha: ", alpha, " Moving Window: ", NAwin)
+
+  # No worker-side progress bar updates
+  if (np > 1 && progBar) {
+    progBar <- FALSE
+  }
+
+  mfactor <- ifelse(isfloat, mfactor, 1)
+
+  rasterm <- x[[1]]
+  nrow_x <- nrow(rasterm)
+  ncol_x <- ncol(rasterm)
+
+  validDistanceMetrics <- c(
+    "euclidean", "manhattan", "canberra",
+    "minkowski", "mahalanobis", "twdtw"
+  )
+
+  if (is.character(dist_m) && dist_m %in% validDistanceMetrics) {
+    distancef <- switch(
+      dist_m,
+      euclidean   = get(".meuclidean"),
+      manhattan   = get(".mmanhattan"),
+      canberra    = get(".mcanberra"),
+      minkowski   = {
+        if (lambda == 0) {
+          stop("Minkowski distance with lambda = 0 is undefined. Choose another value.")
+        }
+        get(".mminkowski")
+      },
+      mahalanobis = {
+        warning("Mahalanobis distance is not fully supported for multidimensional Rao's Q.")
+        get(".mmahalanobis")
+      },
+      twdtw       = get(".mtwdtw")
+    )
+  } else if (is.matrix(dist_m)) {
+    distancef <- dist_m
+  } else {
+    stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', 'twdtw', or provide a matrix.")
+  }
+
+  if (debugging) {
+    message("#check: distance function set.")
+  }
+
+  # Pad layers once
+  hor <- matrix(NA, ncol = ncol_x, nrow = win)
+  ver <- matrix(NA, ncol = win, nrow = nrow_x + win * 2)
+
+  trastersm <- lapply(x, function(layer) {
+    cbind(ver, rbind(hor, layer, hor), ver)
+  })
+
+  if (debugging) {
+    message("#check: padded layers built.")
+  }
+
+  # minimum number of valid trajectories required
+  min_valid_cells <- floor(full_window_n - (full_window_n * na.tolerance))
+
+  aggregate_alpha <- function(vout, alpha, full_window_n) {
+    if (length(vout) == 0 || all(is.na(vout))) {
+      return(NA_real_)
     }
 
-    mfactor <- ifelse(isfloat,mfactor,1) 
-    diagonal <- ifelse(diag==TRUE,0,NA)
-    rasterm <- x[[1]]
-    # Evaluate Rao's method given alpha
-    if( (alpha>=.Machine$integer.max) | is.infinite(alpha) ) {
-        alphameth <- "max(vout*2,na.rm=TRUE)"
-        } else if( alpha>0 ) {
-            if( alpha >100 ) warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
-            alphameth <- "sum((rep(vout^alpha,2) * (1/(NAwin)^4)),na.rm=TRUE) ^ (1/alpha)"
-            } else if( alpha==0 ) {
-                alphameth <- "prod(vout,na.rm=TRUE) ^ (1/(NAwin^4))"
-                } else {
-                    stop()
-                }
-    # Check if there are NAs in the matrices
-    if ( methods::is(x[[1]],"SpatRaster") ){
-        if(any(sapply(lapply(unlist(x),length),is.na)==TRUE))
-        warning("\n One or more SpatRasters contain NA's which will be treated as 0")
-        } else if ( methods::is(x[[1]],"matrix") ){
-            if(any(sapply(x, is.na)==TRUE) ) {
-                warning("\n One or more matrices contain NA's which will be treated as 0")
-            }
-        }
-# Validate and set the distance function
-validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis", "twdtw")
-if (dist_m %in% validDistanceMetrics) {
-    switch(dist_m,
-        euclidean = distancef <- get(".meuclidean"),
-        manhattan = distancef <- get(".mmanhattan"),
-        canberra = distancef <- get(".mcanberra"),
-        twdtw = distancef <- get(".mtwdtw"),
-        minkowski = {
-            if (lambda == 0) stop("Minkowski distance with lambda = 0 is undefined. Choose another value.")
-            distancef <- get(".mminkowski")
-            },
-            mahalanobis = {
-                distancef <- get(".mmahalanobis")
-                warning("Mahalanobis distance is not fully supported for multidimensional Rao's Q.")
-            }
-            )
-    } else if (is.matrix(dist_m)) {
-        distancef <- dist_m
-        } else {
-            stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', 'twdtw' or provide a matrix.")
-        }
-        # Debugging check
-        if (debugging) {
-            message("#check: After setting up distance calculation in multidimensional Rao's Q function.")
-        }
-    # Add additional columns and rows to account for moving NAwin size
-    hor <- matrix(NA,ncol=dim(x[[1]])[2],nrow=win)
-    ver <- matrix(NA,ncol=win,nrow=dim(x[[1]])[1]+win*2)
-    trastersm <- lapply(x, function(x) {
-        cbind(ver,rbind(hor,x,hor),ver)
-        })
-    if(debugging) {
-        message("#check: After rescaling in multimensional clause.")
-        print(distancef)
+    if (alpha >= .Machine$integer.max || is.infinite(alpha)) {
+      return(max(vout * 2, na.rm = TRUE))
     }
-    # Loop over all the pixels in the matrices
-    if( (ncol(x[[1]])*nrow(x[[1]]))>10000 ) {
-        warning("",ncol(x[[1]])*nrow(x[[1]])*length(x), " cells process, it may take quite some time... \n")
+
+    if (alpha > 0) {
+      if (alpha > 100) {
+        warning("With this alpha value you may get integer overflow. Consider decreasing the value of alpha.")
+      }
+      return((sum(rep(vout^alpha, 2) * (1 / (full_window_n^2)), na.rm = TRUE))^(1 / alpha))
     }
-    # Parallelised parametric multidimensional Rao
-    out <- foreach::foreach(cl=(1+win):(dim(rasterm)[2]+win),.verbose = F, .export=c("alpha")) %dopar% {
-        # Update progress bar
-        if(progBar) pb$tick()
-        # Row loop
-        mpaRaoOP <- sapply((1+win):(dim(rasterm)[1]+win), function(rw) {
-            if(debugging) {
-                message("#check: Inside sapply.")
-            }
-            if( length(!which(!trastersm[[1]][c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
-                vv <- NA
-                return(vv)
-                } else {
-                    tw <- lapply(trastersm, function(x) { 
-                        x[(rw-win):(rw+win),(cl-win):(cl+win)]
-                        })
-                # Vectorise the matrices in the list and calculate between matrices pairwase distances
-                lv <- lapply(tw, function(x) as.vector(t(x)))
-                vcomb <- utils::combn(length(lv[[1]]),2)
-                # Exclude windows with only 1 category in all lists
-                if( sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1) ) {
-                    vv <- 0
-                    } else {
-                        vout <- sapply(1:ncol(vcomb), function(p) {
-                            lpair <- lapply(lv, function(chi) {
-                                c(chi[vcomb[1,p]],chi[vcomb[2,p]])
-                                })
-                            return(
-                                if (dist_m == "twdtw") {
-                                    llist <- list(sapply(lpair, function(x) x[1]), sapply(lpair, function(x) x[2]))
-                                    distancef(llist, time_vector = time_vector, stepness = stepness, midpoint = midpoint, cycle_length = cycle_length, time_scale = time_scale) / mfactor
-                                    } else {
-                                        distancef(lpair) / mfactor
-                                        })
-                            })
-                            # Evaluate the parsed alpha method
-                            vv <- eval(parse(text=alphameth))
-                        }
-                        return(vv)
-                    }
-                    })
-        return(mpaRaoOP)
+
+    if (alpha == 0) {
+      return(prod(vout, na.rm = TRUE)^(1 / (full_window_n^2)))
     }
-    return(do.call(cbind,out))
+
+    stop("alpha must be >= 0.")
+  }
+
+  twdtw_pair <- function(a, b) {
+    distancef(
+      x = list(a, b),
+      time_vector = time_vector,
+      stepness = stepness,
+      midpoint = midpoint,
+      cycle_length = cycle_length,
+      time_scale = time_scale
+    ) / mfactor
+  }
+
+  other_pair <- function(a, b) {
+    lpair <- lapply(seq_along(a), function(k) c(a[k], b[k]))
+    distancef(lpair) / mfactor
+  }
+
+  total_cells <- ncol_x * nrow_x * length(x)
+  if (total_cells > 10000) {
+    message("\nWarning: ", total_cells, " cells to be processed, it may take some time...\n")
+  }
+
+  out <- foreach::foreach(
+    cl = (1 + win):(ncol_x + win),
+    .verbose = FALSE
+  ) %dopar% {
+
+    col_out <- sapply((1 + win):(nrow_x + win), function(rw) {
+
+      # extract local windows from all layers
+      tw <- lapply(trastersm, function(layer) {
+        layer[(rw - win):(rw + win), (cl - win):(cl + win), drop = FALSE]
+      })
+
+      # build trajectory matrix: rows = local pixels, cols = layers/time
+      traj_mat <- do.call(
+        cbind,
+        lapply(tw, function(m) as.vector(t(m)))
+      )
+
+      # complete trajectories only
+      traj_mat <- traj_mat[stats::complete.cases(traj_mat), , drop = FALSE]
+
+      # NA tolerance check
+      if (nrow(traj_mat) < min_valid_cells) {
+        return(NA_real_)
+      }
+
+      # fewer than 2 valid trajectories
+      if (nrow(traj_mat) < 2) {
+        return(0)
+      }
+
+      # all trajectories identical
+      if (nrow(unique(traj_mat)) < 2) {
+        return(0)
+      }
+
+      ntraj <- nrow(traj_mat)
+      npairs <- ntraj * (ntraj - 1) / 2
+      vout <- numeric(npairs)
+
+      k <- 1L
+      for (i in 1:(ntraj - 1L)) {
+        ai <- traj_mat[i, ]
+
+        for (j in (i + 1L):ntraj) {
+          bj <- traj_mat[j, ]
+
+          if (dist_m == "twdtw") {
+            vout[k] <- twdtw_pair(ai, bj)
+          } else {
+            vout[k] <- other_pair(ai, bj)
+          }
+
+          k <- k + 1L
+        }
+      }
+
+      aggregate_alpha(vout, alpha, full_window_n)
+    })
+
+    col_out
+  }
+
+  do.call(cbind, out)
 }

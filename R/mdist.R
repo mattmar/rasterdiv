@@ -48,12 +48,30 @@
 }
 
 # time weighted dynamic time warping
-.mtwdtw <- function(x, time_vector=0, stepness = -0.5, midpoint = 35, cycle_length="year", time_scale="day") {
-    # message(midpoint)
-    twdtw::twdtw(
-        x=data.frame(time=time_vector, v=x[[1]]), 
-        y=data.frame(time=time_vector, v=x[[2]]),
-        time_weight = c(stepness=stepness,midpoint=midpoint),
-        cycle_length = cycle_length, 
-        time_scale = time_scale)
+.mtwdtw <- function(x, time_vector = 0, stepness = -0.5, midpoint = 35,
+                    cycle_length = "year", time_scale = "day") {
+
+  if (length(x) != 2L) {
+    return(NA_real_)
+  }
+
+  if (length(x[[1]]) == 0L || length(x[[2]]) == 0L) {
+    return(NA_real_)
+  }
+
+  if (length(x[[1]]) != length(time_vector) || length(x[[2]]) != length(time_vector)) {
+    return(NA_real_)
+  }
+
+  if (anyNA(x[[1]]) || anyNA(x[[2]]) || anyNA(time_vector)) {
+    return(NA_real_)
+  }
+
+  twdtw::twdtw(
+    x = data.frame(time = time_vector, v = x[[1]]),
+    y = data.frame(time = time_vector, v = x[[2]]),
+    time_weight = c(stepness = stepness, midpoint = midpoint),
+    cycle_length = cycle_length,
+    time_scale = time_scale
+  )
 }

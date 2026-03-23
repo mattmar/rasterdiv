@@ -54,15 +54,30 @@ prepareRaster <- function(x) {
 #' @return Integer. The half-size (win).
 #' @noRd
 calculateWindow <- function(window) {
-  if (length(window) != 1L) {
-    stop("`window` must be a single integer (odd).")
+  if (missing(window) || length(window) < 1L) {
+    stop("`window` must contain at least one odd integer.")
   }
-  if (!is.numeric(window) || is.na(window)) {
+
+  if (!is.numeric(window)) {
     stop("`window` must be numeric.")
   }
-  if (window %% 2 == 0) {
-    stop("`window` must be an odd integer (e.g., 3, 5, 7).")
+
+  if (any(is.na(window))) {
+    stop("`window` cannot contain NA values.")
   }
+
+  if (any(window %% 1 != 0)) {
+    stop("`window` must contain integers only.")
+  }
+
+  if (any(window <= 1)) {
+    stop("`window` must contain odd integers greater than 1.")
+  }
+
+  if (any(window %% 2 == 0)) {
+    stop("`window` must contain odd integers only (e.g. 3, 5, 7).")
+  }
+
   as.integer((window - 1) / 2)
 }
 

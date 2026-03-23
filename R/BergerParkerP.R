@@ -23,61 +23,69 @@
 #' }
 #'
 #' @export
-BergerParkerP<-function(x, window = 1, na.tolerance=1, debugging=FALSE, np=1){
-  # `win` is the operative moving window
-  win = window 
-  NAwin <- 2*window+1
+BergerParkerP <- function(x, window = 1, na.tolerance = 1,
+                          debugging = FALSE, np = 1, progBar = TRUE) {
+
+  win <- window
+  NAwin <- 2 * window + 1
   message("\n\nProcessing moving Window: ", NAwin)
-  # Set a progress bar
-  pb <- progress::progress_bar$new(
-    format = "[:bar] :percent in :elapsed\n",
-    # Total number of ticks is the number of column +NA columns divided the number of processor.
-    total = (dim(x)[2]/np)+5, 
-    clear = FALSE, 
-    width = 60, 
-    force = FALSE)
-  #
-  ## Reshape values
-  #
-  values<-as.numeric(as.factor(x))
-  x_1<-matrix(data=values,nrow=dim(x)[1],ncol=dim(x)[2])
-  #
-  ## Add additional xcolumns and rows to match moving window
-  #
-  hor<-matrix(NA,ncol=dim(x)[2],nrow=win)
-  ver<-matrix(NA,ncol=win,nrow=dim(x)[1]+win*2)
-  tx<-cbind(ver,rbind(hor,x_1,hor),ver)
-  rm(hor,ver,x_1,values); gc()
-  #
-  ## Start the parallelized loop over iter
-  #
-  BergerParkerOP <- foreach::foreach(cl=(1+win):(dim(x)[2]+win),.verbose = F) %dopar% {
-    if(debugging) {
-      cat(paste(cl))
-    }
-    BergerParkerOut <- sapply((1+win):(dim(x)[1]+win), function(rw) {
-      # Update progress bar
-      pb$tick()
-      #check number of NA's against tolerad number
-      if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
-        vv<-NA
-        return(vv)
-      } 
-      else {
-        tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)
-        if( "NA's"%in%names(tw) ) {
-          tw<-tw[-length(tw)]
-        }
-        if( debugging ) {
-          message("Berger-Parker - parallelised\nWorking on coords ",rw,",",cl,". classes length: ",length(tw),". window size=", NAwin)
-        }
-        tw_labels <- names(tw)
-        tw_values <- as.vector(tw)
-        vv <- max(tw_values/sum(tw_values))
-      }
-    })
-    return(BergerParkerOut)
+
+  if (np > 1 && progBar) {
+    message("Progress bar disabled for parallel execution.")
+    progBar <- FALSE
   }
-  message("\n\n Parallel calculation of Berger Parker's index complete.\n")
-  return(matrix(unlist(BergerParkerOP), ncol = ncol(x), nrow = nrow(x), byrow=FALSE))
+
+  # Reshape values
+  values <- as.numeric(as.factor(x))
+  x_1 <- matrix(values, nrow = nrow(x), ncol = ncol(x))
+
+  # Add padding to match moving window
+  hor <- matrix(NA, ncol = ncol(x), nrow = win)
+  ver <- matrix(NA, ncol = win, nrow = nrow(x) + win * 2)
+  tx <- cbind(ver, rbind(hor, x_1, hor), ver)
+
+  rm(hor, ver, x_1, values)
+  gc()
+
+  BergerParkerOP <- foreach::foreach(
+    cl = (1 + win):(ncol(x) + win),
+    .verbose = FALSE
+  ) %dopar% {
+
+    if (debugging) {
+      cat(cl)
+    }
+
+    BergerParkerOut <- sapply((1 + win):(nrow(x) + win), function(rw) {
+
+      win_vals <- tx[(rw - win):(rw + win), (cl - win):(cl + win)]
+      n_non_na <- sum(!is.na(win_vals))
+
+      if (n_non_na < floor(NAwin^2 - ((NAwin^2) * na.tolerance))) {
+        return(NA_real_)
+      }
+
+      tw <- summary(as.factor(win_vals), maxsum = 10000)
+      if ("NA's" %in% names(tw)) {
+        tw <- tw[-length(tw)]
+      }
+
+      if (debugging) {
+        message(
+          "Berger-Parker - parallelised\nWorking on coords ", rw, ",", cl,
+          ". classes length: ", length(tw),
+          ". window size=", NAwin
+        )
+      }
+
+      tw_values <- as.vector(tw)
+      max(tw_values / sum(tw_values))
+    })
+
+    BergerParkerOut
+  }
+
+  message("\n\nParallel calculation of Berger Parker's index complete.\n")
+
+  matrix(unlist(BergerParkerOP), ncol = ncol(x), nrow = nrow(x), byrow = FALSE)
 }

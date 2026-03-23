@@ -37,62 +37,76 @@
 #' # proceed with analyzing 'result'
 #' }
 
-PielouS <- function(x, window = 1, na.tolerance=1, debugging=FALSE){
-   # `win` is the operative moving window
-   win = window 
-   NAwin <- 2*window+1
-   message("\n\nProcessing moving Window: ", NAwin)
-  # Set a progress bar
-  win = 2*window+1
-  pb <- progress::progress_bar$new(
-    format = "[:bar] :percent in :elapsed",
-    total = (dim(x)[2]+NAwin), 
-    clear = FALSE, 
-    width = 60, 
-    force = FALSE)
-  # Reshape values
-  out<-matrix(rep(NA,dim(x)[1]*dim(x)[2]),nrow=dim(x)[1],ncol=dim(x)[2])
-  values<-as.numeric(as.factor(x))
-  x_1<-matrix(data=values,nrow=dim(x)[1],ncol=dim(x)[2])
-  #
-  ## Add additional columns and rows for moving window
-  #
-  hor<-matrix(NA,ncol=dim(x)[2],nrow=win)
-  ver<-matrix(NA,ncol=win,nrow=dim(x)[1]+win*2)
-  tx<-cbind(ver,rbind(hor,x_1,hor),ver)
-  #
-  ## Loop over all the pixels
-  #
-  for (cl in (1+win):(dim(x)[2]+win)) {
-    # Update progress bar
-    pb$tick()
-    
-    for(rw in (1+win):(dim(x)[1]+win)) {
-      if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA))  < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
-        out[rw-win,cl-win]<-NA
+PielouS <- function(x, window = 1, na.tolerance = 1, debugging = FALSE, progBar = TRUE) {
+
+  win <- window
+  NAwin <- 2 * window + 1
+  message("\n\nProcessing moving Window: ", NAwin)
+
+  if (progBar) {
+    pb <- progress::progress_bar$new(
+      format = "[:bar] :percent in :elapsed",
+      total = ncol(x),
+      clear = FALSE,
+      width = 60,
+      force = FALSE
+    )
+  }
+
+  out <- matrix(NA_real_, nrow = nrow(x), ncol = ncol(x))
+
+  values <- as.numeric(as.factor(x))
+  x_1 <- matrix(data = values, nrow = nrow(x), ncol = ncol(x))
+
+  # Add additional columns and rows for moving window
+  hor <- matrix(NA, ncol = ncol(x), nrow = win)
+  ver <- matrix(NA, ncol = win, nrow = nrow(x) + win * 2)
+  tx <- cbind(ver, rbind(hor, x_1, hor), ver)
+
+  for (cl in (1 + win):(ncol(x) + win)) {
+    if (progBar) pb$tick()
+
+    for (rw in (1 + win):(nrow(x) + win)) {
+
+      win_vals <- tx[(rw - win):(rw + win), (cl - win):(cl + win)]
+      n_non_na <- sum(!is.na(win_vals))
+
+      if (n_non_na < floor(NAwin^2 - ((NAwin^2) * na.tolerance))) {
+        out[rw - win, cl - win] <- NA_real_
+      } else {
+        tw <- summary(as.factor(win_vals), maxsum = 10000)
+
+        if ("NA's" %in% names(tw)) {
+          tw <- tw[-length(tw)]
+        }
+
+        if (debugging) {
+          message(
+            "\nPielou\nWorking on coords ", rw, ",", cl,
+            ". classes length: ", length(tw),
+            ". window size = ", NAwin
+          )
+        }
+
+        if (length(tw) <= 1) {
+          out[rw - win, cl - win] <- 0
         } else {
-          tw<-summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]))
-          if( "NA's"%in%names(tw) ) {
-            tw<-tw[-length(tw)]
-          }
-
-          if(debugging) {
-            message("\nPielou\nWorking on coords ",rw ,",",cl,". classes length: ",length(tw),". window size=",2*win+1)
-          }
-
           tw_values <- as.vector(tw)
+          p <- tw_values / sum(tw_values)
           maxS <- log(length(tw))
-          p <- tw_values/sum(tw_values)
-          p_log <- log(p)
-          out[rw-win,cl-win] <- (-(sum(p*p_log)))/maxS
+          out[rw - win, cl - win] <- -sum(p * log(p)) / maxS
+        }
 
-          if( debugging ) {
-            message("\ncat: ",paste(tw,collapse=" ")," log S: ",maxS," Pielou: ",out[rw-win,cl-win])
-          }
-
+        if (debugging) {
+          message(
+            "\ncat: ", paste(names(tw), collapse = " "),
+            " log S: ", if (length(tw) > 1) log(length(tw)) else 0,
+            " Pielou: ", out[rw - win, cl - win]
+          )
         }
       }
-    } 
-
-    return(out)
+    }
   }
+
+  return(out)
+}

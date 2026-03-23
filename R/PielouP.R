@@ -38,65 +38,79 @@
 #' # proceed with analyzing 'result'
 #' }
 
-PielouP<-function(x, window = 1,  na.tolerance=1, debugging=FALSE, np){
-  # `win` is the operative moving window
-  win = window 
-  NAwin <- 2*window+5
+PielouP <- function(x, window = 1, na.tolerance = 1,
+                    debugging = FALSE, np = 1, progBar = TRUE) {
+
+  win <- window
+  NAwin <- 2 * window + 1
   message("\n\nProcessing moving Window: ", NAwin)
-  # Set a progress bar
-  pb <- progress::progress_bar$new(
-    format = "[:bar] :percent in :elapsed\n",
-    # Total number of ticks is the number of column +NA columns divided the number of processor.
-    total = (dim(x)[2]/np)+1, 
-    clear = FALSE, 
-    width = 60, 
-    force = FALSE)
-  #
-  ## Reshape values
-  #
-  values <- as.numeric( as.factor(x) )
-  x_1 <- matrix(data = values, nrow = nrow(x), ncol = ncol(x))
-  #
-  ## Add additional columns and rows to match moving window
-  #
-  hor <- matrix(NA, ncol = ncol(x), nrow = win)
-  ver <- matrix(NA, ncol = win, nrow = nrow(x)+ win * 2)
-  tx <- cbind(ver, rbind(hor,x_1,hor), ver)
-  rm(hor, ver, x_1, values); gc()
-  
-  PielouOP <- foreach::foreach(cl=(1+win):(ncol(x)+win),.verbose = FALSE) %dopar% {
-    # Update progress bar
-    pb$tick()
-    
-    PielouOut <- sapply((1+win):(nrow(x)+win), function(rw) {
-      if( length(!which(!tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA))  < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
-        vv<-NA
-        return(vv)
-      } 
-      else {
-        tw <- summary(as.factor(tx[c(rw-win):c(rw+win),c(cl-win):c(cl+win)]),maxsum=10000)
-        if( "NA's"%in%names(tw) ) {
-          tw<-tw[-length(tw)]
-        }
 
-        if( debugging ) {
-          message("\nPielou - parallelized\nWorking on coords ",rw,",",cl,". classes length: ",length(tw),". window size=",2*win+1)
-        }
-
-        tw_values <- as.vector(tw)
-        maxS <- log(length(tw))
-        p <- tw_values/sum(tw_values)
-        vv <- (-(sum(p*log(p))))/maxS
-
-        if( debugging ) {
-          message("\ncat: ",paste(names(tw),collapse=" ")," log S: ",maxS," Pielou: ",vv)
-        }
-
-        return(vv)
-      }
-    })
-    return(PielouOut)
+  if (np > 1 && progBar) {
+    message("Progress bar disabled for parallel execution.")
+    progBar <- FALSE
   }
-  message("\n\n Parallel calculation of Pielou's index complete.\n")
-  return(matrix(unlist(PielouOP), ncol = ncol(x), nrow = nrow(x), byrow=FALSE))
+
+  values <- as.numeric(as.factor(x))
+  x_1 <- matrix(data = values, nrow = nrow(x), ncol = ncol(x))
+
+  hor <- matrix(NA, ncol = ncol(x), nrow = win)
+  ver <- matrix(NA, ncol = win, nrow = nrow(x) + win * 2)
+  tx <- cbind(ver, rbind(hor, x_1, hor), ver)
+
+  rm(hor, ver, x_1, values)
+  gc()
+
+  PielouOP <- foreach::foreach(
+    cl = (1 + win):(ncol(x) + win),
+    .verbose = FALSE
+  ) %dopar% {
+
+    PielouOut <- sapply((1 + win):(nrow(x) + win), function(rw) {
+
+      win_vals <- tx[(rw - win):(rw + win), (cl - win):(cl + win)]
+      n_non_na <- sum(!is.na(win_vals))
+
+      if (n_non_na < floor(NAwin^2 - ((NAwin^2) * na.tolerance))) {
+        return(NA_real_)
+      }
+
+      tw <- summary(as.factor(win_vals), maxsum = 10000)
+      if ("NA's" %in% names(tw)) {
+        tw <- tw[-length(tw)]
+      }
+
+      if (debugging) {
+        message(
+          "\nPielou - parallelized\nWorking on coords ", rw, ",", cl,
+          ". classes length: ", length(tw),
+          ". window size = ", 2 * win + 1
+        )
+      }
+
+      if (length(tw) <= 1) {
+        return(0)
+      }
+
+      tw_values <- as.vector(tw)
+      p <- tw_values / sum(tw_values)
+      maxS <- log(length(tw))
+      vv <- -sum(p * log(p)) / maxS
+
+      if (debugging) {
+        message(
+          "\ncat: ", paste(names(tw), collapse = " "),
+          " log S: ", maxS,
+          " Pielou: ", vv
+        )
+      }
+
+      return(vv)
+    })
+
+    PielouOut
+  }
+
+  message("\n\nParallel calculation of Pielou's index complete.\n")
+
+  matrix(unlist(PielouOP), ncol = ncol(x), nrow = nrow(x), byrow = FALSE)
 }

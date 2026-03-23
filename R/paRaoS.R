@@ -54,6 +54,7 @@ paRaoS <- function(x, alpha, window, dist_m, na.tolerance, diag, debugging, isfl
 		paRaoOS <- matrix(rep(NA,dim(x)[1]*dim(x)[2]),nrow=dim(x)[1],ncol=dim(x)[2])
 		# Reshape values
 		values <- as.numeric(as.factor(x))
+		
 		x_1 <- matrix(data=values,nrow=dim(x)[1],ncol=dim(x)[2])
 		# Add additional columns and rows for moving window
 		hor <- matrix(NA,ncol=dim(x)[2],nrow=win)

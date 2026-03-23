@@ -13,55 +13,66 @@
 #' @return Returns a raster object or matrix containing the Pielou's Evenness Index values.
 #' @export
 
-Pielou <- function(x, window = 3, rasterOut = TRUE, np = 1, na.tolerance=1, cluster.type = "SOCK", debugging = FALSE) {
+Pielou <- function(x, window = 3, rasterOut = TRUE, np = 1,
+                   na.tolerance = 1, cluster.type = "SOCK",
+                   debugging = FALSE, progBar = TRUE) {
 
-  alpha=1 
+  alpha <- 1
   validateInputs(x, window, alpha, na.tolerance)
   rasterm <- prepareRaster(x)
   w <- calculateWindow(window)
-  out <- if (np == 1) calculatePielouSequential(rasterm[[1]], w, na.tolerance, debugging)
-  else calculatePielouParallel(rasterm[[1]], w, na.tolerance, debugging, cluster.type, np)
+
+  out <- if (np == 1) {
+    calculatePielouSequential(
+      rasterm = rasterm[[1]],
+      w = w,
+      na.tolerance = na.tolerance,
+      debugging = debugging,
+      progBar = progBar
+    )
+  } else {
+    calculatePielouParallel(
+      rasterm = rasterm[[1]],
+      w = w,
+      na.tolerance = na.tolerance,
+      debugging = debugging,
+      cluster.type = cluster.type,
+      np = np,
+      progBar = progBar
+    )
+  }
+
   formatOutput(out, rasterOut, x, alpha, window)
 }
 
-#' Calculate Sequentially
-#'
-#' @description Internal function to calculate indices sequentially.
-#'
-#' @param rasterm Prepared raster object for computation.
-#' @param w The operative moving window size.
-#' @param alpha The alpha parameter (used in some indices).
-#' @param na.tolerance Proportion of acceptable NA values in the window.
-#' @param debugging Logical flag for debugging mode.
-#'
-#' @return Returns a list or matrix of calculated index values.
-#' @noRd
-
-calculatePielouSequential <- function(rasterm, w, na.tolerance, debugging) {
-  if(debugging) {cat("#check: Before sequential function.")}
+calculatePielouSequential <- function(rasterm, w, na.tolerance, debugging, progBar = TRUE) {
+  if (debugging) cat("#check: Before sequential function.")
   lapply(w, function(win) {
-    PielouS(rasterm, win, na.tolerance, debugging)
-    })
+    PielouS(
+      x = rasterm,
+      window = win,
+      na.tolerance = na.tolerance,
+      debugging = debugging,
+      progBar = progBar
+    )
+  })
 }
 
-#' Calculate in Parallel
-#'
-#' @description Internal function to calculate indices in parallel.
-#'
-#' @param rasterm Prepared raster object for computation.
-#' @param w The operative moving window size.
-#' @param alpha The alpha parameter (used in some indices).
-#' @param na.tolerance Proportion of acceptable NA values in the window.
-#' @param debugging Logical flag for debugging mode.
-#' @param cluster.type Cluster type for parallel computation.
-#' @param np Number of processes for parallel computation.
-#'
-#' @return Returns a list or matrix of calculated index values.
-#' @noRd
-calculatePielouParallel <- function(rasterm, w, na.tolerance, debugging, cluster.type, np) {
-  if(debugging) {cat("#check: Before parallel function.")}
-  cls <- openCluster(cluster.type, np, debugging); on.exit(stopCluster(cls)); gc()
+calculatePielouParallel <- function(rasterm, w, na.tolerance, debugging,
+                                    cluster.type, np, progBar = TRUE) {
+  if (debugging) cat("#check: Before parallel function.")
+  cls <- openCluster(cluster.type, np, debugging)
+  on.exit(stopCluster(cls), add = TRUE)
+  gc()
+
   lapply(w, function(win) {
-    PielouP(rasterm, win, na.tolerance, debugging, np)
-    })
+    PielouP(
+      x = rasterm,
+      window = win,
+      na.tolerance = na.tolerance,
+      debugging = debugging,
+      np = np,
+      progBar = progBar
+    )
+  })
 }

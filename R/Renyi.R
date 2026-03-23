@@ -24,13 +24,13 @@
 #' }
 #'
 #' @export
-Renyi <- function(x, window = 3, alpha = 1, base = exp(1), rasterOut = TRUE, np = 1, na.tolerance=1, cluster.type = "SOCK", debugging = FALSE) {
+Renyi <- function(x, window = 3, alpha = 1, base = exp(1), rasterOut = TRUE, np = 1, na.tolerance=1, cluster.type = "SOCK", debugging = FALSE, progBar=TRUE) {
 
   validateInputs(x, window, alpha, na.tolerance)
   rasterm <- prepareRaster(x)
   w <- calculateWindow(window)
   out <- if (np == 1) calculateRenyiSequential(rasterm[[1]], w, alpha, na.tolerance, debugging, base)
-  else calculateRenyiParallel(rasterm[[1]], w, alpha, na.tolerance, debugging, base, cluster.type, np)
+  else calculateRenyiParallel(rasterm[[1]], w, alpha, na.tolerance, debugging, base, cluster.type, np, progBar)
   formatOutput(out, rasterOut, x, alpha, window)
 }
 
@@ -74,7 +74,7 @@ calculateRenyiSequential <- function(rasterm, w, alpha, na.tolerance, debugging,
 #'
 #' @return Returns a list or matrix of calculated index values.
 #' @noRd
-calculateRenyiParallel <- function(rasterm, w, alpha, na.tolerance, debugging, base, cluster.type, np) {
+calculateRenyiParallel <- function(rasterm, w, alpha, na.tolerance, debugging, base, cluster.type, np, progBar) {
   if(debugging) {cat("#check: Before parallel function.")}
   cls <- openCluster(cluster.type, np, debugging); on.exit(stopCluster(cls)); gc()
   lapply(w, function(win) {
@@ -82,9 +82,9 @@ calculateRenyiParallel <- function(rasterm, w, alpha, na.tolerance, debugging, b
       outI <- if (abs(a - 1) < .Machine$double.eps) 
       ShannonP(rasterm, win, na.tolerance, debugging, np)
       else if (a >= .Machine$integer.max) 
-      BergerParkerP(rasterm, win, na.tolerance, debugging, np)
+      BergerParkerP(rasterm, win, na.tolerance, debugging, np, progBar)
       else 
-      RenyiP(rasterm, win, a, base, na.tolerance, debugging, np)
+      RenyiP(rasterm, win, a, base, na.tolerance, debugging, np, progBar)
       })
     })
 }

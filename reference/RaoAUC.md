@@ -161,8 +161,6 @@ Matteo Marcantonio <marcantoniomatteo@gmail.com>
 # Minimal example; RaoAUC with alphas ranging from 1 to 10
 a <- matrix(c(10,10,10,20,20,20,20,30,30), ncol=3, nrow=3)
 out <- RaoAUC(alphas=1:10, x=a, window=3, dist_m="euclidean", na.tolerance=1, rasterAUC=TRUE)
-#> Warning: Simplify=0. Rounding data to 0 decimal places.
-#> Warning: Input data are float numbers. Converting data to integer matrices...
 #> 
 #> Processing alpha: 1 Moving Window: 3
 #> 

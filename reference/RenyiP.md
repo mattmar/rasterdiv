@@ -72,5 +72,5 @@ renyi_index <- RenyiP(data, window = 1, np = 1)
 #> Warning: executing %dopar% sequentially: no parallel backend registered
 #> 
 #> 
-#>  Parallel calculation of Renyi's index complete.
+#> Parallel calculation of Renyi's index complete.
 ```
